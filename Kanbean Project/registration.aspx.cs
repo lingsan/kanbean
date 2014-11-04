@@ -32,8 +32,19 @@ namespace Kanbean_Project
         protected void btnRegiter_Click(object sender, EventArgs e)
         {
             if (this.IsValid) {
-                resultLabel.Text = "Information is submitted.";
-                registerFormPopup.Show();
+
+                OleDbConnection myConnection = new OleDbConnection();
+                myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
+                myConnection.Open();
+
+                OleDbCommand myCommand = new OleDbCommand();
+                myCommand.CommandText = "INSERT INTO [User]([Username], [password], [Email], [Level]) VALUES ('"+usernameTextBox.Text+"','"+passwordTextBox.Text+"','"+emailTextBox.Text+"',2)";
+                myCommand.CommandType = CommandType.Text;
+                myCommand.Connection = myConnection;
+                myConnection.Open();
+                myCommand.ExecuteNonQuery();
+                myConnection.Close();
+                Response.Write("<script>alert('The new user is registered');</script>");
                 Response.Redirect("login.aspx");
             }
             else
