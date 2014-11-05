@@ -9,7 +9,7 @@
 </head>
 <body>
     <form id="registerForm" runat="server">
-        <h1 class="formTitle">Lanban board</h1>
+        <h1 class="formTitle">Lanban board or whatever</h1>
         <asp:Panel ID="RegisterPanel" runat="server" GroupingText="User Registration">
             <table id="registerTable">
                 <tr>
