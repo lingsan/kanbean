@@ -35,7 +35,7 @@
                 <div class="clear"></div>
 
                 <asp:Table id="kanbanboard" border="1" runat="server">
-                    <asp:TableRow>
+<%--                    <asp:TableRow>
                         <asp:TableHeaderCell CssClass="board-header">Product Backlog</asp:TableHeaderCell>
                         <asp:TableHeaderCell CssClass="board-header">Sprint Backlog</asp:TableHeaderCell>
                         <asp:TableHeaderCell CssClass="board-header">To-Do</asp:TableHeaderCell>
@@ -48,7 +48,7 @@
                         <asp:TableCell CssClass="board-content" ID="toDo"></asp:TableCell>
                         <asp:TableCell CssClass="board-content" ID="workInProcess"></asp:TableCell>
                         <asp:TableCell CssClass="board-content" ID="done"></asp:TableCell>
-                    </asp:TableRow>
+                    </asp:TableRow>--%>
                 </asp:Table>
 
                 <div class="clear"></div>
@@ -70,11 +70,11 @@
                                     <td style="vertical-align:bottom;padding:0em 0.5em 1.3em 1em">
                                         <label>Column</label><br />
                                         <asp:DropDownList runat="server" ID="swimlaneDropDownList" Width="160">
-                                            <asp:ListItem Text="Product Backlog" Value="productBacklog"></asp:ListItem>
-                                            <asp:ListItem Text="Sprint Backlog" Value="sprintBacklog"></asp:ListItem>
-                                            <asp:ListItem Text="To-Do" Value="toDo"></asp:ListItem>
-                                            <asp:ListItem Text="Work in Process" Value="workInProcess"></asp:ListItem>
-                                            <asp:ListItem Text="Done" Value="done"></asp:ListItem>
+                                            <asp:ListItem Text="Product Backlog" Value="0"></asp:ListItem>
+                                            <asp:ListItem Text="Sprint Backlog" Value="1"></asp:ListItem>
+                                            <asp:ListItem Text="To-Do" Value="2"></asp:ListItem>
+                                            <asp:ListItem Text="Work in Process" Value="3"></asp:ListItem>
+                                            <asp:ListItem Text="Done" Value="4"></asp:ListItem>
                                         </asp:DropDownList>
                                         <p><label>Assignee</label><br />
                                         <asp:DropDownList runat="server" ID="assigneeDropDownList" Width="160"></asp:DropDownList></p>
@@ -90,8 +90,8 @@
                                         </asp:DropDownList>
                                         <p><label>Complexity</label><br />
                                         <asp:TextBox ID="complexityTextBox" runat="server" TextMode="Number" Width="160"></asp:TextBox></p>
-                                        <label>Deadline (month/day/year)</label><br />
-                                        <asp:TextBox ID="deadlineTextBox" runat="server" TextMode="Date" Width="160"></asp:TextBox>
+                                        <label>Deadline</label><br />
+                                        <asp:TextBox ID="deadlineTextBox" runat="server" TextMode="Date" Width="160" ReadOnly="True"></asp:TextBox>
                                         <ajax:CalendarExtender ID="deadlineCalendarExtender" runat="server" TargetControlID="deadlineTextBox" Format="MM/dd/yyyy" />
                                     </td>
                                 </tr>

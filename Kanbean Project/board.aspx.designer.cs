@@ -85,51 +85,6 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.Table kanbanboard;
         
         /// <summary>
-        /// productBacklog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell productBacklog;
-        
-        /// <summary>
-        /// sprintBacklog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell sprintBacklog;
-        
-        /// <summary>
-        /// toDo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell toDo;
-        
-        /// <summary>
-        /// workInProcess control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell workInProcess;
-        
-        /// <summary>
-        /// done control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell done;
-        
-        /// <summary>
         /// addBacklogPopup control.
         /// </summary>
         /// <remarks>

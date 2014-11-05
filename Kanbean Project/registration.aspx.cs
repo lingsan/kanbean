@@ -44,8 +44,9 @@ namespace Kanbean_Project
                 myConnection.Open();
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
-                Response.Write("<script>alert('The new user is registered');</script>");
-                Response.Redirect("login.aspx");
+                //Response.Write("<script>alert('The new user is registered');</script>");
+                resultLabel.Text = "Information is submitted.";
+                registerFormPopup.Show(); 
             }
             else
             {
@@ -57,7 +58,8 @@ namespace Kanbean_Project
 
         protected void btnOK_Click(object sender, EventArgs e)
         {
-            
+            if (this.IsValid) 
+			    Response.Redirect("login.aspx");
         }
     }
 }

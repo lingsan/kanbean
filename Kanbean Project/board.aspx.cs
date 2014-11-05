@@ -15,27 +15,49 @@ namespace Kanbean_Project
         OleDbCommand mySelectCommand = new OleDbCommand();
         OleDbCommand myDeleteCommand = new OleDbCommand();
         OleDbCommand myInsertCommand = new OleDbCommand();
+        OleDbCommand myUpdateCommand = new OleDbCommand();
         OleDbDataAdapter myAdapter = new OleDbDataAdapter();
         DataSet myDataSet = new DataSet();
-
-        private void getBacklogs()
-        {
-            mySelectCommand.CommandText = "SELECT * FROM Backlogs";
-            myAdapter.Fill(myDataSet, "myBacklogs");
-            DataTable backlogsTable = myDataSet.Tables["myBacklogs"];
-            foreach (DataRow row in backlogsTable.Rows)
-            {
-                createBacklog(row["BacklogID"].ToString(), row["Complexity"].ToString(), row["BacklogTitle"].ToString(), row["DueDate"].ToString(), row["BacklogColor"].ToString(), row["BacklogColorHeader"].ToString(), row["Swimlane"].ToString());
-            }
-        }
-        protected void Page_Load(object sender, EventArgs e)
+        protected void Page_Init(object sender, EventArgs e)
         {
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
+            
+            //Initialize the kanbanboard with swimlane information from database
             mySelectCommand.Connection = myConnection;
             myAdapter.SelectCommand = mySelectCommand;
-            getBacklogs();
+            mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1";
+            myAdapter.Fill(myDataSet, "mySwimlanes");
+            //mySelectCommand.CommandText = "SELECT * FROM User";
+            //myAdapter.Fill(myDataSet, "myUser");
+            DataTable boardTable = myDataSet.Tables["mySwimlanes"];
+            TableRow thRow = new TableRow();
+            TableRow tRow = new TableRow();
             
+            foreach (DataRow row in boardTable.Rows)
+            {
+                //the board header
+                TableHeaderCell thCell = new TableHeaderCell();
+                thCell.CssClass = "board-header";
+                thCell.ID = "columnHeader" + row["SwimlaneID"].ToString();
+                thCell.Text = row["SwimlaneName"].ToString();
+                thCell.Width = new Unit(100 / boardTable.Rows.Count, UnitType.Percentage);
+                thRow.Cells.Add(thCell);
+                
+                //the board content
+                TableCell tCell = new TableCell();
+                tCell.CssClass = "board-content";
+                tCell.ID = "columnContent" + row["SwimlaneID"].ToString();
+                tCell.Width = new Unit(100 / boardTable.Rows.Count, UnitType.Percentage);
+                tRow.Cells.Add(tCell);
+            }
+            kanbanboard.Controls.Add(thRow);
+            kanbanboard.Controls.Add(tRow);
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            getBacklogs();
         }
         protected void btnAdd_Click(object sender, EventArgs e)
         {
@@ -71,7 +93,8 @@ namespace Kanbean_Project
            
         }
 
-        private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlane)
+        //create new backlog
+        private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee)
         {
             Panel newBacklog = new Panel();
             newBacklog.CssClass = "backlogArea";
@@ -94,18 +117,22 @@ namespace Kanbean_Project
             backlogContent.ID = "backlogContent" + id;
             backlog.Controls.Add(backlogContent);
 
-            Panel backlogFooter = new Panel();
-            backlogFooter.CssClass = "backlog-footer";
-            backlogFooter.ID = "backlogFooter" + id;
-            backlog.Controls.Add(backlogFooter);
+            Panel backlogFooterUp = new Panel();
+            backlogFooterUp.CssClass = "backlog-footer";
+            backlogFooterUp.ID = "backlogFooterUp" + id;
+            backlog.Controls.Add(backlogFooterUp);
 
-            LinkButton btnComplexity = new LinkButton();
-            btnComplexity.CssClass = "btnComplexity";
-            btnComplexity.ID = "btnComplexity" + id;
-            btnComplexity.ToolTip = "Complexity";
-            btnComplexity.Text = complexity;
-            btnComplexity.Click += new EventHandler(btnComplexity_Click);
-            backlogHeader.Controls.Add(btnComplexity);
+            Panel backlogFooterDown = new Panel();
+            backlogFooterDown.CssClass = "backlog-footer";
+            backlogFooterDown.ID = "backlogFooterrDown" + id;
+            backlog.Controls.Add(backlogFooterDown);
+
+            Label lblID = new Label();
+            lblID.CssClass = "lblID";
+            lblID.ID = "lblID" + id;
+            lblID.ToolTip = "backlog ID";
+            lblID.Text = "#" + id;
+            backlogHeader.Controls.Add(lblID);
 
             LinkButton btnDelete = new LinkButton();
             btnDelete.CssClass = "backlogIcon iconDelete";
@@ -129,6 +156,22 @@ namespace Kanbean_Project
             backlogTitle.Click += new EventHandler(backlogTitle_Click);
             backlogContent.Controls.Add(backlogTitle);
 
+            LinkButton btnComplexity = new LinkButton();
+            btnComplexity.CssClass = "btnComplexity";
+            btnComplexity.ID = "btnComplexity" + id;
+            btnComplexity.ToolTip = "Complexity";
+            btnComplexity.Text = complexity;
+            btnComplexity.Click += new EventHandler(btnComplexity_Click);
+            backlogFooterUp.Controls.Add(btnComplexity);
+
+            LinkButton btnAssignee = new LinkButton();
+            btnAssignee.CssClass = "btnAssignee";
+            btnAssignee.ID = "btnAssignee" + id;
+            btnAssignee.ToolTip = "Assignee";
+            btnAssignee.Text = "Assignee: " + assignee;
+            btnAssignee.Click += new EventHandler(btnAssignee_Click);
+            backlogFooterUp.Controls.Add(btnAssignee);
+
             LinkButton btnDueDate = new LinkButton();
             btnDueDate.CssClass = "btnDueDate";
             btnDueDate.ID = "btnDueDate" + id;
@@ -136,25 +179,38 @@ namespace Kanbean_Project
             if (deadline != "")
                 btnDueDate.Text = Convert.ToDateTime(deadline).ToString("dd.MM.yyyy");
             btnDueDate.Click += new EventHandler(btnDueDate_Click);
-            backlogFooter.Controls.Add(btnDueDate);
+            backlogFooterDown.Controls.Add(btnDueDate);
+
+            LinkButton btnComment = new LinkButton();
+            btnComment.CssClass = "backlogIcon iconComment";
+            btnComment.ID = "btnComment" + id;
+            btnComment.ToolTip = "Show the comments";
+            btnComment.Click += new EventHandler(btnComment_Click);
+            backlogFooterDown.Controls.Add(btnComment);
 
             LinkButton btnTask = new LinkButton();
             btnTask.CssClass = "backlogIcon iconTask";
             btnTask.ID = "btnTask" + id;
             btnTask.ToolTip = "Show the tasks";
             btnTask.Click += new EventHandler(btnTask_Click);
-            backlogFooter.Controls.Add(btnTask);
+            backlogFooterDown.Controls.Add(btnTask);
 
-            if (swimlane == "productBacklog")
-                productBacklog.Controls.Add(newBacklog);
-            if (swimlane == "sprintBacklog")
-                sprintBacklog.Controls.Add(newBacklog);
-            if (swimlane == "toDo")
-                toDo.Controls.Add(newBacklog);
-            if (swimlane == "workInProcess")
-                workInProcess.Controls.Add(newBacklog);
-            if (swimlane == "done")
-                done.Controls.Add(newBacklog);
+            foreach (TableCell cell in kanbanboard.Rows[1].Cells)
+            {
+                if (cell.ID.Remove(0, 13) == swimlaneID)
+                    cell.Controls.Add(newBacklog);
+            }
+        }
+
+        //load backlog in the database
+        private void getBacklogs()
+        {
+            //mySelectCommand.CommandText = "SELECT Backlogs.*, User.Username FROM Backlogs, User WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogAssigneeID = User.UserID ORDER BY Backlogs.BacklogID";
+            mySelectCommand.CommandText = "SELECT * FROM Backlogs WHERE ProjectID = 1";
+            myAdapter.Fill(myDataSet, "myBacklogs");
+            DataTable backlogsTable = myDataSet.Tables["myBacklogs"];
+            foreach (DataRow row in backlogsTable.Rows)
+                createBacklog(row["BacklogID"].ToString(), row["BacklogComplexity"].ToString(), row["BacklogTitle"].ToString(), row["BacklogDueDate"].ToString(), row["BacklogColor"].ToString(), row["BacklogColorHeader"].ToString(), row["SwimlaneID"].ToString(), "user 1");
         }
 
         protected void backlogTitle_Click(object sender, EventArgs e)
@@ -181,11 +237,6 @@ namespace Kanbean_Project
             viewBacklogPopup.Show();
         }
 
-        protected void btnComplexity_Click(object sender, EventArgs e)
-        {
-            //lblTest.Text = ((Control)sender).ID;
-        }
-
         protected void btnDelete_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;
@@ -195,13 +246,25 @@ namespace Kanbean_Project
         {
             //lblTest.Text = ((Control)sender).ID;
         }
+        protected void btnComplexity_Click(object sender, EventArgs e)
+        {
+            //lblTest.Text = ((Control)sender).ID;
+        }
 
+        protected void btnAssignee_Click(object sender, EventArgs e)
+        {
+            //lblTest.Text = ((Control)sender).ID;
+        }
         protected void btnDueDate_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;
         }
 
         protected void btnTask_Click(object sender, EventArgs e)
+        {
+            //lblTest.Text = ((Control)sender).ID;
+        }
+        protected void btnComment_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;
         }

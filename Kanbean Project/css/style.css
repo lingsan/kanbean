@@ -144,7 +144,6 @@ td {
 
 .board-content {
     background-color:#eeeeee;
-    width:20%;
 }
 .backlog {
     margin:0.3em;
@@ -155,13 +154,21 @@ td {
     height:1.6em;
 }
 
-.btnComplexity {
+.lblID {
     font-weight:bold;
     font-size: 1.3em;
     margin-left:0.4em;
     display:inline-block;
+}
+
+.btnComplexity {
+    font-weight:bold;
+    font-size: 1.1em;
+    margin-right:0.4em;
+    display:inline-block;
     text-decoration:none;
     color:black;
+    float:right;
 }
 
 .backlogIcon {
@@ -200,7 +207,7 @@ td {
     padding:0.2em;
 }
 
-.btnDueDate {
+.btnDueDate, .btnAssignee {
     font-size: 1em;
     margin-left:0.2em;
     text-decoration:none;
@@ -212,7 +219,12 @@ td {
     content:  "\f00b";
 }
 
-.iconEdit:hover, .iconDelete:hover, .iconTask:hover {
+.iconComment:before {
+    font-size: 1em;
+    content:  "\f0e5";
+}
+
+.iconEdit:hover, .iconDelete:hover, .iconTask:hover, .iconComment:hover {
     color: black;
 }
 
