@@ -251,6 +251,8 @@ namespace Kanbean_Project
             myAdapter.Update(myDataSet, "myRawBacklogs");
             myDataSet.Clear();
 
+            getDatabase();
+            getBacklogs();
             addandEditBacklogPopup.Hide();
         }
 
@@ -374,7 +376,6 @@ namespace Kanbean_Project
 
             getDatabase();
             getBacklogs();
-
             addandEditBacklogPopup.Hide();
         }
         
