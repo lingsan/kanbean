@@ -49,13 +49,13 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.DropDownList projectDropDownList;
         
         /// <summary>
-        /// btnAdd control.
+        /// btnAddBacklog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnAdd;
+        protected global::System.Web.UI.WebControls.LinkButton btnAddBacklog;
         
         /// <summary>
         /// btnSearch control.
@@ -85,40 +85,58 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.Table kanbanboard;
         
         /// <summary>
-        /// addBacklogPopup control.
+        /// test control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender addBacklogPopup;
+        protected global::System.Web.UI.WebControls.Label test;
         
         /// <summary>
-        /// addBacklogHiddenField control.
+        /// addandEditBacklogPopup control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField addBacklogHiddenField;
+        protected global::AjaxControlToolkit.ModalPopupExtender addandEditBacklogPopup;
         
         /// <summary>
-        /// addBacklogPanel control.
+        /// addandEditBacklogHiddenField control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel addBacklogPanel;
+        protected global::System.Web.UI.WebControls.HiddenField addandEditBacklogHiddenField;
         
         /// <summary>
-        /// addBacklogTable control.
+        /// addandEditBacklogPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl addBacklogTable;
+        protected global::System.Web.UI.WebControls.Panel addandEditBacklogPanel;
+        
+        /// <summary>
+        /// addandEditBacklogLegend control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl addandEditBacklogLegend;
+        
+        /// <summary>
+        /// addandEditBacklogTable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl addandEditBacklogTable;
         
         /// <summary>
         /// titleTextBox control.
@@ -193,22 +211,31 @@ namespace Kanbean_Project {
         protected global::AjaxControlToolkit.CalendarExtender deadlineCalendarExtender;
         
         /// <summary>
-        /// btnAddBacklog control.
+        /// btnUpdateBacklog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddBacklog;
+        protected global::System.Web.UI.WebControls.Button btnUpdateBacklog;
         
         /// <summary>
-        /// btnCancelAdd control.
+        /// btnAddNewBacklog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancelAdd;
+        protected global::System.Web.UI.WebControls.Button btnAddNewBacklog;
+        
+        /// <summary>
+        /// btnCancelAddandEditBacklog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelAddandEditBacklog;
         
         /// <summary>
         /// btnRefresh control.
@@ -220,58 +247,67 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.Button btnRefresh;
         
         /// <summary>
-        /// viewBacklogPopup control.
+        /// viewBacklogandTaskPopup control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender viewBacklogPopup;
+        protected global::AjaxControlToolkit.ModalPopupExtender viewBacklogandTaskPopup;
         
         /// <summary>
-        /// viewBacklogHiddenField control.
+        /// viewBacklogandTaskHiddenField control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField viewBacklogHiddenField;
+        protected global::System.Web.UI.WebControls.HiddenField viewBacklogandTaskHiddenField;
         
         /// <summary>
-        /// viewBacklogPanel control.
+        /// viewBacklogandTaskPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel viewBacklogPanel;
+        protected global::System.Web.UI.WebControls.Panel viewBacklogandTaskPanel;
         
         /// <summary>
-        /// backlogIDview control.
+        /// viewBacklogandTaskLegend control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label backlogIDview;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl viewBacklogandTaskLegend;
         
         /// <summary>
-        /// viewBacklog control.
+        /// viewBacklogandTask control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal viewBacklog;
+        protected global::System.Web.UI.WebControls.Literal viewBacklogandTask;
         
         /// <summary>
-        /// btnEditView control.
+        /// btnEditViewTask control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEditView;
+        protected global::System.Web.UI.WebControls.Button btnEditViewTask;
+        
+        /// <summary>
+        /// btnEditViewBacklog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnEditViewBacklog;
         
         /// <summary>
         /// btnCancelView control.

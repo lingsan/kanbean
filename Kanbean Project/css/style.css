@@ -114,7 +114,7 @@
     color:deepskyblue;
 }
 
-#btnAdd:before {
+#btnAddBacklog:before {
     content:"\f055";
 }
 
@@ -192,6 +192,10 @@ td {
     content: "\f00d";
 }
 
+.iconAdd:before {
+    content:"\f067";
+}
+
 .backlog-content {
     font-size:1.1em;
     padding: 0.4em;
@@ -224,7 +228,7 @@ td {
     content:  "\f0e5";
 }
 
-.iconEdit:hover, .iconDelete:hover, .iconTask:hover, .iconComment:hover {
+.iconEdit:hover, .iconDelete:hover, .iconTask:hover, .iconComment:hover, .iconAdd:hover {
     color: black;
 }
 
@@ -234,9 +238,6 @@ td {
     margin:0.3em 0.3em 0.6em 2.2em;
     padding:0.3em;
     clear:both;
-}
-#add-button:hover, #search-button:hover, #filter-button:hover, .tasks:hover {
-    cursor:pointer;
 }
 
 .popupbackground {
@@ -250,6 +251,14 @@ td {
     padding:0.6em;
 }
 
+legend {
+    font-size:1.6em;
+    font-weight:bold;
+}
 #btnRefresh {
     visibility:hidden;
+}
+
+.viewBacklogandTaskPanel {
+    padding:0em 1em 1em 1em;
 }
