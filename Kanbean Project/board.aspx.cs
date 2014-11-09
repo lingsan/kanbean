@@ -161,10 +161,11 @@ namespace Kanbean_Project
         {
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
-            mySelectCommand.Connection = myConnection;
-            myAdapter.SelectCommand = mySelectCommand;
-            mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1 ORDER BY SwimlaneID";
-            myAdapter.Fill(myDataSet, "mySwimlanes");
+            //mySelectCommand.Connection = myConnection;
+            //myAdapter.SelectCommand = mySelectCommand;
+            //mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1 ORDER BY SwimlaneID";
+            //myAdapter.Fill(myDataSet, "mySwimlanes");
+            getDatabase();
             //Initialize the kanbanboard with swimlane information from database
             DataTable boardTable = myDataSet.Tables["mySwimlanes"];
             TableRow thRow = new TableRow();
@@ -189,13 +190,13 @@ namespace Kanbean_Project
             }
             kanbanboard.Controls.Add(thRow);
             kanbanboard.Controls.Add(tRow);
-            myDataSet.Clear();
+            //myDataSet.Clear();
+            getBacklogs();
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            getDatabase();
-            getBacklogs();
+     
         }
 
         protected void btnAddBacklog_Click(object sender, EventArgs e)
@@ -366,7 +367,6 @@ namespace Kanbean_Project
                     //row["BacklogPosition"] = 1;
                 }
             }
-            myDataSet.Tables["myRawBacklogs"].AcceptChanges();
 
             myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
             OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
@@ -379,10 +379,39 @@ namespace Kanbean_Project
             addandEditBacklogPopup.Hide();
         }
         
-
         protected void btnDelete_Click(object sender, EventArgs e)
         {
-            //lblTest.Text = ((Control)sender).ID;
+            if (((Control)sender).ID.Substring(9, 4) == "Back")
+                lblDeleteItem.Text = "backlog ID #" + ((Control)sender).ID.Remove(0, 16).ToString(); deleteBacklogorTaskLegend.InnerText = "Delete Backlog";
+            if (((Control)sender).ID.Substring(9, 4) == "Task")
+                lblDeleteItem.Text = "task ID #" + ((Control)sender).ID.Remove(0, 13).ToString(); deleteBacklogorTaskLegend.InnerText = "Delete Task";
+            deleteBacklogandTaskPopup.Show();
+        }
+
+        protected void btnDeleteBacklogorTask_Click(object sender, EventArgs e)
+        {
+            myDeleteCommand.Connection = myConnection;
+            if (lblDeleteItem.Text.Substring(0, 4) == "back")
+            {
+                string id = lblDeleteItem.Text.Remove(0, 12);
+                myDeleteCommand.CommandText = "DELETE FROM Backlogs WHERE BacklogID = " + id;
+                myDeleteCommand.ExecuteNonQuery();
+                myDeleteCommand.CommandText = "DELETE FROM BacklogsComments WHERE BacklogID = " + id;
+                myDeleteCommand.ExecuteNonQuery();
+                myDeleteCommand.CommandText = "DELETE FROM Tasks WHERE BacklogID = " + id;
+                myDeleteCommand.ExecuteNonQuery();
+            }
+
+            if (lblDeleteItem.Text.Substring(0, 4) == "task")
+            {
+                myDeleteCommand.CommandText = "DELETE FROM Tasks WHERE TaskID = " + lblDeleteItem.Text.Remove(0, 9);
+                myDeleteCommand.ExecuteNonQuery();
+            }
+            myDataSet.Clear();
+
+            getDatabase();
+            getBacklogs();
+            deleteBacklogandTaskPopup.Hide();
         }
 
         protected void btnAddTask_Click(object sender, EventArgs e)
@@ -414,8 +443,6 @@ namespace Kanbean_Project
         {
             //lblTest.Text = ((Control)sender).ID;
         }
-
-
 
     }
 }

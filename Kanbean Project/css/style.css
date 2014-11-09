@@ -262,3 +262,14 @@ legend {
 .viewBacklogandTaskPanel {
     padding:0em 1em 1em 1em;
 }
+
+#btnDeleteBacklogorTask {
+    color:whitesmoke;
+    background-color:red;
+    border-color:red;
+}
+
+#btnDeleteBacklogorTask:hover {
+    background-color:darkred;
+    border-color:darkred;
+}

@@ -38,6 +38,12 @@
 
                 <div class="clear"></div>
                 <asp:Label ID="test" runat="server" Text=""></asp:Label>
+                <asp:Button runat="server" ClientIDMode="Static" ID="btnRefresh" />
+                <script>
+                    function refreshBoard() {
+                        setTimeout(function () { document.getElementById('btnRefresh').click(); }, 200);
+                    }
+                </script>
 
                 <ajaxToolkit:ModalPopupExtender ID="addandEditBacklogPopup" runat="server" TargetControlID="addandEditBacklogHiddenField" PopupControlID="addandEditBacklogPanel" CancelControlID="btnCancelAddandEditBacklog" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
                 <asp:HiddenField ID="addandEditBacklogHiddenField" runat="server" />
@@ -80,12 +86,6 @@
                                         <asp:Button ID="btnUpdateBacklog" runat="server" Text="Edit" OnClick="btnUpdateBacklog_Click" OnClientClick="refreshBoard()" />
                                         <asp:Button ID="btnAddNewBacklog" runat="server" Text="Add" OnClick="btnAddNewBacklog_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;
                                         <asp:Button ID="btnCancelAddandEditBacklog" runat="server" Text="Cancel" />
-                                        <asp:Button runat="server" ClientIDMode="Static" ID="btnRefresh" />
-                                        <script>
-                                            function refreshBoard() {
-                                                setTimeout(function () { document.getElementById('btnRefresh').click(); }, 200);
-                                            }
-                                        </script>
                                     </td>
                                 </tr>
                             </table>
@@ -101,6 +101,16 @@
                         <asp:Literal ID="viewBacklogandTask" runat="server"></asp:Literal>
                         <asp:Button ID="btnEditViewTask" runat="server" Text="Edit" />
                         <asp:Button ID="btnEditViewBacklog" runat="server" Text="Edit" OnClick="btnEditBacklog_Click" />&nbsp;or&nbsp;<asp:Button ID="btnCancelView" runat="server" Text="Cancel" />
+                    </fieldset>
+                </asp:Panel>
+
+                <ajaxToolkit:ModalPopupExtender ID="deleteBacklogandTaskPopup" runat="server" TargetControlID="deleteBacklogandTaskHiddenField" PopupControlID="deleteBacklogandTaskPanel" CancelControlID="btnCancelDelete" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
+                <asp:HiddenField ID="deleteBacklogandTaskHiddenField" runat="server" />
+                <asp:Panel ID="deleteBacklogandTaskPanel" runat="server" CssClass="popupmodal">
+                    <fieldset style="padding:1em">
+                        <legend id="deleteBacklogorTaskLegend" runat="server"></legend>
+                        Do you want to delete <asp:Label ID="lblDeleteItem" runat="server" Text=""></asp:Label>?<br /><br />
+                        <asp:Button ID="btnDeleteBacklogorTask" runat="server" Text="Delete" OnClick="btnDeleteBacklogorTask_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCancelDelete" runat="server" Text="Cancel" />
                     </fieldset>
                 </asp:Panel>
             </ContentTemplate>
