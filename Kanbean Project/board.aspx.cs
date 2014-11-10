@@ -305,7 +305,7 @@ namespace Kanbean_Project
                 id = ((Control)sender).ID.Remove(0, 14);
             if (((Control)sender).ID.Substring(7, 4) == "View")
                 id = viewBacklogandTaskLegend.InnerText.Remove(0,12);
-
+            test.Text = id;
             addandEditBacklogLegend.InnerText = "Edit backlog ID #" + id;
 
             foreach (DataRow row in myDataSet.Tables["myBacklogs"].Rows)
@@ -341,7 +341,8 @@ namespace Kanbean_Project
                             colorDropDownList.Items[i].Selected = false;
                     }
                     complexityTextBox.Text = row["BacklogComplexity"].ToString();
-                    deadlineTextBox.Text = Convert.ToDateTime(row["BacklogDueDate"]).ToShortDateString();
+                    if (row["BacklogDueDate"].ToString() != "")
+                        deadlineTextBox.Text = Convert.ToDateTime(row["BacklogDueDate"]).ToShortDateString();
                 }
             }
             addandEditBacklogPopup.Show();

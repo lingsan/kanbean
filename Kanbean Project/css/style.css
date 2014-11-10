@@ -144,6 +144,7 @@ td {
 
 .board-content {
     background-color:#eeeeee;
+    vertical-align:top;
 }
 .backlog {
     margin:0.3em;

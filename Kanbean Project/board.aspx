@@ -113,6 +113,7 @@
                         <asp:Button ID="btnDeleteBacklogorTask" runat="server" Text="Delete" OnClick="btnDeleteBacklogorTask_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCancelDelete" runat="server" Text="Cancel" />
                     </fieldset>
                 </asp:Panel>
+
             </ContentTemplate>
         </asp:UpdatePanel>
      </form>
