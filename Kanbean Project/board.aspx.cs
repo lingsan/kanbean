@@ -17,6 +17,10 @@ namespace Kanbean_Project
         OleDbCommand myInsertCommand = new OleDbCommand();
         OleDbCommand myUpdateCommand = new OleDbCommand();
         OleDbDataAdapter myAdapter = new OleDbDataAdapter();
+
+        OleDbDataReader myReader;
+        OleDbCommand selectSearch = new OleDbCommand();
+
         DataSet myDataSet = new DataSet();
         private void getDatabase()
         {
@@ -204,7 +208,7 @@ namespace Kanbean_Project
         protected void Page_Load(object sender, EventArgs e)
         {
         }
-
+     
 
         protected void btnAddBacklog_Click(object sender, EventArgs e)
         {
@@ -451,35 +455,60 @@ namespace Kanbean_Project
         {
             //lblTest.Text = ((Control)sender).ID;
         }
-        protected void updatePosition()
+
+        protected void btnFilter_Click(object sender, EventArgs e)
         {
-            foreach (DataRow row in myDataSet.Tables["mySwimlanes"].Rows)
+            dropdownFilter.Visible = true;
+            
+        }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            tbxSearch.Visible = true;
+            btnFilter.Enabled = true;
+        }
+
+        protected void dropdownFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectSearch.Connection = myConnection;
+            if (myConnection.State == ConnectionState.Closed)
+                myConnection.Open();
+            List<string> links = new List<string>();
+            if (dropdownFilter.SelectedItem.Text == "Users")
             {
-                int position = 0;
-                string id = "columnContent" + row["SwimlaneID"].ToString();
-                foreach (Control backlog in kanbanboard.FindControl(id).Controls)
+                selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] WHERE [Username] LIKE '" + tbxSearch.Text + "' OR [Email] LIKE '" + tbxSearch.Text + "' ";
+
+                myReader = selectSearch.ExecuteReader();
+                bool notEoF;
+                notEoF = myReader.Read();
+                while (notEoF)
                 {
-                    
-                    for (int i = 0; i < myDataSet.Tables["myRawBacklogs"].Rows.Count; i++)
-                    {
-                        if (myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogID"].ToString() == backlog.ID.Remove(0, 11))
-                        {
-                            myDataSet.Tables["myRawBacklogs"].Rows[i]["SwimlaneID"] = row["SwimlaneID"].ToString();
-                            myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogPosition"] = position;
-                            position++;
-                            
-                        }
-                    }
+                    //string linkItem = myReader["Username"].ToString() + ", " + myReader["Email"].ToString();
+                    //linkItem.Value = myReader["UserID"].ToString();
+                    links.Add(myReader["Username"].ToString()+ ", " + myReader["Email"].ToString());
+                    notEoF = myReader.Read();
                 }
             }
-            myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
-            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
-            myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
-            myAdapter.Update(myDataSet, "myRawBacklogs");
-            myDataSet.Clear();
+            else if (dropdownFilter.SelectedItem.Text == "Tasks")
+            {
+                selectSearch.CommandText = "SELECT [TaskTitle],[TaskComplexity], [TaskStartDate],[TaskDueDate],[UserID] FROM [Tasks],[User] WHERE [TaskTitle] LIKE '" + tbxSearch.Text + "' OR [TaskComplexity] LIKE '" + tbxSearch.Text + "' OR [TaskStartDate] LIKE '" + tbxSearch.Text + "' OR [TaskDueDate] LIKE '" + tbxSearch.Text + "' OR,[TaskAssigneeID] LIKE '" + tbxSearch.Text + "'";
 
-            getDatabase();
-            getBacklogs();
+                myReader = selectSearch.ExecuteReader();
+                bool notEoF;
+                notEoF = myReader.Read();
+                while (notEoF)
+                {
+                    //string linkItem = myReader["Username"].ToString() + ", " + myReader["Email"].ToString();
+                    //linkItem.Value = myReader["UserID"].ToString();
+                    links.Add(myReader["TaskTitle"].ToString() + ", complexity: "+ myReader["TaskComplexity"].ToString()+"Period: "+myReader["TaskStartDate"]+" - "+myReader["TaskDueDate"]);
+                    notEoF = myReader.Read();
+                }
+            }
+            myConnection.Close();
+            Session["links"] = links;
+            //Server.Transfer("SearchResults.aspx", true);
+            Response.Redirect("SearchResults.aspx");
         }
+
     }
 }

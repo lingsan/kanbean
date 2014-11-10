@@ -64,8 +64,16 @@
 
                 <div id="toolbar">
                     <asp:LinkButton runat="server" id="btnAddBacklog" CssClass="icon" ToolTip="Add new backlog" OnClick="btnAddBacklog_Click"></asp:LinkButton>
-                    <asp:LinkButton runat="server" id="btnSearch" CssClass="icon" ToolTip="Search"></asp:LinkButton>
-                    <asp:LinkButton runat="server" id="btnFilter" CssClass="icon" ToolTip="Filter"></asp:LinkButton>
+                    <asp:LinkButton runat="server" id="btnSearch" CssClass="icon" ToolTip="Search" OnClick="btnSearch_Click"></asp:LinkButton>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <asp:TextBox ID="tbxSearch" runat="server" Visible="False"></asp:TextBox>
+                    &nbsp;<asp:LinkButton runat="server" id="btnFilter" CssClass="icon" ToolTip="Filter" Enabled="False" OnClick="btnFilter_Click"></asp:LinkButton>
+                    <asp:DropDownList ID="dropdownFilter" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropdownFilter_SelectedIndexChanged" Visible="False">
+                        <asp:ListItem>All categories</asp:ListItem>
+                        <asp:ListItem>Tasks</asp:ListItem>
+                        <asp:ListItem>Users</asp:ListItem>
+                        <asp:ListItem>Comments</asp:ListItem>
+                    </asp:DropDownList>
                 </div>
 
                 <div class="clear"></div>

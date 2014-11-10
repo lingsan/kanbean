@@ -87,8 +87,10 @@
     <Content Include="App_Data\LanbanDatabase.mdb" />
     <Content Include="board.aspx" />
     <Content Include="css\style.css" />
+    <Content Include="Global.asax" />
     <Content Include="login.aspx" />
     <Content Include="registration.aspx" />
+    <Content Include="SearchResults.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +100,9 @@
     </Compile>
     <Compile Include="board.aspx.designer.cs">
       <DependentUpon>board.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="login.aspx.cs">
       <DependentUpon>login.aspx</DependentUpon>
@@ -113,6 +118,13 @@
     </Compile>
     <Compile Include="registration.aspx.designer.cs">
       <DependentUpon>registration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchResults.aspx.cs">
+      <DependentUpon>SearchResults.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchResults.aspx.designer.cs">
+      <DependentUpon>SearchResults.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
