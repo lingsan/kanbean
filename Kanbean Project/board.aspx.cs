@@ -17,6 +17,10 @@ namespace Kanbean_Project
         OleDbCommand myInsertCommand = new OleDbCommand();
         OleDbCommand myUpdateCommand = new OleDbCommand();
         OleDbDataAdapter myAdapter = new OleDbDataAdapter();
+
+        OleDbDataReader myReader;
+        OleDbCommand selectSearch = new OleDbCommand();
+
         DataSet myDataSet = new DataSet();
         private void getDatabase()
         {
@@ -30,7 +34,7 @@ namespace Kanbean_Project
             myAdapter.Fill(myDataSet, "myBacklogs");
             mySelectCommand.CommandText = "Select * From Backlogs";
             myAdapter.Fill(myDataSet, "myRawBacklogs");
-            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username FROM Tasks, [User] WHERE Tasks.ProjectID = 1 AND Tasks.TaskAssigneeID = [User].UserID ORDER BY Tasks.TaskID";
+            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username FROM Tasks, [User] WHERE Tasks.TaskAssigneeID = [User].UserID ORDER BY Tasks.TaskID";
             myAdapter.Fill(myDataSet, "myTasks");
         }
 
@@ -442,6 +446,60 @@ namespace Kanbean_Project
         protected void btnComment_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;
+        }
+
+        protected void btnFilter_Click(object sender, EventArgs e)
+        {
+            dropdownFilter.Visible = true;
+            
+        }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            tbxSearch.Visible = true;
+            btnFilter.Enabled = true;
+        }
+
+        protected void dropdownFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectSearch.Connection = myConnection;
+            if (myConnection.State == ConnectionState.Closed)
+                myConnection.Open();
+            List<string> links = new List<string>();
+            if (dropdownFilter.SelectedItem.Text == "Users")
+            {
+                selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] WHERE [Username] LIKE '" + tbxSearch.Text + "' OR [Email] LIKE '" + tbxSearch.Text + "' ";
+
+                myReader = selectSearch.ExecuteReader();
+                bool notEoF;
+                notEoF = myReader.Read();
+                while (notEoF)
+                {
+                    //string linkItem = myReader["Username"].ToString() + ", " + myReader["Email"].ToString();
+                    //linkItem.Value = myReader["UserID"].ToString();
+                    links.Add(myReader["Username"].ToString()+ ", " + myReader["Email"].ToString());
+                    notEoF = myReader.Read();
+                }
+            }
+            else if (dropdownFilter.SelectedItem.Text == "Tasks")
+            {
+                selectSearch.CommandText = "SELECT [TaskTitle],[TaskComplexity], [TaskStartDate],[TaskDueDate],[UserID] FROM [Tasks],[User] WHERE [TaskTitle] LIKE '" + tbxSearch.Text + "' OR [TaskComplexity] LIKE '" + tbxSearch.Text + "' OR [TaskStartDate] LIKE '" + tbxSearch.Text + "' OR [TaskDueDate] LIKE '" + tbxSearch.Text + "' OR,[TaskAssigneeID] LIKE '" + tbxSearch.Text + "'";
+
+                myReader = selectSearch.ExecuteReader();
+                bool notEoF;
+                notEoF = myReader.Read();
+                while (notEoF)
+                {
+                    //string linkItem = myReader["Username"].ToString() + ", " + myReader["Email"].ToString();
+                    //linkItem.Value = myReader["UserID"].ToString();
+                    links.Add(myReader["TaskTitle"].ToString() + ", complexity: "+ myReader["TaskComplexity"].ToString()+"Period: "+myReader["TaskStartDate"]+" - "+myReader["TaskDueDate"]);
+                    notEoF = myReader.Read();
+                }
+            }
+            myConnection.Close();
+            Session["links"] = links;
+            //Server.Transfer("SearchResults.aspx", true);
+            Response.Redirect("SearchResults.aspx");
         }
 
     }
