@@ -26,11 +26,11 @@ namespace Kanbean_Project
             myAdapter.Fill(myDataSet, "mySwimlanes");
             mySelectCommand.CommandText = "SELECT ProjectsMembers.*, Projects.ProjectName, [User].UserID, [User].Username, [User].Level FROM ProjectsMembers, Projects, [User] WHERE ProjectsMembers.ProjectID = Projects.ProjectID AND ProjectsMembers.UserID = [User].UserID AND Projects.ProjectID = 1 ORDER BY [User].UserID";
             myAdapter.Fill(myDataSet, "myUsers");
-            mySelectCommand.CommandText = "SELECT Backlogs.*, [User].Username, Swimlanes.SwimlaneName, Projects.ProjectName FROM Backlogs, [User], Swimlanes, Projects WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogAssigneeID = [User].UserID AND Backlogs.SwimlaneID = Swimlanes.SwimlaneID AND Backlogs.ProjectID = Projects.ProjectID ORDER BY Backlogs.BacklogID";
+            mySelectCommand.CommandText = "SELECT Backlogs.*, [User].Username, Swimlanes.SwimlaneName, Projects.ProjectName FROM Backlogs, [User], Swimlanes, Projects WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogAssigneeID = [User].UserID AND Backlogs.SwimlaneID = Swimlanes.SwimlaneID AND Backlogs.ProjectID = Projects.ProjectID ORDER BY Backlogs.SwimlaneID, Backlogs.BacklogPosition";
             myAdapter.Fill(myDataSet, "myBacklogs");
             mySelectCommand.CommandText = "Select * From Backlogs";
             myAdapter.Fill(myDataSet, "myRawBacklogs");
-            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username FROM Tasks, [User] WHERE Tasks.ProjectID = 1 AND Tasks.TaskAssigneeID = [User].UserID ORDER BY Tasks.TaskID";
+            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username FROM Tasks, [User], Backlogs WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogID = Tasks.BacklogID AND Tasks.TaskAssigneeID = [User].UserID ORDER BY Tasks.TaskID";
             myAdapter.Fill(myDataSet, "myTasks");
         }
 
@@ -44,6 +44,8 @@ namespace Kanbean_Project
             backlog.CssClass = "backlog";
             backlog.Style.Add("background-color", color);
             backlog.ID = "backlog" + id;
+            backlog.Attributes.Add("draggable", "true");
+            backlog.Attributes.Add("ondragstart", "drag(event)");
             newBacklog.Controls.Add(backlog);
 
             Panel backlogHeader = new Panel();
@@ -166,6 +168,7 @@ namespace Kanbean_Project
             //mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1 ORDER BY SwimlaneID";
             //myAdapter.Fill(myDataSet, "mySwimlanes");
             getDatabase();
+
             //Initialize the kanbanboard with swimlane information from database
             DataTable boardTable = myDataSet.Tables["mySwimlanes"];
             TableRow thRow = new TableRow();
@@ -186,18 +189,22 @@ namespace Kanbean_Project
                 tCell.CssClass = "board-content";
                 tCell.ID = "columnContent" + row["SwimlaneID"].ToString();
                 tCell.Width = new Unit(100 / boardTable.Rows.Count, UnitType.Percentage);
+                tCell.Attributes.Add("ondrop", "drop(event)");
+                tCell.Attributes.Add("ondragover", "dragover(event)");
                 tRow.Cells.Add(tCell);
             }
             kanbanboard.Controls.Add(thRow);
             kanbanboard.Controls.Add(tRow);
             //myDataSet.Clear();
+
             getBacklogs();
+            
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-     
         }
+
 
         protected void btnAddBacklog_Click(object sender, EventArgs e)
         {
@@ -234,6 +241,7 @@ namespace Kanbean_Project
             DataRow row = myDataSet.Tables["myRawBacklogs"].NewRow();
             row["ProjectID"] = 1;
             row["SwimlaneID"] = Convert.ToInt32(swimlaneDropDownList.SelectedValue);
+            
             row["BacklogTitle"] = titleTextBox.Text;
             row["BacklogDescription"] = descriptionTextBox.Text;
             row["BacklogColor"] = colorDropDownList.SelectedValue.Split(',')[1].ToString();
@@ -244,7 +252,8 @@ namespace Kanbean_Project
             if (deadlineTextBox.Text != "")
                 row["BacklogDueDate"] = Convert.ToDateTime(deadlineTextBox.Text);
             row["BacklogAssigneeID"] = Convert.ToInt32(assigneeDropDownList.SelectedValue);
-            //row["BacklogPosition"] = 1;
+            mySelectCommand.CommandText = "SELECT COUNT(SwimlaneID) FROM Backlogs WHERE SwimlaneID=" + swimlaneDropDownList.SelectedValue;
+            row["BacklogPosition"] = Convert.ToInt32(mySelectCommand.ExecuteScalar().ToString());
             myDataSet.Tables["myRawBacklogs"].Rows.Add(row);
             myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
             OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
@@ -305,7 +314,6 @@ namespace Kanbean_Project
                 id = ((Control)sender).ID.Remove(0, 14);
             if (((Control)sender).ID.Substring(7, 4) == "View")
                 id = viewBacklogandTaskLegend.InnerText.Remove(0,12);
-            test.Text = id;
             addandEditBacklogLegend.InnerText = "Edit backlog ID #" + id;
 
             foreach (DataRow row in myDataSet.Tables["myBacklogs"].Rows)
@@ -365,7 +373,6 @@ namespace Kanbean_Project
                     if (deadlineTextBox.Text != "")
                         row["BacklogDueDate"] = Convert.ToDateTime(deadlineTextBox.Text);
                     row["BacklogAssigneeID"] = Convert.ToInt32(assigneeDropDownList.SelectedValue);
-                    //row["BacklogPosition"] = 1;
                 }
             }
 
@@ -444,6 +451,35 @@ namespace Kanbean_Project
         {
             //lblTest.Text = ((Control)sender).ID;
         }
+        protected void updatePosition()
+        {
+            foreach (DataRow row in myDataSet.Tables["mySwimlanes"].Rows)
+            {
+                int position = 0;
+                string id = "columnContent" + row["SwimlaneID"].ToString();
+                foreach (Control backlog in kanbanboard.FindControl(id).Controls)
+                {
+                    
+                    for (int i = 0; i < myDataSet.Tables["myRawBacklogs"].Rows.Count; i++)
+                    {
+                        if (myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogID"].ToString() == backlog.ID.Remove(0, 11))
+                        {
+                            myDataSet.Tables["myRawBacklogs"].Rows[i]["SwimlaneID"] = row["SwimlaneID"].ToString();
+                            myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogPosition"] = position;
+                            position++;
+                            
+                        }
+                    }
+                }
+            }
+            myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
+            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
+            myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
+            myAdapter.Update(myDataSet, "myRawBacklogs");
+            myDataSet.Clear();
 
+            getDatabase();
+            getBacklogs();
+        }
     }
 }
