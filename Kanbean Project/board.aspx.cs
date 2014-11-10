@@ -510,5 +510,34 @@ namespace Kanbean_Project
             Response.Redirect("SearchResults.aspx");
         }
 
+        protected void updatePosition()
+        {
+            foreach (DataRow row in myDataSet.Tables["mySwimlanes"].Rows)
+            {
+                int position = 0;
+                string id = "columnContent" + row["SwimlaneID"].ToString();
+                foreach (Control backlog in kanbanboard.FindControl(id).Controls)
+                {
+                    
+                    for (int i = 0; i < myDataSet.Tables["myRawBacklogs"].Rows.Count; i++)
+                    {
+                        if (myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogID"].ToString() == backlog.ID.Remove(0, 11))
+                        {
+                            myDataSet.Tables["myRawBacklogs"].Rows[i]["SwimlaneID"] = row["SwimlaneID"].ToString();
+                            myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogPosition"] = position;
+                            position++;
+                        }
+                    }
+                }
+            }
+            myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
+            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
+            myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
+            myAdapter.Update(myDataSet, "myRawBacklogs");
+            myDataSet.Clear();
+
+            getDatabase();
+            getBacklogs();
+        }
     }
 }
