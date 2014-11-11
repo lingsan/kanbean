@@ -81,7 +81,10 @@
                     </div>
                     <div id="user-information">
                         <p>Welcome, <span id="username">Username</span>. (<a href="#">logout</a>)</p>
-                        <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList"></asp:DropDownList></p>
+                        <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList">
+                            <asp:ListItem>1</asp:ListItem>
+                            <asp:ListItem>2</asp:ListItem>
+                            </asp:DropDownList></p>
                     </div>
                 </div>
 
@@ -89,10 +92,10 @@
 
                 <div id="toolbar">
                     <asp:LinkButton runat="server" id="btnAddBacklog" CssClass="icon" ToolTip="Add new backlog" OnClick="btnAddBacklog_Click"></asp:LinkButton>
-                    <asp:LinkButton runat="server" id="btnSearch" CssClass="icon" ToolTip="Search" OnClick="btnSearch_Click"></asp:LinkButton>
+                    <asp:LinkButton runat="server" id="btnSearch" CssClass="icon" ToolTip="Click to get the search field" OnClick="btnSearch_Click"></asp:LinkButton>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <asp:TextBox ID="tbxSearch" runat="server" Visible="False"></asp:TextBox>
-                    &nbsp;<asp:LinkButton runat="server" id="btnFilter" CssClass="icon" ToolTip="Filter" Enabled="False" OnClick="btnFilter_Click"></asp:LinkButton>
+                    &nbsp;<asp:LinkButton runat="server" id="btnFilter" CssClass="icon" ToolTip="Click to select category" Enabled="False" OnClick="btnFilter_Click"></asp:LinkButton>
                     <asp:DropDownList ID="dropdownFilter" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropdownFilter_SelectedIndexChanged" Visible="False">
                         <asp:ListItem>All categories</asp:ListItem>
                         <asp:ListItem>Tasks</asp:ListItem>
