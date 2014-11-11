@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.OleDb;
 using System.Data;
+using System.Collections;
 
 namespace Kanbean_Project
 {
@@ -38,11 +39,12 @@ namespace Kanbean_Project
             myAdapter.Fill(myDataSet, "myTasks");
         }
 
-        private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee)
+        private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee, string position)
         {
             Panel newBacklog = new Panel();
             newBacklog.CssClass = "backlogArea";
             newBacklog.ID = "backlogArea" + id;
+            newBacklog.Attributes.Add("data-position", position);
 
             Panel backlog = new Panel();
             backlog.CssClass = "backlog";
@@ -160,7 +162,7 @@ namespace Kanbean_Project
         {
             DataTable backlogsTable = myDataSet.Tables["myBacklogs"];
             foreach (DataRow row in backlogsTable.Rows)
-                createBacklog(row["BacklogID"].ToString(), row["BacklogComplexity"].ToString(), row["BacklogTitle"].ToString(), row["BacklogDueDate"].ToString(), row["BacklogColor"].ToString(), row["BacklogColorHeader"].ToString(), row["SwimlaneID"].ToString(), row["Username"].ToString());
+                createBacklog(row["BacklogID"].ToString(), row["BacklogComplexity"].ToString(), row["BacklogTitle"].ToString(), row["BacklogDueDate"].ToString(), row["BacklogColor"].ToString(), row["BacklogColorHeader"].ToString(), row["SwimlaneID"].ToString(), row["Username"].ToString(), row["BacklogPosition"].ToString());
         }
 
         protected void Page_Init(object sender, EventArgs e)
@@ -207,9 +209,9 @@ namespace Kanbean_Project
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
         }
      
-
         protected void btnAddBacklog_Click(object sender, EventArgs e)
         {
             btnAddNewBacklog.Visible = true;
@@ -374,8 +376,12 @@ namespace Kanbean_Project
                     row["BacklogColorHeader"] = colorDropDownList.SelectedValue.Split(',')[0].ToString();
                     if (complexityTextBox.Text != "")
                         row["BacklogComplexity"] = Convert.ToInt32(complexityTextBox.Text);
+                    else
+                        row["BacklogComplexity"] = "";
                     if (deadlineTextBox.Text != "")
                         row["BacklogDueDate"] = Convert.ToDateTime(deadlineTextBox.Text);
+                    else
+                        row["BacklogDueDate"] = "";
                     row["BacklogAssigneeID"] = Convert.ToInt32(assigneeDropDownList.SelectedValue);
                 }
             }
@@ -428,7 +434,32 @@ namespace Kanbean_Project
 
         protected void btnAddTask_Click(object sender, EventArgs e)
         {
-            //lblTest.Text = ((Control)sender).ID;
+            btnAddNewTask.Visible = true;
+            btnUpdateTask.Visible = false;
+            addandEditTaskLegend.InnerText = "Add new task";
+            titleTaskTextBox.Text = "";
+
+            assigneeTaskDropDownList.Items.Clear();
+            foreach (DataRow row in myDataSet.Tables["myUsers"].Rows)
+            {
+                assigneeTaskDropDownList.Items.Add(row["Username"].ToString());
+                assigneeTaskDropDownList.Items[assigneeTaskDropDownList.Items.Count - 1].Value = row["User.UserID"].ToString();
+            }
+
+            complexityTaskTextBox.Text = "";
+            deadlineTaskTextBox.Text = "";
+
+            addandEditTaskPopup.Show();
+        }
+
+        protected void btnAddNewTask_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void btnUpdateTask_Click(object sender, EventArgs e)
+        {
+
         }
 
         protected void btnComplexity_Click(object sender, EventArgs e)
@@ -510,34 +541,19 @@ namespace Kanbean_Project
             Response.Redirect("SearchResults.aspx");
         }
 
-        protected void updatePosition()
+        public static void updatePosition(string swimlane, List<string> swimlaneBacklog, List<string> swimlaneBacklogPos)
         {
-            foreach (DataRow row in myDataSet.Tables["mySwimlanes"].Rows)
+            OleDbConnection conn = new OleDbConnection();
+            OleDbCommand myCommand = new OleDbCommand();
+            myCommand.Connection = conn;
+            conn.Open();
+            for (int i = 0; i < swimlaneBacklog.Count; i++)
             {
-                int position = 0;
-                string id = "columnContent" + row["SwimlaneID"].ToString();
-                foreach (Control backlog in kanbanboard.FindControl(id).Controls)
-                {
-                    
-                    for (int i = 0; i < myDataSet.Tables["myRawBacklogs"].Rows.Count; i++)
-                    {
-                        if (myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogID"].ToString() == backlog.ID.Remove(0, 11))
-                        {
-                            myDataSet.Tables["myRawBacklogs"].Rows[i]["SwimlaneID"] = row["SwimlaneID"].ToString();
-                            myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogPosition"] = position;
-                            position++;
-                        }
-                    }
-                }
+                myCommand.CommandText = "UPDATE Backlogs SET BacklogPosition = " + swimlaneBacklogPos[i] + ", swimlaneID = " + swimlane + " WHERE backlogID = " + swimlaneBacklog[i];
+                myCommand.ExecuteNonQuery();
             }
-            myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
-            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
-            myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
-            myAdapter.Update(myDataSet, "myRawBacklogs");
-            myDataSet.Clear();
-
-            getDatabase();
-            getBacklogs();
+            conn.Close(); 
         }
+
     }
 }

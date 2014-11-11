@@ -274,3 +274,12 @@ legend {
     background-color:darkred;
     border-color:darkred;
 }
+
+#addandEditBacklogTable table tr td {
+    vertical-align:bottom !important;
+    padding:0.4em;
+}
+
+#addandEditTaskTable table tr td {
+    padding:0.4em;
+}
