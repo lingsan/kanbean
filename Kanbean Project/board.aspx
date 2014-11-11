@@ -8,10 +8,46 @@
     <title>Lanban</title>
     <link rel="stylesheet" href="/css/style.css" type="text/css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+    <script>
+        function refreshBoard() {
+            setTimeout(function () { document.getElementById('btnRefresh').click(); }, 200);
+        }
+
+        function dragover(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("content", ev.target.parentElement.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("content");
+            if (ev.target.className == "board-content") {
+                ev.target.appendChild(document.getElementById(data));
+            }
+            else {
+                var node = findParentNode(ev.target);
+                node.parentElement.insertBefore(document.getElementById(data), node);
+            }
+
+        }
+
+        function findParentNode(childObj) {
+            var testObj = childObj.parentNode;
+            var count = 1;
+            while (testObj.getAttribute('class') != "backlogArea") {
+                testObj = testObj.parentNode;
+                count++;
+            }
+            return testObj;
+        }
+    </script>
 </head>
 <body>
     <form id="lanbanboard" runat="server">
-        <ajaxToolkit:ToolkitScriptManager ID="lanbanScriptManager" runat="server" ></ajaxToolkit:ToolkitScriptManager>
+        <ajaxToolkit:ToolkitScriptManager ID="lanbanScriptManager" EnablePageMethods="true" runat="server" ></ajaxToolkit:ToolkitScriptManager>
         <asp:UpdatePanel ID="updatePanel" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
                 <div id="header">
@@ -45,16 +81,12 @@
 
                 <div class="clear"></div>
 
-                <asp:Table id="kanbanboard" border="1" runat="server"></asp:Table>
+                <asp:Table id="kanbanboard" border="1" runat="server">
+                </asp:Table>
 
                 <div class="clear"></div>
                 <asp:Label ID="test" runat="server" Text=""></asp:Label>
                 <asp:Button runat="server" ClientIDMode="Static" ID="btnRefresh" />
-                <script>
-                    function refreshBoard() {
-                        setTimeout(function () { document.getElementById('btnRefresh').click(); }, 200);
-                    }
-                </script>
 
                 <ajaxToolkit:ModalPopupExtender ID="addandEditBacklogPopup" runat="server" TargetControlID="addandEditBacklogHiddenField" PopupControlID="addandEditBacklogPanel" CancelControlID="btnCancelAddandEditBacklog" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
                 <asp:HiddenField ID="addandEditBacklogHiddenField" runat="server" />
