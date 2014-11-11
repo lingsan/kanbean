@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.Data.OleDb;
 using System.Data;
 using System.Collections;
+using System.Web.Services;
 
 namespace Kanbean_Project
 {
@@ -557,12 +558,14 @@ namespace Kanbean_Project
             Response.Redirect("SearchResults.aspx");
         }
 
+        [WebMethod]
         public static void updatePosition(string swimlane, List<string> swimlaneBacklog, List<string> swimlaneBacklogPos)
         {
             OleDbConnection conn = new OleDbConnection();
             OleDbCommand myCommand = new OleDbCommand();
-            myCommand.Connection = conn;
+            conn.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             conn.Open();
+            myCommand.Connection = conn;
             for (int i = 0; i < swimlaneBacklog.Count; i++)
             {
                 myCommand.CommandText = "UPDATE Backlogs SET BacklogPosition = " + swimlaneBacklogPos[i] + ", swimlaneID = " + swimlane + " WHERE backlogID = " + swimlaneBacklog[i];

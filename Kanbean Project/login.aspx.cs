@@ -36,7 +36,7 @@ namespace Kanbean_Project
             //insert username and password in to string lists
             List<string> Username = new List<string>();
             List<string> PassWord = new List<string>();
-            OleDbDataReader CheckLoginReader = new OleDbDataReader();
+            OleDbDataReader CheckLoginReader;
             CheckLoginReader = UserPassConn.ExecuteReader();
             bool notEoF = CheckLoginReader.Read();
             while (notEoF)

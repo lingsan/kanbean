@@ -55,7 +55,7 @@
 
             PageMethods.updatePosition(oldSwimlaneID, oldSwimlaneBacklog, oldSwimlaneBacklogPos);
             PageMethods.updatePosition(newSwimlaneID, newSwimlaneBacklog, newSwimlaneBacklogPos);
-            refreshBoard();
+
         }
 
         function findParentNode(childObj) {
