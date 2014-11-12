@@ -155,33 +155,29 @@ namespace Kanbean_Project
             btnTask.Click += new EventHandler(btnTask_Click);
             backlogFooterDown.Controls.Add(btnTask);
 
-            foreach (TableCell cell in kanbanboard.Rows[1].Cells)
-            {
-                if (cell.ID.Remove(0, 13) == swimlaneID)
-                    cell.Controls.Add(newBacklog);
-            }
+            kanbanboard.FindControl("columnContent" + swimlaneID).Controls.Add(newBacklog);
+            //foreach (TableCell cell in kanbanboard.Rows[1].Cells)
+            //{
+            //    if (cell.ID.Remove(0, 13) == swimlaneID)
+            //        cell.Controls.Add(newBacklog);
+            //}
         }
 
         private void createTask(string id, string BacklogID, string complexity, string title, string deadline, string assignee, string statusID)
         {
             Panel task = new Panel();
-            task.CssClass = "task";
+            task.CssClass = "tasks";
             if (statusID == "1")
                 task.Style.Add("background-color", "#fffafa");
             if (statusID == "2")
                 task.Style.Add("background-color", "#eee9e9");
             if (statusID == "3")
-                task.Style.Add("background-color", "#cdc9c9");
+                task.Style.Add("background-color", "#ddd7d7");
             task.ID = "task" + id;
 
             Panel taskHeader = new Panel();
             taskHeader.CssClass = "backlog-header";
-            if (statusID == "1")
-                taskHeader.Style.Add("background-color", "#eee9e9");
-            if (statusID == "2")
-                taskHeader.Style.Add("background-color", "#cdc9c9");
-            if (statusID == "3")
-                taskHeader.Style.Add("background-color", "#8b8989");
+            taskHeader.Style.Add("background-color", "#cccccc");
             taskHeader.ID = "taskHeader" + id;
             task.Controls.Add(taskHeader);
 
@@ -262,12 +258,7 @@ namespace Kanbean_Project
             btnComment.Click += new EventHandler(btnComment_Click);
             taskFooterDown.Controls.Add(btnComment);
 
-            kanbanboard.Rows[1].FindControl("backlogArea" + BacklogID).Controls.Add(task);
-            //foreach (TableCell cell in kanbanboard.Rows[1].Cells)
-            //{
-            //    if (cell.ID.Remove(0, 13) == swimlaneID)
-            //        cell.Controls.Add(newBacklog);
-            //}
+            kanbanboard.FindControl("backlogArea" + BacklogID).Controls.Add(task);
         }
 
         private void getBacklogs()
@@ -283,6 +274,7 @@ namespace Kanbean_Project
             foreach (DataRow row in tasksTable.Rows)
                 createTask(row["TaskID"].ToString(), row["BacklogID"].ToString(), row["TaskComplexity"].ToString(), row["TaskTitle"].ToString(), row["TaskDueDate"].ToString(), row["Username"].ToString(), row["TaskStatusID"].ToString());
         }
+
         protected void Page_Init(object sender, EventArgs e)
         {
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
@@ -365,8 +357,13 @@ namespace Kanbean_Project
         {
             DataRow row = myDataSet.Tables["myRawBacklogs"].NewRow();
             row["ProjectID"] = 1;
-            row["SwimlaneID"] = Convert.ToInt32(swimlaneDropDownList.SelectedValue);
-            
+            row["SwimlaneID"] = swimlaneDropDownList.SelectedValue;
+            if (swimlaneDropDownList.SelectedValue == "5")
+                row["BacklogStatusID"] = 3;
+            else if (swimlaneDropDownList.SelectedValue == "4")
+                row["BacklogStatusID"] = 2;
+            else
+                row["BacklogStatusID"] = 1;
             row["BacklogTitle"] = titleTextBox.Text;
             row["BacklogDescription"] = descriptionTextBox.Text;
             row["BacklogColor"] = colorDropDownList.SelectedValue.Split(',')[1].ToString();
@@ -388,6 +385,7 @@ namespace Kanbean_Project
 
             getDatabase();
             getBacklogs();
+            getTasks();
             addandEditBacklogPopup.Hide();
         }
 
@@ -496,12 +494,8 @@ namespace Kanbean_Project
                     row["BacklogColorHeader"] = colorDropDownList.SelectedValue.Split(',')[0].ToString();
                     if (complexityTextBox.Text != "")
                         row["BacklogComplexity"] = Convert.ToInt32(complexityTextBox.Text);
-                    else
-                        row["BacklogComplexity"] = "";
                     if (deadlineTextBox.Text != "")
                         row["BacklogDueDate"] = Convert.ToDateTime(deadlineTextBox.Text);
-                    else
-                        row["BacklogDueDate"] = "";
                     row["BacklogAssigneeID"] = Convert.ToInt32(assigneeDropDownList.SelectedValue);
                 }
             }
@@ -514,6 +508,7 @@ namespace Kanbean_Project
 
             getDatabase();
             getBacklogs();
+            getTasks();
             addandEditBacklogPopup.Hide();
         }
         
@@ -549,6 +544,7 @@ namespace Kanbean_Project
 
             getDatabase();
             getBacklogs();
+            getTasks();
             deleteBacklogandTaskPopup.Hide();
         }
 
@@ -557,6 +553,7 @@ namespace Kanbean_Project
             btnAddNewTask.Visible = true;
             btnUpdateTask.Visible = false;
             addandEditTaskLegend.InnerText = "Add new task";
+            lblAddedBacklogID.Text = ((Control)sender).ID.Remove(0,10);
             titleTaskTextBox.Text = "";
 
             assigneeTaskDropDownList.Items.Clear();
@@ -581,6 +578,30 @@ namespace Kanbean_Project
 
         protected void btnAddNewTask_Click(object sender, EventArgs e)
         {
+            DataRow row = myDataSet.Tables["myRawTasks"].NewRow();
+            row["BacklogID"] = Convert.ToInt32(lblAddedBacklogID.Text);
+            row["TaskTitle"] = titleTaskTextBox.Text;
+            if (complexityTaskTextBox.Text != "")
+                row["TaskComplexity"] = Convert.ToInt32(complexityTaskTextBox.Text);
+            row["TaskAssigneeID"] = Convert.ToInt32(assigneeTaskDropDownList.SelectedValue);
+            row["TaskStatusID"] = Convert.ToInt32(statusTaskDropDownList.SelectedValue);
+            if (estimationHourTaskTextBox.Text != "")
+                row["TaskEstimationHour"] = Convert.ToInt32(estimationHourTaskTextBox.Text);
+            if (timeSpentTaskTextBox.Text != "")
+                row["TaskSpentTime"] = Convert.ToInt32(timeSpentTaskTextBox.Text);
+            row["TaskStartDate"] = DateTime.Today;
+            if (deadlineTaskTextBox.Text != "")
+                row["TaskDueDate"] = Convert.ToDateTime(deadlineTaskTextBox.Text);
+            myDataSet.Tables["myRawTasks"].Rows.Add(row);
+            myAdapter.SelectCommand.CommandText = "Select * From Tasks";
+            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
+            myAdapter.InsertCommand = myCommandBuilder.GetInsertCommand();
+            myAdapter.Update(myDataSet, "myRawTasks");
+            myDataSet.Clear();
+
+            getDatabase();
+            getBacklogs();
+            addandEditTaskPopup.Hide();
 
         }
 

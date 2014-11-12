@@ -184,6 +184,7 @@
                     <fieldset>
                         <legend id="addandEditTaskLegend" runat="server"></legend>
                         <div id="addandEditTaskTable" runat="server" visible="true">
+                            <asp:Label ID="lblAddedBacklogID" runat="server" visible="false"></asp:Label>
                             <table>
 								<tr>
 									<td colspan="2">

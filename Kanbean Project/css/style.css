@@ -152,8 +152,8 @@ td {
     clear:both;
 }
 
-.task {
-    margin:0.5em 0.5em 0.5em 2.2em;
+.tasks {
+    margin:0.3em 0.3em 0.3em 2.2em;
     clear:both;
 }
 
@@ -186,7 +186,7 @@ td {
     text-decoration: inherit;
     color: gray;
     font-size: 1.1em;
-    margin:0.2em 0.2em 0.2em 0em;
+    margin:0.2em 0.5em 0.2em 0em;
     float:right;
     vertical-align:middle;
 }
