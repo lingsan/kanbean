@@ -146,8 +146,14 @@ td {
     background-color:#eeeeee;
     vertical-align:top;
 }
+
 .backlog {
     margin:0.3em;
+    clear:both;
+}
+
+.tasks {
+    margin:0.3em 0.3em 0.3em 2.2em;
     clear:both;
 }
 
@@ -233,14 +239,6 @@ td {
     color: black;
 }
 
-.tasks {
-    background-color:snow;
-    border: 1px solid #b2b2b2;
-    margin:0.3em 0.3em 0.6em 2.2em;
-    padding:0.3em;
-    clear:both;
-}
-
 .popupbackground {
     background-color:gray;
     opacity: 0.5;
@@ -273,4 +271,13 @@ legend {
 #btnDeleteBacklogorTask:hover {
     background-color:darkred;
     border-color:darkred;
+}
+
+#addandEditBacklogTable table tr td {
+    vertical-align:bottom !important;
+    padding:0.4em;
+}
+
+#addandEditTaskTable table tr td {
+    padding:0.4em;
 }

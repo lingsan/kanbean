@@ -12,7 +12,7 @@
         <h1 class="formTitle">Lanban board</h1>
             
         <asp:Panel ID="loginPanel" runat="server" GroupingText="Login">
-            <asp:CustomValidator ID="LoginValidator" runat="server" ErrorMessage="your Username and password do not match!!!" CssClass="validatorField"></asp:CustomValidator>
+            <asp:CustomValidator ID="LoginValidator" runat="server" ErrorMessage="your Username and password do not match!!!" CssClass="validatorField" ControlToValidate="passwordTextBox" OnServerValidate="LoginValidation"></asp:CustomValidator>
             <table>
                 <tr>
                     <td class="registerLabel">Username</td>
@@ -31,7 +31,8 @@
                 <tr>
                     <td></td>
                     <td>
-                        <a href="#">Forgot username and password ???</a>
+                        <a href="#">Forgot username and password ???</a> <br />
+                        <a href="registration.aspx">Not yet had an account ???</a>
                     </td>
                 </tr>
                 <tr>

@@ -516,45 +516,7 @@ namespace Kanbean_Project
                     notEoF = myReader.Read();
                 }
             }
-            else
-            {
-                selectSearch.CommandText =
-@"SELECT [TaskTitle] 
-FROM [Tasks]
-WHERE UCASE([TaskTitle]) LIKE '" + tbxSearch.Text.ToUpper() + @"'
-UNION
-SELECT [Username]
-FROM [User]
-WHERE [Username] LIKE '" + tbxSearch.Text.ToUpper() + @"'
-UNION 
-SELECT [Email]
-FROM [User]
-WHERE [Email] LIKE '" + tbxSearch.Text.ToUpper() + @"'
-UNION
-SELECT [BacklogTitle]
-FROM [Backlogs]
-WHERE [BacklogTitle] LIKE '" + tbxSearch.Text.ToUpper() + @"'
-UNION 
-SELECT [BacklogDescription]
-FROM [Backlogs]
-WHERE [BacklogDescription] LIKE '" + tbxSearch.Text.ToUpper() + "'";
-
-                myReader = selectSearch.ExecuteReader();
-                bool notEoF;
-                notEoF = myReader.Read();
-                while (notEoF)
-                {
-                    addItem(links, myReader["TaskTitle"].ToString());
-                    //links.Add(myReader["TaskTitle"].ToString());
-                    //links.Add(myReader["Username"].ToString());
-                    //links.Add(myReader["Email"].ToString());
-                    //links.Add(myReader["BacklogTitle"].ToString());
-                    //links.Add(myReader["BacklogDescription"].ToString());
-
-
-                    notEoF = myReader.Read();
-                }
-            }
+            
             myConnection.Close();
             Session["links"] = links;
             //Server.Transfer("SearchResults.aspx", true);

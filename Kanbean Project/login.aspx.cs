@@ -16,24 +16,57 @@ namespace Kanbean_Project
         OleDbConnection LogInConnection = new OleDbConnection();
         protected void Page_Load(object sender, EventArgs e)
         {
+            //read cookie to check if User Loged on or not
+            if ( Request.Cookies["UserSetting"] != null && Request.Cookies["UserSetting"]["Name"] != null)
+            {
+                Response.Redirect("Board.aspx");
+            }
+
             Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
-            string path = @"\App_Data";
+            /*string path = @"\App_Data";
             string constr = "Provider=Microsoft.Jet.OleDB.4.0 " +
-                "Data Source = " + path + @"\LanbanDatabase.mdb";
+                "Data Source = " + path + @"\LanbanDatabase.mdb";*/
+            string constr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             LogInConnection.ConnectionString = constr;
+        }
+
+        //Write a cookie for username
+        private void BakeCookies ()
+        {
+            String Username = usernameTextBox.Text;
+            HttpCookie UserCookie = new HttpCookie("UserSetting");
+            UserCookie["Name"] = Username;
+            UserCookie.Expires = DateTime.Now.AddDays(1);
+            Response.Cookies.Add(UserCookie);
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            Response.Redirect("board.aspx");
+            if (this.IsValid)
+            {
+                BakeCookies();
+                Response.Redirect("board.aspx"); 
+            }
         }
 
         protected void LoginValidation(object source, ServerValidateEventArgs args)
         {
             //connect to DB
-            OleDbCommand UserPassConn = new OleDbCommand("SELECT Username, Password FROM User", LogInConnection);
+            LogInConnection.Open();
+            string UserName = usernameTextBox.Text;
+            OleDbCommand UserPassConn = new OleDbCommand("SELECT [Password] FROM [User] WHERE [Username]='" + UserName +"'", LogInConnection);
             UserPassConn.CommandType = CommandType.Text;
-            //insert username and password in to string lists
+            /*OleDbDataReader CheclogInReader;
+            CheclogInReader = UserPassConn.ExecuteReader();*/
+                if (passwordTextBox.Text == UserPassConn.ExecuteScalar().ToString())
+                {
+                    args.IsValid = true;
+                } else
+                {
+                    args.IsValid = false;
+                }
+            LogInConnection.Close();
+            /*insert username and password in to string lists
             List<string> Username = new List<string>();
             List<string> PassWord = new List<string>();
             OleDbDataReader CheckLoginReader;
@@ -45,6 +78,7 @@ namespace Kanbean_Project
                 PassWord.Add(CheckLoginReader["Password"].ToString());
                 notEoF = CheckLoginReader.Read();
             }
+            LogInConnection.Close();
             //check matching between username and password
             string InputUser = usernameTextBox.Text;
             string InputPass = passwordTextBox.Text;
@@ -56,7 +90,7 @@ namespace Kanbean_Project
             else
             {
                 args.IsValid = false;
-            }
+            }*/
         }
     }
 }
