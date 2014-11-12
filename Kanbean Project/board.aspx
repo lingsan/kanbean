@@ -7,7 +7,7 @@
 <head runat="server">
     <title>Lanban</title>
     <link rel="stylesheet" href="/css/style.css" type="text/css" />
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="http://localhost:40716/maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
     <script>
         function refreshBoard() {
             setTimeout(function () { document.getElementById('btnRefresh').click(); }, 200);
@@ -253,6 +253,19 @@
                         <legend id="deleteBacklogorTaskLegend" runat="server"></legend>
                         Do you want to delete <asp:Label ID="lblDeleteItem" runat="server" Text=""></asp:Label>?<br /><br />
                         <asp:Button ID="btnDeleteBacklogorTask" runat="server" Text="Delete" OnClick="btnDeleteBacklogorTask_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCancelDelete" runat="server" Text="Cancel" />
+                    </fieldset>
+                </asp:Panel>
+
+                <ajaxToolkit:ModalPopupExtender ID="editComplexityPopup" runat="server" TargetControlID="viewEditComplexityHiddenField" PopupControlID="editComplexityPanel" CancelControlID="btnCancelEditC" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
+                    <asp:HiddenField ID="viewEditComplexityHiddenField" runat="server" />
+                <asp:Panel ID="editComplexityPanel" runat="server" CssClass="popupmodal">
+                    <fieldset style="padding:1em">
+                        <legend id="editComplexityLegend" runat="server">Edit the complexity</legend>
+                        <asp:Label ID="lblEditComplexity" runat="server" Text=""></asp:Label>
+                        <asp:TextBox ID="txtBacklogComplexity" runat="server" TextMode="Number"></asp:TextBox>
+                        <br />
+                        <br />
+                        <asp:Button ID="btnEditComplexity" runat="server" Text="Edit" OnClick="btnUpdateEditComplex_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCancelEditC" runat="server" Text="Cancel" />
                     </fieldset>
                 </asp:Panel>
 

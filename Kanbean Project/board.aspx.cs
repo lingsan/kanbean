@@ -612,8 +612,46 @@ namespace Kanbean_Project
 
         }
 
+        protected void btnUpdateEditComplex_Click(object sender, EventArgs e)
+        {
+
+            string id = editComplexityLegend.InnerText.Remove(0,33);
+
+            foreach (DataRow row in myDataSet.Tables["myRawBacklogs"].Rows)
+            {
+                if (row["BacklogID"].ToString() == id)
+                {
+                    row["BacklogComplexity"] =Convert.ToInt32(txtBacklogComplexity.Text);
+                }
+            }
+            myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
+            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
+            myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
+            myAdapter.Update(myDataSet, "myRawBacklogs");
+            myDataSet.Clear();
+
+            getDatabase();
+            getBacklogs();
+            getTasks();
+            }
         protected void btnComplexity_Click(object sender, EventArgs e)
         {
+            string id = "";
+                
+                if (((Control)sender).ID.Substring(10, 4) == "Comp")
+                    id = ((Control)sender).ID.Remove(0, 20);
+                    editComplexityLegend.InnerText="Edit the complexity for Backlog #" +id;
+
+                foreach (DataRow row in myDataSet.Tables["myBacklogs"].Rows)
+                {
+                    if (row["BacklogID"].ToString() == id)
+                    {
+                        lblEditComplexity.Text = "Complexity: ";
+                        txtBacklogComplexity.Text = row["BacklogComplexity"].ToString();
+                    }
+                }
+                editComplexityPopup.Show();
+          
             //lblTest.Text = ((Control)sender).ID;
         }
 
