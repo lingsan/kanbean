@@ -17,7 +17,7 @@ namespace Kanbean_Project
         protected void Page_Load(object sender, EventArgs e)
         {
             //read cookie to check if User Loged on or not
-            if (Response.Cookies["UserSetting"] != null && Response.Cookies["UserSetting"]["Name"] != null)
+            if ( Request.Cookies["UserSetting"] != null && Request.Cookies["UserSetting"]["Name"] != null)
             {
                 Response.Redirect("Board.aspx");
             }
@@ -52,10 +52,21 @@ namespace Kanbean_Project
         protected void LoginValidation(object source, ServerValidateEventArgs args)
         {
             //connect to DB
-            OleDbCommand UserPassConn = new OleDbCommand("SELECT Username, Password FROM User", LogInConnection);
-            UserPassConn.CommandType = CommandType.Text;
             LogInConnection.Open();
-            //insert username and password in to string lists
+            string UserName = usernameTextBox.Text;
+            OleDbCommand UserPassConn = new OleDbCommand("SELECT [Password] FROM [User] WHERE [Username]='" + UserName +"'", LogInConnection);
+            UserPassConn.CommandType = CommandType.Text;
+            /*OleDbDataReader CheclogInReader;
+            CheclogInReader = UserPassConn.ExecuteReader();*/
+                if (passwordTextBox.Text == UserPassConn.ExecuteScalar().ToString())
+                {
+                    args.IsValid = true;
+                } else
+                {
+                    args.IsValid = false;
+                }
+            LogInConnection.Close();
+            /*insert username and password in to string lists
             List<string> Username = new List<string>();
             List<string> PassWord = new List<string>();
             OleDbDataReader CheckLoginReader;
@@ -79,7 +90,7 @@ namespace Kanbean_Project
             else
             {
                 args.IsValid = false;
-            }
+            }*/
         }
     }
 }

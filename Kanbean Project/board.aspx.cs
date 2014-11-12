@@ -320,6 +320,15 @@ namespace Kanbean_Project
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            string Username;
+            if(Request.Cookies["UserSetting"] != null)
+            {
+                if (Request.Cookies["UserSetting"]["Name"] != null)
+                {
+                    Username = Request.Cookies["UserSetting"]["Name"];
+                    LblUsername.Text = Username;
+                }
+            }
 
         }
      
