@@ -146,8 +146,14 @@ td {
     background-color:#eeeeee;
     vertical-align:top;
 }
+
 .backlog {
     margin:0.3em;
+    clear:both;
+}
+
+.task {
+    margin:0.5em 0.5em 0.5em 2.2em;
     clear:both;
 }
 
@@ -180,7 +186,7 @@ td {
     text-decoration: inherit;
     color: gray;
     font-size: 1.1em;
-    margin:0.2em 0.5em 0.2em 0em;
+    margin:0.2em 0.2em 0.2em 0em;
     float:right;
     vertical-align:middle;
 }
@@ -231,14 +237,6 @@ td {
 
 .iconEdit:hover, .iconDelete:hover, .iconTask:hover, .iconComment:hover, .iconAdd:hover {
     color: black;
-}
-
-.tasks {
-    background-color:snow;
-    border: 1px solid #b2b2b2;
-    margin:0.3em 0.3em 0.6em 2.2em;
-    padding:0.3em;
-    clear:both;
 }
 
 .popupbackground {

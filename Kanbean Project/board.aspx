@@ -192,9 +192,13 @@
 									</td>
 								</tr>
 								<tr>
-									<td colspan="2">
+									<td>
 										<label>Assignee</label><br />
                                         <asp:DropDownList runat="server" ID="assigneeTaskDropDownList" Width="160"></asp:DropDownList>
+									</td>
+                                    <td>
+										<label>Task Status</label><br />
+                                        <asp:DropDownList runat="server" ID="statusTaskDropDownList" Width="160"></asp:DropDownList>
 									</td>
 								</tr>
 								<tr>
