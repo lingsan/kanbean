@@ -95,6 +95,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <asp:TextBox ID="tbxSearch" runat="server" Visible="False"></asp:TextBox>
                     &nbsp;<asp:DropDownList ID="dropdownFilter" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropdownFilter_SelectedIndexChanged" Visible="False">
+                        <asp:ListItem Selected="True"></asp:ListItem>
                         <asp:ListItem>Tasks</asp:ListItem>
                         <asp:ListItem>Users</asp:ListItem>
                         <asp:ListItem>Comments</asp:ListItem>
