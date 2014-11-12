@@ -177,7 +177,7 @@ namespace Kanbean_Project
             DataTable boardTable = myDataSet.Tables["mySwimlanes"];
             TableRow thRow = new TableRow();
             TableRow tRow = new TableRow();
-            
+
             foreach (DataRow row in boardTable.Rows)
             {
                 //the board header
@@ -187,7 +187,7 @@ namespace Kanbean_Project
                 thCell.Text = row["SwimlaneName"].ToString();
                 thCell.Width = new Unit(100 / boardTable.Rows.Count, UnitType.Percentage);
                 thRow.Cells.Add(thCell);
-                
+
                 //the board content
                 TableCell tCell = new TableCell();
                 tCell.CssClass = "board-content";
@@ -202,13 +202,13 @@ namespace Kanbean_Project
             //myDataSet.Clear();
 
             getBacklogs();
-            
+
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
         }
-     
+
 
         protected void btnAddBacklog_Click(object sender, EventArgs e)
         {
@@ -245,7 +245,7 @@ namespace Kanbean_Project
             DataRow row = myDataSet.Tables["myRawBacklogs"].NewRow();
             row["ProjectID"] = 1;
             row["SwimlaneID"] = Convert.ToInt32(swimlaneDropDownList.SelectedValue);
-            
+
             row["BacklogTitle"] = titleTextBox.Text;
             row["BacklogDescription"] = descriptionTextBox.Text;
             row["BacklogColor"] = colorDropDownList.SelectedValue.Split(',')[1].ToString();
@@ -317,7 +317,7 @@ namespace Kanbean_Project
             if (((Control)sender).ID.Substring(7, 4) == "Back")
                 id = ((Control)sender).ID.Remove(0, 14);
             if (((Control)sender).ID.Substring(7, 4) == "View")
-                id = viewBacklogandTaskLegend.InnerText.Remove(0,12);
+                id = viewBacklogandTaskLegend.InnerText.Remove(0, 12);
             addandEditBacklogLegend.InnerText = "Edit backlog ID #" + id;
 
             foreach (DataRow row in myDataSet.Tables["myBacklogs"].Rows)
@@ -390,7 +390,7 @@ namespace Kanbean_Project
             getBacklogs();
             addandEditBacklogPopup.Hide();
         }
-        
+
         protected void btnDelete_Click(object sender, EventArgs e)
         {
             if (((Control)sender).ID.Substring(9, 4) == "Back")
@@ -459,7 +459,7 @@ namespace Kanbean_Project
         protected void btnFilter_Click(object sender, EventArgs e)
         {
             dropdownFilter.Visible = true;
-            
+
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)
@@ -477,7 +477,7 @@ namespace Kanbean_Project
             
             if (dropdownFilter.SelectedItem.Text == "Users")
             {
-                selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] WHERE (UCASE([Username]) LIKE '%" + tbxSearch.Text.ToUpper() + "%' OR UCASE([Email]) LIKE '%" + tbxSearch.Text.ToUpper() + "%') AND [UserID] IN (SELECT [UserID] FROM [ProjectsMembers] WHERE [ProjectID] LIKE '"+projectDropDownList.SelectedItem.Text+"') ";
+                selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] WHERE ([Username] LIKE '%" + tbxSearch.Text + "%' OR [Email] LIKE '%" + tbxSearch.Text.ToUpper() + "%') AND [UserID] IN (SELECT [UserID] FROM [ProjectsMembers] WHERE [ProjectID] LIKE '" + projectDropDownList.SelectedItem.Text + "') ";
 
                 myReader = selectSearch.ExecuteReader();
                 bool notEoF;
@@ -486,26 +486,26 @@ namespace Kanbean_Project
                 {
                     //string linkItem = myReader["Username"].ToString() + ", " + myReader["Email"].ToString();
                     //linkItem.Value = myReader["UserID"].ToString();
-                    links.Add(myReader["Username"].ToString()+ ", " + myReader["Email"].ToString());
+                    links.Add(myReader["Username"].ToString() + ", " + myReader["Email"].ToString());
                     notEoF = myReader.Read();
                 }
             }
             else if (dropdownFilter.SelectedItem.Text == "Tasks")
             {
-                selectSearch.CommandText = "SELECT [TaskTitle],[TaskComplexity], [TaskStartDate],[TaskDueDate],[Username] FROM [Tasks] INNER JOIN [User] ON [Tasks].[TaskAssigneeID]=[User].[UserID] WHERE [ProjectID] LIKE '"+projectDropDownList.SelectedItem.Text+"' AND (UCASE([TaskTitle]) LIKE '%" + tbxSearch.Text.ToUpper() + "%' OR [TaskComplexity] LIKE '" + tbxSearch.Text + "' OR [TaskStartDate] LIKE '%" + tbxSearch.Text + "%' OR [TaskDueDate] LIKE '%" + tbxSearch.Text + "%')";
+                selectSearch.CommandText = "SELECT [TaskTitle],[TaskComplexity], [TaskStartDate],[TaskDueDate],[Username] FROM [Tasks] INNER JOIN [User] ON [Tasks].[TaskAssigneeID]=[User].[UserID] WHERE [ProjectID] LIKE '" + projectDropDownList.SelectedItem.Text + "' AND ([TaskTitle] LIKE '%" + tbxSearch.Text.ToUpper() + "%' OR [TaskComplexity] LIKE '" + tbxSearch.Text + "' OR [TaskStartDate] LIKE '%" + tbxSearch.Text + "%' OR [TaskDueDate] LIKE '%" + tbxSearch.Text + "%')";
 
                 myReader = selectSearch.ExecuteReader();
                 bool notEoF;
                 notEoF = myReader.Read();
                 while (notEoF)
                 {
-                    links.Add(myReader["TaskTitle"].ToString() + ", complexity: " + myReader["TaskComplexity"].ToString() + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"]+", assignee: "+myReader["Username"]);
+                    links.Add(myReader["TaskTitle"].ToString() + ", complexity: " + myReader["TaskComplexity"].ToString() + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"] + ", assignee: " + myReader["Username"]);
                     notEoF = myReader.Read();
                 }
             }
             else if (dropdownFilter.SelectedItem.Text == "Comments")
             {
-                selectSearch.CommandText = "SELECT [CommentContent], [Username] FROM [BacklogsComments] INNER JOIN [User] ON [User].[UserID] = [BacklogsComments].[CommenterID] WHERE UCASE([CommentContent]) LIKE '%" + tbxSearch.Text.ToUpper() + "%' AND [BacklogID] IN (SELECT [BacklogID] FROM [Backlogs] WHERE [ProjectID] LIKE '"+projectDropDownList.SelectedItem.Text+"')";
+                selectSearch.CommandText = "SELECT [CommentContent], [Username] FROM [BacklogsComments] INNER JOIN [User] ON [User].[UserID] = [BacklogsComments].[CommenterID] WHERE [CommentContent] LIKE '%" + tbxSearch.Text.ToUpper() + "%' AND [BacklogID] IN (SELECT [BacklogID] FROM [Backlogs] WHERE [ProjectID] LIKE '" + projectDropDownList.SelectedItem.Text + "')";
 
                 myReader = selectSearch.ExecuteReader();
                 bool notEoF;
@@ -518,7 +518,42 @@ namespace Kanbean_Project
             }
             else
             {
-                selectSearch.CommandText = "";
+                selectSearch.CommandText =
+@"SELECT [TaskTitle] 
+FROM [Tasks]
+WHERE UCASE([TaskTitle]) LIKE '" + tbxSearch.Text.ToUpper() + @"'
+UNION
+SELECT [Username]
+FROM [User]
+WHERE [Username] LIKE '" + tbxSearch.Text.ToUpper() + @"'
+UNION 
+SELECT [Email]
+FROM [User]
+WHERE [Email] LIKE '" + tbxSearch.Text.ToUpper() + @"'
+UNION
+SELECT [BacklogTitle]
+FROM [Backlogs]
+WHERE [BacklogTitle] LIKE '" + tbxSearch.Text.ToUpper() + @"'
+UNION 
+SELECT [BacklogDescription]
+FROM [Backlogs]
+WHERE [BacklogDescription] LIKE '" + tbxSearch.Text.ToUpper() + "'";
+
+                myReader = selectSearch.ExecuteReader();
+                bool notEoF;
+                notEoF = myReader.Read();
+                while (notEoF)
+                {
+                    addItem(links, myReader["TaskTitle"].ToString());
+                    //links.Add(myReader["TaskTitle"].ToString());
+                    //links.Add(myReader["Username"].ToString());
+                    //links.Add(myReader["Email"].ToString());
+                    //links.Add(myReader["BacklogTitle"].ToString());
+                    //links.Add(myReader["BacklogDescription"].ToString());
+
+
+                    notEoF = myReader.Read();
+                }
             }
             myConnection.Close();
             Session["links"] = links;
@@ -526,6 +561,11 @@ namespace Kanbean_Project
             Response.Redirect("SearchResults.aspx");
         }
 
+        public void addItem(List<string> lis, string str)
+        {
+            if (str != "")
+                lis.Add(str);
+        }
         protected void updatePosition()
         {
             foreach (DataRow row in myDataSet.Tables["mySwimlanes"].Rows)
@@ -534,7 +574,7 @@ namespace Kanbean_Project
                 string id = "columnContent" + row["SwimlaneID"].ToString();
                 foreach (Control backlog in kanbanboard.FindControl(id).Controls)
                 {
-                    
+
                     for (int i = 0; i < myDataSet.Tables["myRawBacklogs"].Rows.Count; i++)
                     {
                         if (myDataSet.Tables["myRawBacklogs"].Rows[i]["BacklogID"].ToString() == backlog.ID.Remove(0, 11))
