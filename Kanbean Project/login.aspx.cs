@@ -16,16 +16,37 @@ namespace Kanbean_Project
         OleDbConnection LogInConnection = new OleDbConnection();
         protected void Page_Load(object sender, EventArgs e)
         {
+            //read cookie to check if User Loged on or not
+            if (Response.Cookies["UserSetting"] != null && Response.Cookies["UserSetting"]["Name"] != null)
+            {
+                Response.Redirect("Board.aspx");
+            }
+
             Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
-            string path = @"\App_Data";
+            /*string path = @"\App_Data";
             string constr = "Provider=Microsoft.Jet.OleDB.4.0 " +
-                "Data Source = " + path + @"\LanbanDatabase.mdb";
+                "Data Source = " + path + @"\LanbanDatabase.mdb";*/
+            string constr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             LogInConnection.ConnectionString = constr;
+        }
+
+        //Write a cookie for username
+        private void BakeCookies ()
+        {
+            String Username = usernameTextBox.Text;
+            HttpCookie UserCookie = new HttpCookie("UserSetting");
+            UserCookie["Name"] = Username;
+            UserCookie.Expires = DateTime.Now.AddDays(1);
+            Response.Cookies.Add(UserCookie);
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            Response.Redirect("board.aspx");
+            if (this.IsValid)
+            {
+                BakeCookies();
+                Response.Redirect("board.aspx"); 
+            }
         }
 
         protected void LoginValidation(object source, ServerValidateEventArgs args)
@@ -33,6 +54,7 @@ namespace Kanbean_Project
             //connect to DB
             OleDbCommand UserPassConn = new OleDbCommand("SELECT Username, Password FROM User", LogInConnection);
             UserPassConn.CommandType = CommandType.Text;
+            LogInConnection.Open();
             //insert username and password in to string lists
             List<string> Username = new List<string>();
             List<string> PassWord = new List<string>();
@@ -45,6 +67,7 @@ namespace Kanbean_Project
                 PassWord.Add(CheckLoginReader["Password"].ToString());
                 notEoF = CheckLoginReader.Read();
             }
+            LogInConnection.Close();
             //check matching between username and password
             string InputUser = usernameTextBox.Text;
             string InputPass = passwordTextBox.Text;
