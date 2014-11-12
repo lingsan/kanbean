@@ -16,6 +16,12 @@ namespace Kanbean_Project
         OleDbConnection LogInConnection = new OleDbConnection();
         protected void Page_Load(object sender, EventArgs e)
         {
+            //read cookie to check if User Loged on or not
+            if (Response.Cookies["UserSetting"] != null && Response.Cookies["UserSetting"]["Name"] != null)
+            {
+                Response.Redirect("Board.aspx");
+            }
+
             Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
             /*string path = @"\App_Data";
             string constr = "Provider=Microsoft.Jet.OleDB.4.0 " +
@@ -24,13 +30,14 @@ namespace Kanbean_Project
             LogInConnection.ConnectionString = constr;
         }
 
+        //Write a cookie for username
         private void BakeCookies ()
         {
             String Username = usernameTextBox.Text;
             HttpCookie UserCookie = new HttpCookie("UserSetting");
             UserCookie["Name"] = Username;
             UserCookie.Expires = DateTime.Now.AddDays(1);
-            Response.Cookies.(UserCookie);
+            Response.Cookies.Add(UserCookie);
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
