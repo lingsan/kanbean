@@ -17,15 +17,29 @@ namespace Kanbean_Project
         protected void Page_Load(object sender, EventArgs e)
         {
             Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
-            string path = @"\App_Data";
+            /*string path = @"\App_Data";
             string constr = "Provider=Microsoft.Jet.OleDB.4.0 " +
-                "Data Source = " + path + @"\LanbanDatabase.mdb";
+                "Data Source = " + path + @"\LanbanDatabase.mdb";*/
+            string constr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             LogInConnection.ConnectionString = constr;
+        }
+
+        private void BakeCookies ()
+        {
+            String Username = usernameTextBox.Text;
+            HttpCookie UserCookie = new HttpCookie("UserSetting");
+            UserCookie["Name"] = Username;
+            UserCookie.Expires = DateTime.Now.AddDays(1);
+            Response.Cookies.(UserCookie);
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            Response.Redirect("board.aspx");
+            if (this.IsValid)
+            {
+                BakeCookies();
+                Response.Redirect("board.aspx"); 
+            }
         }
 
         protected void LoginValidation(object source, ServerValidateEventArgs args)
@@ -33,6 +47,7 @@ namespace Kanbean_Project
             //connect to DB
             OleDbCommand UserPassConn = new OleDbCommand("SELECT Username, Password FROM User", LogInConnection);
             UserPassConn.CommandType = CommandType.Text;
+            LogInConnection.Open();
             //insert username and password in to string lists
             List<string> Username = new List<string>();
             List<string> PassWord = new List<string>();
@@ -45,6 +60,7 @@ namespace Kanbean_Project
                 PassWord.Add(CheckLoginReader["Password"].ToString());
                 notEoF = CheckLoginReader.Read();
             }
+            LogInConnection.Close();
             //check matching between username and password
             string InputUser = usernameTextBox.Text;
             string InputPass = passwordTextBox.Text;
