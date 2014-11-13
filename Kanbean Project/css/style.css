@@ -118,16 +118,12 @@
     content:"\f055";
 }
 
-#btnChart:before {
-    content:"\f080";
+#btnSearch:before {
+    content:"\f00e";
 }
 
 #btnFilter:before {
     content:"\f0b0";
-}
-
-#btnSearch:before {
-    content:"\f00e";
 }
 
 #kanbanboard {
@@ -231,7 +227,7 @@ td {
 
 .iconTask:before {
     font-size: 1em;
-    content:  "\f0ae";
+    content:  "\f00b";
 }
 
 .iconComment:before {
@@ -246,6 +242,7 @@ td {
 .popupbackground {
     background-color:gray;
     opacity: 0.5;
+    filter:Alpha(opacity=50);
 }
  
 .popupmodal {

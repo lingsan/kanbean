@@ -102,7 +102,6 @@
                     </asp:DropDownList>
                     <asp:LinkButton runat="server" id="btnSearch" CssClass="icon" ToolTip="Click to get the search field" OnClick="btnSearch_Click"></asp:LinkButton>
                     <asp:LinkButton runat="server" id="btnFilter" CssClass="icon" ToolTip="Click to select category" Enabled="False" OnClick="btnFilter_Click"></asp:LinkButton>
-                    <asp:LinkButton runat="server" id="btnChart" CssClass="icon" ToolTip="Click to display the chart"></asp:LinkButton>
                 </div>
 
                 <div class="clear"></div>
@@ -123,7 +122,7 @@
                                 <tr>
                                     <td>
                                         <label>Title</label><br />
-                                        <asp:TextBox ID="titleTextBox" runat="server" Width="95%"></asp:TextBox>
+                                        <asp:TextBox ID="titleTextBox" runat="server" Width="340"></asp:TextBox>
                                     </td>
                                     <td>
                                         <label>Column</label><br />
@@ -196,7 +195,7 @@
 								<tr>
 									<td>
 										<label>Assignee</label><br />
-                                        <asp:DropDownList runat="server" ID="assigneeTaskDropDownList" Width="95%"></asp:DropDownList>
+                                        <asp:DropDownList runat="server" ID="assigneeTaskDropDownList" Width="160"></asp:DropDownList>
 									</td>
                                     <td>
 										<label>Task Status</label><br />
@@ -210,7 +209,7 @@
                                     </td>
                                     <td>
                                         <label>Time Spent</label><br />
-                                        <asp:TextBox ID="spentTimeTaskTextBox" runat="server" TextMode="Number" Width="160"></asp:TextBox>
+                                        <asp:TextBox ID="timeSpentTaskTextBox" runat="server" TextMode="Number" Width="160"></asp:TextBox>
                                     </td>
                                 </tr>
                                 <tr>
