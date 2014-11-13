@@ -817,9 +817,14 @@ namespace Kanbean_Project
             editAssigneePopup.Show();
 
         }
-
+        protected void updateDueDate_Click(object sender, EventArgs e)
+        {
+           
+        }
         protected void btnDueDate_Click(object sender, EventArgs e)
         {
+            //nothing happens
+            editDeadlinePopup.Show();
             //lblTest.Text = ((Control)sender).ID;
         }
 

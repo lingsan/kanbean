@@ -283,6 +283,20 @@
                     </fieldset>
                 </asp:Panel>
 
+
+                 <ajaxToolkit:ModalPopupExtender runat="server" ID="editDeadlinePopup" TargetControlID="viewEditDeadlineHiddenField" PopupControlID="editDeadlinePanel"  CancelControlID="btnCancelID" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
+                <asp:HiddenField ID="viewEditDeadlineHiddenField" runat="server" />
+                <asp:Panel ID="editDeadlinePanel" runat="server" CssClass="popupmodal">
+                    <fieldset style="padding:1em">
+                        <legend id="editDeadlineLegend" runat="server"></legend>
+                        <asp:Label ID="Label1" runat="server" Text="Deadline: "></asp:Label> 
+                        <asp:TextBox ID="editDeadlineTextbox" runat="server" Width="160" ></asp:TextBox>
+                        <ajax:CalendarExtender ID="editDeadlineCalendarExterder" runat="server" TargetControlID="editDeadlineTextbox" Format="mm/dd/yyyy"></ajax:CalendarExtender><br /><br />
+                        <asp:Button ID="btnEditDeadline" runat="server" Text="Edit" OnClick="updateDueDate_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCanceID" runat="server" Text="Cancel" />
+                    </fieldset>
+                </asp:Panel>
+
+
             </ContentTemplate>
         </asp:UpdatePanel>
      </form>
