@@ -614,40 +614,84 @@ namespace Kanbean_Project
 
         protected void btnUpdateEditComplex_Click(object sender, EventArgs e)
         {
-
-            string id = editComplexityLegend.InnerText.Remove(0,33);
-
-            foreach (DataRow row in myDataSet.Tables["myRawBacklogs"].Rows)
+            if (editComplexityLegend.InnerText.Substring(24,4) == "Back")
             {
-                if (row["BacklogID"].ToString() == id)
+                string id = editComplexityLegend.InnerText.Remove(0, 33);
+           
+
+                foreach (DataRow row in myDataSet.Tables["myRawBacklogs"].Rows)
                 {
-                    row["BacklogComplexity"] =Convert.ToInt32(txtBacklogComplexity.Text);
+                    if (row["BacklogID"].ToString() == id)
+                    {
+                        row["BacklogComplexity"] = Convert.ToInt32(txtBacklogComplexity.Text);
+                    }
+                }
+
+                myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
+                OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
+                myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
+                myAdapter.Update(myDataSet, "myRawBacklogs");
+                myDataSet.Clear();
+                getDatabase();
+                getBacklogs();
+                getTasks();
+
+            }
+           else if (editComplexityLegend.InnerText.Substring(24,4) == "Task" )
+            {
+            string idTask = editComplexityLegend.InnerText.Remove(0, 30);
+            foreach (DataRow row in myDataSet.Tables["myRawTasks"].Rows)
+            {
+                if (row["TaskID"].ToString() == idTask)
+                {
+                    row["TaskComplexity"] = Convert.ToInt32(txtBacklogComplexity.Text);
                 }
             }
-            myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
-            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
-            myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
-            myAdapter.Update(myDataSet, "myRawBacklogs");
+            
+            myAdapter.SelectCommand.CommandText = "Select * From Tasks";
+            OleDbCommandBuilder myCommandBuilderTask = new OleDbCommandBuilder(myAdapter);
+            myAdapter.UpdateCommand = myCommandBuilderTask.GetUpdateCommand();
+            myAdapter.Update(myDataSet, "myRawTasks");
             myDataSet.Clear();
-
-            getDatabase();
-            getBacklogs();
-            getTasks();
+           
+           getDatabase();
+           getBacklogs();
+           getTasks();
+                }
             }
         protected void btnComplexity_Click(object sender, EventArgs e)
         {
             string id = "";
-                
-                if (((Control)sender).ID.Substring(10, 4) == "Comp")
-                    id = ((Control)sender).ID.Remove(0, 20);
-                    editComplexityLegend.InnerText="Edit the complexity for Backlog #" +id;
+
+            if (((Control)sender).ID.Substring(3, 4) == "Back")
+                    {
+                         id = ((Control)sender).ID.Remove(0, 20);
+                         editComplexityLegend.InnerText = "Edit the complexity for Backlog #" + id;
+                     }
+
+            else if (((Control)sender).ID.Substring(3, 4) == "Task")
+                    {
+                        id = ((Control)sender).ID.Remove(0, 17);
+                        editComplexityLegend.InnerText = "Edit the complexity for Task #" + id;
+                    }
 
                 foreach (DataRow row in myDataSet.Tables["myBacklogs"].Rows)
                 {
                     if (row["BacklogID"].ToString() == id)
                     {
-                        lblEditComplexity.Text = "Complexity: ";
-                        txtBacklogComplexity.Text = row["BacklogComplexity"].ToString();
+                        if (((Control)sender).ID.Substring(3, 4) == "Back")
+                       
+                            lblEditComplexity.Text = "Complexity: ";
+                            txtBacklogComplexity.Text = row["BacklogComplexity"].ToString();                
+                    }   
+                }
+                foreach (DataRow row in myDataSet.Tables["myTasks"].Rows)
+                {
+                    if (row["TaskID"].ToString() == id)
+                    { 
+                        if (((Control)sender).ID.Substring(3, 4) == "Task")
+                            lblEditComplexity.Text = "Complexity: ";
+                        txtBacklogComplexity.Text = row["TaskComplexity"].ToString(); 
                     }
                 }
                 editComplexityPopup.Show();
