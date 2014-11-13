@@ -17,6 +17,7 @@ namespace Kanbean_Project
         OleDbCommand mySelectCommand = new OleDbCommand();
         OleDbCommand myDeleteCommand = new OleDbCommand();
         OleDbCommand myInsertCommand = new OleDbCommand();
+        OleDbCommand myUpdateCommand = new OleDbCommand();
         OleDbDataAdapter myAdapter = new OleDbDataAdapter();
 
         OleDbDataReader myReader;
@@ -29,7 +30,7 @@ namespace Kanbean_Project
             myAdapter.SelectCommand = mySelectCommand;
             mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1 ORDER BY SwimlaneID";
             myAdapter.Fill(myDataSet, "mySwimlanes");
-            mySelectCommand.CommandText = "SELECT ProjectsMembers.*, Projects.ProjectName, [User].UserID, [User].Username, [User].Level "
+            mySelectCommand.CommandText = "SELECT Projects.ProjectName, [User].UserID, [User].Username, [User].Level "
                                         + "FROM ProjectsMembers, Projects, [User] " 
                                         + "WHERE ProjectsMembers.ProjectID = Projects.ProjectID AND ProjectsMembers.UserID = [User].UserID AND Projects.ProjectID = 1 " 
                                         + "ORDER BY [User].UserID";
@@ -185,14 +186,14 @@ namespace Kanbean_Project
             if (statusID == "1")
                 task.Style.Add("background-color", "#fffafa");
             if (statusID == "2")
-                task.Style.Add("background-color", "#eee9e9");
+                task.Style.Add("background-color", "#f8f8ff");
             if (statusID == "3")
-                task.Style.Add("background-color", "#ddd7d7");
+                task.Style.Add("background-color", "#eee9e9");
             task.ID = "task" + id;
 
             Panel taskHeader = new Panel();
             taskHeader.CssClass = "backlog-header";
-            taskHeader.Style.Add("background-color", "#cccccc");
+            taskHeader.Style.Add("background-color", "#ddd7d7");
             taskHeader.ID = "taskHeader" + id;
             task.Controls.Add(taskHeader);
 
@@ -359,7 +360,7 @@ namespace Kanbean_Project
             foreach (DataRow row in myDataSet.Tables["myUsers"].Rows)
             {
                 assigneeDropDownList.Items.Add(row["Username"].ToString());
-                assigneeDropDownList.Items[assigneeDropDownList.Items.Count - 1].Value = row["User.UserID"].ToString();
+                assigneeDropDownList.Items[assigneeDropDownList.Items.Count - 1].Value = row["UserID"].ToString();
             }
 
             for (int i = 0; i < colorDropDownList.Items.Count; i++)
@@ -414,27 +415,21 @@ namespace Kanbean_Project
                 viewBacklogandTaskLegend.InnerText = "Backlog ID #" + id;
                 btnEditViewBacklog.Visible = true;
                 btnEditViewTask.Visible = false;
-
-                foreach (DataRow row in myDataSet.Tables["myBacklogs"].Rows)
-                {
-                    if (row["BacklogID"].ToString() == id)
-                    {
-                        viewBacklogandTask.Text = "Backlog in Project \"" + row["ProjectName"].ToString() + "\"";
-                        viewBacklogandTask.Text += "<ul><li><b>Title: </b>" + row["BacklogTitle"].ToString() + "</li>";
-                        if (row["BacklogDescription"].ToString() != "")
-                            viewBacklogandTask.Text += "<li><b>Description: </b>" + row["BacklogDescription"].ToString() + "</li>";
-                        if (row["Username"].ToString() != "")
-                            viewBacklogandTask.Text += "<li><b>Assignee: </b>" + row["Username"].ToString() + "</li>";
-                        if (row["BacklogComplexity"].ToString() != "")
-                            viewBacklogandTask.Text += "<li><b>Complexity: </b>" + row["BacklogComplexity"].ToString() + "</li>";
-                        viewBacklogandTask.Text += "<li><b>Backlog Status: </b>" + row["StatusName"].ToString() + "</li>";
-                        viewBacklogandTask.Text += "<li><b>Column on the board: </b>" + row["SwimlaneName"].ToString() + "</li>";
-                        viewBacklogandTask.Text += "<li>Created on <b>" + Convert.ToDateTime(row["BacklogStartDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
-                        if (row["BacklogDueDate"].ToString() != "")
-                            viewBacklogandTask.Text += "<li>Must be done before <b>" + Convert.ToDateTime(row["BacklogDueDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
-                        viewBacklogandTask.Text += "</ul>";
-                    }
-                }
+                DataRow row = myDataSet.Tables["myBacklogs"].Select("BacklogID = " + id)[0];
+                viewBacklogandTask.Text = "Backlog in Project \"" + row["ProjectName"].ToString() + "\"";
+                viewBacklogandTask.Text += "<ul><li><b>Title: </b>" + row["BacklogTitle"].ToString() + "</li>";
+                if (row["BacklogDescription"].ToString() != "")
+                    viewBacklogandTask.Text += "<li><b>Description: </b>" + row["BacklogDescription"].ToString() + "</li>";
+                if (row["Username"].ToString() != "")
+                    viewBacklogandTask.Text += "<li><b>Assignee: </b>" + row["Username"].ToString() + "</li>";
+                if (row["BacklogComplexity"].ToString() != "")
+                    viewBacklogandTask.Text += "<li><b>Complexity: </b>" + row["BacklogComplexity"].ToString() + "</li>";
+                viewBacklogandTask.Text += "<li><b>Backlog Status: </b>" + row["StatusName"].ToString() + "</li>";
+                viewBacklogandTask.Text += "<li><b>Column on the board: </b>" + row["SwimlaneName"].ToString() + "</li>";
+                viewBacklogandTask.Text += "<li>Created on <b>" + Convert.ToDateTime(row["BacklogStartDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
+                if (row["BacklogDueDate"].ToString() != "")
+                    viewBacklogandTask.Text += "<li>Must be done before <b>" + Convert.ToDateTime(row["BacklogDueDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
+                viewBacklogandTask.Text += "</ul>";
             }
             if (((Control)sender).ID.Substring(0, 4) == "task")
             {
@@ -442,28 +437,23 @@ namespace Kanbean_Project
                 viewBacklogandTaskLegend.InnerText = "Task ID #" + id;
                 btnEditViewBacklog.Visible = false;
                 btnEditViewTask.Visible = true;
+                DataRow row = myDataSet.Tables["myTasks"].Select("TaskID = " + id)[0];
+                viewBacklogandTask.Text = "Task of Backlog #" + row["BacklogID"].ToString();
+                viewBacklogandTask.Text += "<ul><li><b>Title: </b>" + row["TaskTitle"].ToString() + "</li>";
+                if (row["Username"].ToString() != "")
+                    viewBacklogandTask.Text += "<li><b>Assignee: </b>" + row["Username"].ToString() + "</li>";
+                if (row["TaskComplexity"].ToString() != "")
+                    viewBacklogandTask.Text += "<li><b>Complexity: </b>" + row["TaskComplexity"].ToString() + "</li>";
+                if (row["TaskEstimationHour"].ToString() != "")
+                    viewBacklogandTask.Text += "<li><b>Estimation Hour: </b>" + row["TaskEstimationHour"].ToString() + " hour(s)</li>";
+                if (row["TaskSpentTime"].ToString() != "")
+                    viewBacklogandTask.Text += "<li><b>Time Spent: </b>" + row["TaskSpentTime"].ToString() + " hour(s)</li>";
+                viewBacklogandTask.Text += "<li><b>Task Status: </b>" + row["StatusName"].ToString() + "</li>";
+                viewBacklogandTask.Text += "<li>Created on <b>" + Convert.ToDateTime(row["TaskStartDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
+                if (row["TaskDueDate"].ToString() != "")
+                    viewBacklogandTask.Text += "<li>Must be done before <b>" + Convert.ToDateTime(row["TaskDueDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
+                viewBacklogandTask.Text += "</ul>";
 
-                foreach (DataRow row in myDataSet.Tables["myTasks"].Rows)
-                {
-                    if (row["TaskID"].ToString() == id)
-                    {
-                        viewBacklogandTask.Text = "Task of Backlog #" + row["BacklogID"].ToString();
-                        viewBacklogandTask.Text += "<ul><li><b>Title: </b>" + row["TaskTitle"].ToString() + "</li>";
-                        if (row["Username"].ToString() != "")
-                            viewBacklogandTask.Text += "<li><b>Assignee: </b>" + row["Username"].ToString() + "</li>";
-                        if (row["TaskComplexity"].ToString() != "")
-                            viewBacklogandTask.Text += "<li><b>Complexity: </b>" + row["TaskComplexity"].ToString() + "</li>";
-                        if (row["TaskEstimationHour"].ToString() != "")
-                            viewBacklogandTask.Text += "<li><b>Estimation Hour: </b>" + row["TaskEstimationHour"].ToString() + " hour(s)</li>";
-                        if (row["TaskSpentTime"].ToString() != "")
-                            viewBacklogandTask.Text += "<li><b>Time Spent: </b>" + row["TaskSpentTime"].ToString() + " hour(s)</li>";
-                        viewBacklogandTask.Text += "<li><b>Task Status: </b>" + row["StatusName"].ToString() + "</li>";
-                        viewBacklogandTask.Text += "<li>Created on <b>" + Convert.ToDateTime(row["TaskStartDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
-                        if (row["TaskDueDate"].ToString() != "")
-                            viewBacklogandTask.Text += "<li>Must be done before <b>" + Convert.ToDateTime(row["TaskDueDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
-                        viewBacklogandTask.Text += "</ul>";
-                    }
-                }
             }
             viewBacklogandTaskPopup.Show();
         }
@@ -479,65 +469,62 @@ namespace Kanbean_Project
                 id = viewBacklogandTaskLegend.InnerText.Remove(0, 12);
             addandEditBacklogLegend.InnerText = "Edit backlog ID #" + id;
 
-            foreach (DataRow row in myDataSet.Tables["myBacklogs"].Rows)
+            DataRow row = myDataSet.Tables["myBacklogs"].Select("BacklogID = " + id)[0];
+
+            titleTextBox.Text = row["BacklogTitle"].ToString();
+            descriptionTextBox.Text = row["BacklogDescription"].ToString();
+
+            swimlaneDropDownList.Items.Clear();
+            foreach (DataRow r in myDataSet.Tables["mySwimlanes"].Rows)
             {
-                if (row["BacklogID"].ToString() == id)
-                {
-                    titleTextBox.Text = row["BacklogTitle"].ToString();
-                    descriptionTextBox.Text = row["BacklogDescription"].ToString();
-
-                    swimlaneDropDownList.Items.Clear();
-                    foreach (DataRow r in myDataSet.Tables["mySwimlanes"].Rows)
-                    {
-                        swimlaneDropDownList.Items.Add(r["SwimlaneName"].ToString());
-                        swimlaneDropDownList.Items[swimlaneDropDownList.Items.Count - 1].Value = r["SwimlaneID"].ToString();
-                        if (row["SwimlaneID"].ToString() == r["SwimlaneID"].ToString())
-                            swimlaneDropDownList.Items[swimlaneDropDownList.Items.Count - 1].Selected = true;
-                    }
-
-                    assigneeDropDownList.Items.Clear();
-                    foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
-                    {
-                        assigneeDropDownList.Items.Add(r["Username"].ToString());
-                        assigneeDropDownList.Items[assigneeDropDownList.Items.Count - 1].Value = r["User.UserID"].ToString();
-                        if (row["BacklogAssigneeID"].ToString() == r["User.UserID"].ToString())
-                            assigneeDropDownList.Items[assigneeDropDownList.Items.Count - 1].Selected = true;
-                    }
-
-                    for (int i = 0; i < colorDropDownList.Items.Count; i++)
-                    {
-                        if (row["BacklogColorHeader"].ToString() == colorDropDownList.Items[i].Value.Split(',')[0].ToString())
-                            colorDropDownList.Items[i].Selected = true;
-                        else
-                            colorDropDownList.Items[i].Selected = false;
-                    }
-                    complexityTextBox.Text = row["BacklogComplexity"].ToString();
-                    if (row["BacklogDueDate"].ToString() != "")
-                        deadlineTextBox.Text = Convert.ToDateTime(row["BacklogDueDate"]).ToShortDateString();
-                }
+                swimlaneDropDownList.Items.Add(r["SwimlaneName"].ToString());
+                swimlaneDropDownList.Items[swimlaneDropDownList.Items.Count - 1].Value = r["SwimlaneID"].ToString();
+                if (row["SwimlaneID"].ToString() == r["SwimlaneID"].ToString())
+                    swimlaneDropDownList.Items[swimlaneDropDownList.Items.Count - 1].Selected = true;
             }
+
+            assigneeDropDownList.Items.Clear();
+            foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
+            {
+                assigneeDropDownList.Items.Add(r["Username"].ToString());
+                assigneeDropDownList.Items[assigneeDropDownList.Items.Count - 1].Value = r["UserID"].ToString();
+                if (row["BacklogAssigneeID"].ToString() == r["UserID"].ToString())
+                    assigneeDropDownList.Items[assigneeDropDownList.Items.Count - 1].Selected = true;
+            }
+
+            for (int i = 0; i < colorDropDownList.Items.Count; i++)
+            {
+                if (row["BacklogColorHeader"].ToString() == colorDropDownList.Items[i].Value.Split(',')[0].ToString())
+                    colorDropDownList.Items[i].Selected = true;
+                else
+                    colorDropDownList.Items[i].Selected = false;
+            }
+            complexityTextBox.Text = row["BacklogComplexity"].ToString();
+            if (row["BacklogDueDate"].ToString() != "")
+                deadlineTextBox.Text = Convert.ToDateTime(row["BacklogDueDate"]).ToShortDateString();
+
             addandEditBacklogPopup.Show();
         }
 
         protected void btnUpdateBacklog_Click(object sender, EventArgs e)
         {
             string id = addandEditBacklogLegend.InnerText.Remove(0, 17);
-            foreach (DataRow row in myDataSet.Tables["myRawBacklogs"].Rows)
-            {
-                if (row["BacklogID"].ToString() == id)
-                {
-                    row["SwimlaneID"] = Convert.ToInt32(swimlaneDropDownList.SelectedValue);
-                    row["BacklogTitle"] = titleTextBox.Text;
-                    row["BacklogDescription"] = descriptionTextBox.Text;
-                    row["BacklogColor"] = colorDropDownList.SelectedValue.Split(',')[1].ToString();
-                    row["BacklogColorHeader"] = colorDropDownList.SelectedValue.Split(',')[0].ToString();
-                    if (complexityTextBox.Text != "")
-                        row["BacklogComplexity"] = Convert.ToInt32(complexityTextBox.Text);
-                    if (deadlineTextBox.Text != "")
-                        row["BacklogDueDate"] = Convert.ToDateTime(deadlineTextBox.Text);
-                    row["BacklogAssigneeID"] = Convert.ToInt32(assigneeDropDownList.SelectedValue);
-                }
-            }
+            DataRow row = myDataSet.Tables["myRawBacklogs"].Select("BacklogID = " + id)[0];
+
+            row["SwimlaneID"] = Convert.ToInt32(swimlaneDropDownList.SelectedValue);
+            row["BacklogTitle"] = titleTextBox.Text;
+            row["BacklogDescription"] = descriptionTextBox.Text;
+            row["BacklogColor"] = colorDropDownList.SelectedValue.Split(',')[1].ToString();
+            row["BacklogColorHeader"] = colorDropDownList.SelectedValue.Split(',')[0].ToString();
+            if (complexityTextBox.Text != "")
+                row["BacklogComplexity"] = Convert.ToInt32(complexityTextBox.Text);
+            else
+                row["BacklogComplexity"] = DBNull.Value;
+            if (deadlineTextBox.Text != "")
+                row["BacklogDueDate"] = Convert.ToDateTime(deadlineTextBox.Text);
+            else
+                row["BacklogDueDate"] = DBNull.Value;
+            row["BacklogAssigneeID"] = Convert.ToInt32(assigneeDropDownList.SelectedValue);
 
             myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
             OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
@@ -576,7 +563,8 @@ namespace Kanbean_Project
 
             if (lblDeleteItem.Text.Substring(0, 4) == "task")
             {
-                myDeleteCommand.CommandText = "DELETE FROM Tasks WHERE TaskID = " + lblDeleteItem.Text.Remove(0, 9);
+                string id = lblDeleteItem.Text.Remove(0, 9);
+                myDeleteCommand.CommandText = "DELETE FROM Tasks WHERE TaskID = " + id;
                 myDeleteCommand.ExecuteNonQuery();
             }
             myDataSet.Clear();
@@ -599,7 +587,7 @@ namespace Kanbean_Project
             foreach (DataRow row in myDataSet.Tables["myUsers"].Rows)
             {
                 assigneeTaskDropDownList.Items.Add(row["Username"].ToString());
-                assigneeTaskDropDownList.Items[assigneeTaskDropDownList.Items.Count - 1].Value = row["User.UserID"].ToString();
+                assigneeTaskDropDownList.Items[assigneeTaskDropDownList.Items.Count - 1].Value = row["UserID"].ToString();
             }
 
             statusTaskDropDownList.Items.Clear();
@@ -609,6 +597,8 @@ namespace Kanbean_Project
                 statusTaskDropDownList.Items[statusTaskDropDownList.Items.Count - 1].Value = row["StatusID"].ToString();
             }
 
+            estimationHourTaskTextBox.Text = "";
+            spentTimeTaskTextBox.Text = "";
             complexityTaskTextBox.Text = "";
             deadlineTaskTextBox.Text = "";
 
@@ -626,8 +616,8 @@ namespace Kanbean_Project
             row["TaskStatusID"] = Convert.ToInt32(statusTaskDropDownList.SelectedValue);
             if (estimationHourTaskTextBox.Text != "")
                 row["TaskEstimationHour"] = Convert.ToInt32(estimationHourTaskTextBox.Text);
-            if (timeSpentTaskTextBox.Text != "")
-                row["TaskSpentTime"] = Convert.ToInt32(timeSpentTaskTextBox.Text);
+            if (spentTimeTaskTextBox.Text != "")
+                row["TaskSpentTime"] = Convert.ToInt32(spentTimeTaskTextBox.Text);
             row["TaskStartDate"] = DateTime.Today;
             if (deadlineTaskTextBox.Text != "")
                 row["TaskDueDate"] = Convert.ToDateTime(deadlineTaskTextBox.Text);
@@ -641,49 +631,110 @@ namespace Kanbean_Project
             getDatabase();
             getBacklogs();
             addandEditTaskPopup.Hide();
-
         }
 
         protected void btnEditTask_Click(object sender, EventArgs e)
         {
+            btnAddNewTask.Visible = false;
+            btnUpdateTask.Visible = true;
+            string id = "";
+            if (((Control)sender).ID.Substring(7, 4) == "Task")
+                id = ((Control)sender).ID.Remove(0, 11);
+            if (((Control)sender).ID.Substring(7, 4) == "View")
+                id = viewBacklogandTaskLegend.InnerText.Remove(0, 9);
+            addandEditTaskLegend.InnerText = "Edit task ID #" + id;
+            DataRow row = myDataSet.Tables["myTasks"].Select("TaskID = " + id)[0];
 
+            titleTaskTextBox.Text = row["TaskTitle"].ToString();
+
+            assigneeTaskDropDownList.Items.Clear();
+            foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
+            {
+                assigneeTaskDropDownList.Items.Add(r["Username"].ToString());
+                assigneeTaskDropDownList.Items[assigneeTaskDropDownList.Items.Count - 1].Value = r["UserID"].ToString();
+                if (row["TaskAssigneeID"].ToString() == r["UserID"].ToString())
+                    assigneeTaskDropDownList.Items[assigneeTaskDropDownList.Items.Count - 1].Selected = true;
+            }
+
+            statusTaskDropDownList.Items.Clear();
+            foreach (DataRow r in myDataSet.Tables["myStatus"].Rows)
+            {
+                statusTaskDropDownList.Items.Add(r["StatusName"].ToString());
+                statusTaskDropDownList.Items[statusTaskDropDownList.Items.Count - 1].Value = r["StatusID"].ToString();
+                if (row["TaskStatusID"].ToString() == r["StatusID"].ToString())
+                    statusTaskDropDownList.Items[statusTaskDropDownList.Items.Count - 1].Selected = true;
+            }
+            estimationHourTaskTextBox.Text = row["TaskEstimationHour"].ToString();
+            spentTimeTaskTextBox.Text = row["TaskSpentTime"].ToString();
+            complexityTaskTextBox.Text = row["TaskComplexity"].ToString();
+            if (row["TaskDueDate"].ToString() != "")
+                deadlineTaskTextBox.Text = Convert.ToDateTime(row["TaskDueDate"]).ToShortDateString();
+
+            addandEditTaskPopup.Show();
         }
 
         protected void btnUpdateTask_Click(object sender, EventArgs e)
         {
+            string id = addandEditTaskLegend.InnerText.Remove(0, 14);
+            DataRow row = myDataSet.Tables["myRawTasks"].Select("TaskID = " + id)[0];
 
+            row["TaskTitle"] = titleTaskTextBox.Text;
+            row["TaskAssigneeID"] = Convert.ToInt32(assigneeTaskDropDownList.SelectedValue);
+            row["TaskStatusID"] = Convert.ToInt32(statusTaskDropDownList.SelectedValue);
+            if (complexityTaskTextBox.Text != "")
+                row["TaskComplexity"] = Convert.ToInt32(complexityTaskTextBox.Text);
+            else
+                row["TaskComplexity"] = DBNull.Value;
+            if (estimationHourTaskTextBox.Text != "")
+                row["TaskEstimationHour"] = Convert.ToInt32(estimationHourTaskTextBox.Text);
+            else
+                row["TaskEstimationHour"] = DBNull.Value;
+            if (spentTimeTaskTextBox.Text != "")
+                row["TaskSpentTime"] = Convert.ToInt32(spentTimeTaskTextBox.Text);
+            else
+                row["TaskSpentTime"] = DBNull.Value;
+            if (deadlineTaskTextBox.Text != "")
+                row["TaskDueDate"] = Convert.ToDateTime(deadlineTaskTextBox.Text);
+            else
+                row["TaskDueDate"] = DBNull.Value;
+
+            myAdapter.SelectCommand.CommandText = "Select * From Tasks";
+            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
+            myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
+            myAdapter.Update(myDataSet, "myRawTasks");
+            myDataSet.Clear();
+
+            getDatabase();
+            getTasks();
+            getTasks();
+            addandEditTaskPopup.Hide();
         }
 
         protected void btnUpdateEditComplex_Click(object sender, EventArgs e)
         {
+            myUpdateCommand.Connection = myConnection;
+            string value = "";
             if (editComplexityLegend.InnerText.Substring(24, 4) == "Back")
             {
-                string id = editComplexityLegend.InnerText.Remove(0, 33);
-                foreach (DataRow row in myDataSet.Tables["myRawBacklogs"].Rows)
-                {
-                    if (row["BacklogID"].ToString() == id)
-                        row["BacklogComplexity"] = Convert.ToInt32(txtBacklogComplexity.Text);
-                }
-                myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
+                if (txtBacklogComplexity.Text != "")
+                    value = txtBacklogComplexity.Text;
+                myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogComplexity = " + value + " WHERE backlogID = " + editComplexityLegend.InnerText.Remove(0, 33);
+                myUpdateCommand.ExecuteNonQuery();
             }
             if (editComplexityLegend.InnerText.Substring(24, 4) == "Task")
             {
-                string idTask = editComplexityLegend.InnerText.Remove(0, 30);
-                foreach (DataRow row in myDataSet.Tables["myRawTasks"].Rows)
-                {
-                    if (row["TaskID"].ToString() == idTask)
-                        row["TaskComplexity"] = Convert.ToInt32(txtBacklogComplexity.Text);
-                }
-                myAdapter.SelectCommand.CommandText = "Select * From Tasks";
+                if (txtBacklogComplexity.Text != "")
+                    value = txtBacklogComplexity.Text;
+                myUpdateCommand.CommandText = "UPDATE Tasks SET TaskComplexity = " + value + " WHERE taskID = " + editComplexityLegend.InnerText.Remove(0, 30);
+                myUpdateCommand.ExecuteNonQuery();
             }
-            OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
-            myAdapter.UpdateCommand = myCommandBuilder.GetUpdateCommand();
-            myAdapter.Update(myDataSet, "myRawBacklogs");
+            
             myDataSet.Clear();
             getDatabase();
             getBacklogs();
             getTasks();
         }
+
         protected void btnComplexity_Click(object sender, EventArgs e)
         {
             string id = "";
@@ -691,24 +742,19 @@ namespace Kanbean_Project
             {
                 id = ((Control)sender).ID.Remove(0, 20);
                 editComplexityLegend.InnerText = "Edit the complexity for Backlog #" + id;
-                foreach (DataRow row in myDataSet.Tables["myBacklogs"].Rows)
-                {
-                    if (row["BacklogID"].ToString() == id)
-                        txtBacklogComplexity.Text = row["BacklogComplexity"].ToString();
-                }
+                DataRow row = myDataSet.Tables["myBacklogs"].Select("BacklogID = " + id)[0];
+                txtBacklogComplexity.Text = row["BacklogComplexity"].ToString();
             }
             else if (((Control)sender).ID.Substring(3, 4) == "Task")
             {
                 id = ((Control)sender).ID.Remove(0, 17);
                 editComplexityLegend.InnerText = "Edit the complexity for Task #" + id;
-                foreach (DataRow row in myDataSet.Tables["myTasks"].Rows)
-                {
-                    if (row["TaskID"].ToString() == id)
-                        txtBacklogComplexity.Text = row["TaskComplexity"].ToString();
-                }
+                DataRow row = myDataSet.Tables["myTasks"].Select("TaskID = " + id)[0];
+                txtBacklogComplexity.Text = row["TaskComplexity"].ToString();
             }
             editComplexityPopup.Show();
         }
+
         protected void updateAssignee_Click(object sender, EventArgs e)
         {
             myUpdateCommand.Connection = myConnection;
@@ -723,7 +769,6 @@ namespace Kanbean_Project
             if (editComplexityLegend.InnerText.Substring(22, 4) == "Task")
             {
                 if (editAssigneeDropdownList.SelectedItem.Text != "")
-
                     value = editAssigneeDropdownList.SelectedValue;
                 myUpdateCommand.CommandText = "UPDATE Tasks SET TaskAssigneeID = " + value + " WHERE TaskID = " + editAssigneeLegend.InnerText.Remove(0, 28);
                 myUpdateCommand.ExecuteNonQuery();
@@ -737,40 +782,40 @@ namespace Kanbean_Project
 
         protected void btnAssignee_Click(object sender, EventArgs e)
         {
-             string id = "";
-             if (((Control)sender).ID.Substring(3, 4) == "Back")
-             {
-                 id = ((Control)sender).ID.Remove(0, 18);
-                 editAssigneeLegend.InnerText = "Edit the Assignee for Backlog #" + id;
-                 editAssigneeDropdownList.Items.Clear();
-                 
-                     foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
-                     {
-                         editAssigneeDropdownList.Items.Add(r["Username"].ToString());
-                         DataRow row = myDataSet.Tables["myBacklogs"].Select("BacklogID = " + id)[0];
-                           editAssigneeDropdownList.Items[ editAssigneeDropdownList.Items.Count - 1].Value = r["UserID"].ToString();
-                            if (row["BacklogAssigneeID"].ToString() == r["UserID"].ToString() )
-                                editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Selected = true;
-                         
-                    }
-             }
-             else if (((Control)sender).ID.Substring(3, 4) == "Task")
-             {
-                 id = ((Control)sender).ID.Remove(0, 15);
-                  editAssigneeLegend.InnerText = "Edit the Assignee for Task #" + id;
-                  editAssigneeDropdownList.Items.Clear();
-                  foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
-                  {
-                      editAssigneeDropdownList.Items.Add(r["Username"].ToString());
-                      DataRow row = myDataSet.Tables["myBacklogs"].Select("TaskID = " + id)[0];
-                      editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Value = r["UserID"].ToString();
-                      if (row["TaskAssigneeID"].ToString() == r["UserID"].ToString())
-                          editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Selected = true;
+            string id = "";
+            if (((Control)sender).ID.Substring(3, 4) == "Back")
+            {
+                id = ((Control)sender).ID.Remove(0, 18);
+                editAssigneeLegend.InnerText = "Edit the Assignee for Backlog #" + id;
+                editAssigneeDropdownList.Items.Clear();
 
-                  }
-             }
+                foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
+                {
+                    editAssigneeDropdownList.Items.Add(r["Username"].ToString());
+                    DataRow row = myDataSet.Tables["myBacklogs"].Select("BacklogID = " + id)[0];
+                    editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Value = r["UserID"].ToString();
+                    if (row["BacklogAssigneeID"].ToString() == r["UserID"].ToString())
+                        editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Selected = true;
+
+                }
+            }
+            else if (((Control)sender).ID.Substring(3, 4) == "Task")
+            {
+                id = ((Control)sender).ID.Remove(0, 15);
+                editAssigneeLegend.InnerText = "Edit the Assignee for Task #" + id;
+                editAssigneeDropdownList.Items.Clear();
+                foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
+                {
+                    editAssigneeDropdownList.Items.Add(r["Username"].ToString());
+                    DataRow row = myDataSet.Tables["myBacklogs"].Select("TaskID = " + id)[0];
+                    editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Value = r["UserID"].ToString();
+                    if (row["TaskAssigneeID"].ToString() == r["UserID"].ToString())
+                        editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Selected = true;
+
+                }
+            }
             editAssigneePopup.Show();
-        
+
         }
 
         protected void btnDueDate_Click(object sender, EventArgs e)
@@ -891,5 +936,10 @@ namespace Kanbean_Project
             conn.Close();
         }
 
+        public bool IsNumeric(string input) 
+        {
+            int test;
+            return int.TryParse(input, out test); 
+        }
     }
 }
