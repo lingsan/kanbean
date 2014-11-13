@@ -17,7 +17,6 @@ namespace Kanbean_Project
         OleDbCommand mySelectCommand = new OleDbCommand();
         OleDbCommand myDeleteCommand = new OleDbCommand();
         OleDbCommand myInsertCommand = new OleDbCommand();
-        OleDbCommand myUpdateCommand = new OleDbCommand();
         OleDbDataAdapter myAdapter = new OleDbDataAdapter();
 
         OleDbDataReader myReader;
@@ -30,13 +29,24 @@ namespace Kanbean_Project
             myAdapter.SelectCommand = mySelectCommand;
             mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1 ORDER BY SwimlaneID";
             myAdapter.Fill(myDataSet, "mySwimlanes");
-            mySelectCommand.CommandText = "SELECT ProjectsMembers.*, Projects.ProjectName, [User].UserID, [User].Username, [User].Level FROM ProjectsMembers, Projects, [User] WHERE ProjectsMembers.ProjectID = Projects.ProjectID AND ProjectsMembers.UserID = [User].UserID AND Projects.ProjectID = 1 ORDER BY [User].UserID";
+            mySelectCommand.CommandText = "SELECT ProjectsMembers.*, Projects.ProjectName, [User].UserID, [User].Username, [User].Level "
+                                        + "FROM ProjectsMembers, Projects, [User] " 
+                                        + "WHERE ProjectsMembers.ProjectID = Projects.ProjectID AND ProjectsMembers.UserID = [User].UserID AND Projects.ProjectID = 1 " 
+                                        + "ORDER BY [User].UserID";
             myAdapter.Fill(myDataSet, "myUsers");
-            mySelectCommand.CommandText = "SELECT Backlogs.*, [User].Username, Swimlanes.SwimlaneName, Projects.ProjectName, Status.StatusName FROM Backlogs, [User], Swimlanes, Projects, Status WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogAssigneeID = [User].UserID AND Backlogs.SwimlaneID = Swimlanes.SwimlaneID AND Backlogs.ProjectID = Projects.ProjectID AND Backlogs.BacklogStatusID = Status.StatusID ORDER BY Backlogs.SwimlaneID, Backlogs.BacklogPosition";
+            mySelectCommand.CommandText = "SELECT Backlogs.*, [User].Username, Swimlanes.SwimlaneName, Projects.ProjectName, Status.StatusName "
+                                        + "FROM Backlogs, [User], Swimlanes, Projects, Status "
+                                        + "WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogAssigneeID = [User].UserID AND Backlogs.SwimlaneID = Swimlanes.SwimlaneID "
+                                        + "AND Backlogs.ProjectID = Projects.ProjectID AND Backlogs.BacklogStatusID = Status.StatusID " 
+                                        + "ORDER BY Backlogs.SwimlaneID, Backlogs.BacklogPosition";
             myAdapter.Fill(myDataSet, "myBacklogs");
             mySelectCommand.CommandText = "Select * From Backlogs";
             myAdapter.Fill(myDataSet, "myRawBacklogs");
-            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username, Status.StatusName FROM Tasks, [User], Backlogs, Status WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogID = Tasks.BacklogID AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskStatusID = Status.StatusID ORDER BY Tasks.TaskID";
+            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username, Status.StatusName "
+                                        + "FROM Tasks, [User], Backlogs, Status " 
+                                        + "WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogID = Tasks.BacklogID " 
+                                        + "AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskStatusID = Status.StatusID " 
+                                        + "ORDER BY Tasks.TaskID";
             myAdapter.Fill(myDataSet, "myTasks");
             mySelectCommand.CommandText = "Select * From Tasks";
             myAdapter.Fill(myDataSet, "myRawTasks");
@@ -146,13 +156,23 @@ namespace Kanbean_Project
             btnComment.ID = "btnBacklogComment" + id;
             btnComment.ToolTip = "Show the comments";
             btnComment.Click += new EventHandler(btnComment_Click);
+            mySelectCommand.CommandText = "SELECT COUNT(CommentID) FROM BacklogsComments WHERE BacklogID=" + id;
+            string amountComments = mySelectCommand.ExecuteScalar().ToString();
+            if (amountComments != "0")
+                btnComment.Text = " " + amountComments;
             backlogFooterDown.Controls.Add(btnComment);
 
             LinkButton btnTask = new LinkButton();
             btnTask.CssClass = "backlogIcon iconTask";
-            btnTask.ID = "btnTask" + id;
+            btnTask.ID = "btnShowHideTask" + id;
             btnTask.ToolTip = "Show the tasks";
-            btnTask.Click += new EventHandler(btnTask_Click);
+            btnTask.Click += new EventHandler(btnShowHideTask_Click);
+            mySelectCommand.CommandText = "SELECT COUNT(TaskID) FROM Tasks WHERE BacklogID=" + id;
+            string amountTasks = mySelectCommand.ExecuteScalar().ToString();
+            mySelectCommand.CommandText = "SELECT COUNT(TaskID) FROM Tasks WHERE BacklogID=" + id + "AND TaskStatusID=3";
+            string amountCompletedTasks = mySelectCommand.ExecuteScalar().ToString();
+            if (amountTasks != "0")
+                btnTask.Text = " " + amountCompletedTasks + "/" + amountTasks;
             backlogFooterDown.Controls.Add(btnTask);
 
             kanbanboard.FindControl("columnContent" + swimlaneID).Controls.Add(newBacklog);
@@ -403,10 +423,10 @@ namespace Kanbean_Project
                         viewBacklogandTask.Text += "<ul><li><b>Title: </b>" + row["BacklogTitle"].ToString() + "</li>";
                         if (row["BacklogDescription"].ToString() != "")
                             viewBacklogandTask.Text += "<li><b>Description: </b>" + row["BacklogDescription"].ToString() + "</li>";
-                        if (row["BacklogComplexity"].ToString() != "")
-                            viewBacklogandTask.Text += "<li><b>Complexity: </b>" + row["BacklogComplexity"].ToString() + "</li>";
                         if (row["Username"].ToString() != "")
                             viewBacklogandTask.Text += "<li><b>Assignee: </b>" + row["Username"].ToString() + "</li>";
+                        if (row["BacklogComplexity"].ToString() != "")
+                            viewBacklogandTask.Text += "<li><b>Complexity: </b>" + row["BacklogComplexity"].ToString() + "</li>";
                         viewBacklogandTask.Text += "<li><b>Backlog Status: </b>" + row["StatusName"].ToString() + "</li>";
                         viewBacklogandTask.Text += "<li><b>Column on the board: </b>" + row["SwimlaneName"].ToString() + "</li>";
                         viewBacklogandTask.Text += "<li>Created on <b>" + Convert.ToDateTime(row["BacklogStartDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
@@ -422,6 +442,28 @@ namespace Kanbean_Project
                 viewBacklogandTaskLegend.InnerText = "Task ID #" + id;
                 btnEditViewBacklog.Visible = false;
                 btnEditViewTask.Visible = true;
+
+                foreach (DataRow row in myDataSet.Tables["myTasks"].Rows)
+                {
+                    if (row["TaskID"].ToString() == id)
+                    {
+                        viewBacklogandTask.Text = "Task of Backlog #" + row["BacklogID"].ToString();
+                        viewBacklogandTask.Text += "<ul><li><b>Title: </b>" + row["TaskTitle"].ToString() + "</li>";
+                        if (row["Username"].ToString() != "")
+                            viewBacklogandTask.Text += "<li><b>Assignee: </b>" + row["Username"].ToString() + "</li>";
+                        if (row["TaskComplexity"].ToString() != "")
+                            viewBacklogandTask.Text += "<li><b>Complexity: </b>" + row["TaskComplexity"].ToString() + "</li>";
+                        if (row["TaskEstimationHour"].ToString() != "")
+                            viewBacklogandTask.Text += "<li><b>Estimation Hour: </b>" + row["TaskEstimationHour"].ToString() + " hour(s)</li>";
+                        if (row["TaskSpentTime"].ToString() != "")
+                            viewBacklogandTask.Text += "<li><b>Time Spent: </b>" + row["TaskSpentTime"].ToString() + " hour(s)</li>";
+                        viewBacklogandTask.Text += "<li><b>Task Status: </b>" + row["StatusName"].ToString() + "</li>";
+                        viewBacklogandTask.Text += "<li>Created on <b>" + Convert.ToDateTime(row["TaskStartDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
+                        if (row["TaskDueDate"].ToString() != "")
+                            viewBacklogandTask.Text += "<li>Must be done before <b>" + Convert.ToDateTime(row["TaskDueDate"]).ToString("ddd, dd MMM yyyy") + "</b></li>";
+                        viewBacklogandTask.Text += "</ul>";
+                    }
+                }
             }
             viewBacklogandTaskPopup.Show();
         }
@@ -627,7 +669,7 @@ namespace Kanbean_Project
             //lblTest.Text = ((Control)sender).ID;
         }
 
-        protected void btnTask_Click(object sender, EventArgs e)
+        protected void btnShowHideTask_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;
         }
@@ -658,7 +700,10 @@ namespace Kanbean_Project
 
             if (dropdownFilter.SelectedItem.Text == "Users")
             {
-                selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] WHERE ([Username] LIKE '%" + tbxSearch.Text + "%' OR [Email] LIKE '%" + tbxSearch.Text.ToUpper() + "%') AND [UserID] IN (SELECT [UserID] FROM [ProjectsMembers] WHERE [ProjectID] LIKE '" + projectDropDownList.SelectedItem.Text + "') ";
+                selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] "
+                                        + "WHERE ([Username] LIKE '%" + tbxSearch.Text + "%' OR [Email] LIKE '%" + tbxSearch.Text + "%')"
+                                        + "AND UserID IN (SELECT UserID FROM ProjectsMembers " 
+                                        + "WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "') ";
 
                 myReader = selectSearch.ExecuteReader();
                 bool notEoF;
@@ -673,20 +718,31 @@ namespace Kanbean_Project
             }
             else if (dropdownFilter.SelectedItem.Text == "Tasks")
             {
-                selectSearch.CommandText = "SELECT [TaskTitle],[TaskComplexity], [TaskStartDate],[TaskDueDate],[Username] FROM [Tasks] INNER JOIN [User] ON [Tasks].[TaskAssigneeID]=[User].[UserID] WHERE [ProjectID] LIKE '" + projectDropDownList.SelectedItem.Text + "' AND ([TaskTitle] LIKE '%" + tbxSearch.Text.ToUpper() + "%' OR [TaskComplexity] LIKE '" + tbxSearch.Text + "' OR [TaskStartDate] LIKE '%" + tbxSearch.Text + "%' OR [TaskDueDate] LIKE '%" + tbxSearch.Text + "%')";
+                selectSearch.CommandText = "SELECT TaskTitle, TaskComplexity, TaskStartDate, TaskDueDate, [Username] " 
+                                        + "FROM Tasks INNER JOIN [User] ON Tasks.TaskAssigneeID = [User].UserID " 
+                                        + "WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "' " 
+                                        + "AND (TaskTitle LIKE '%" + tbxSearch.Text + "%' "
+                                        + "OR TaskComplexity LIKE '" + tbxSearch.Text + "' " 
+                                        + "OR TaskStartDate LIKE '%" + tbxSearch.Text + "%' " 
+                                        + "OR TaskDueDate LIKE '%" + tbxSearch.Text + "%')";
 
                 myReader = selectSearch.ExecuteReader();
                 bool notEoF;
                 notEoF = myReader.Read();
                 while (notEoF)
                 {
-                    links.Add(myReader["TaskTitle"].ToString() + ", complexity: " + myReader["TaskComplexity"].ToString() + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"] + ", assignee: " + myReader["Username"]);
+                    links.Add(myReader["TaskTitle"].ToString() + ", complexity: " + myReader["TaskComplexity"].ToString() 
+                                + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"] 
+                                + ", assignee: " + myReader["Username"]);
                     notEoF = myReader.Read();
                 }
             }
             else if (dropdownFilter.SelectedItem.Text == "Comments")
             {
-                selectSearch.CommandText = "SELECT [CommentContent], [Username] FROM [BacklogsComments] INNER JOIN [User] ON [User].[UserID] = [BacklogsComments].[CommenterID] WHERE [CommentContent] LIKE '%" + tbxSearch.Text.ToUpper() + "%' AND [BacklogID] IN (SELECT [BacklogID] FROM [Backlogs] WHERE [ProjectID] LIKE '" + projectDropDownList.SelectedItem.Text + "')";
+                selectSearch.CommandText = "SELECT CommentContent, [Username] FROM BacklogsComments " 
+                                        + "INNER JOIN [User] ON [User].UserID = BacklogsComments.CommenterID " 
+                                        + "WHERE CommentContent LIKE '%" + tbxSearch.Text + "%' " 
+                                        + "AND BacklogID IN (SELECT BacklogID FROM Backlogs WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "')";
 
                 myReader = selectSearch.ExecuteReader();
                 bool notEoF;
@@ -718,7 +774,9 @@ namespace Kanbean_Project
                 statusID = 2;
             for (int i = 0; i < swimlaneBacklog.Count; i++)
             {
-                myCommand.CommandText = "UPDATE Backlogs SET BacklogPosition = " + swimlaneBacklogPos[i] + ", swimlaneID = " + swimlane + ", BacklogStatusID = " + statusID + " WHERE backlogID = " + swimlaneBacklog[i];
+                myCommand.CommandText = "UPDATE Backlogs SET BacklogPosition = " + swimlaneBacklogPos[i] 
+                                        + ", swimlaneID = " + swimlane + ", BacklogStatusID = " + statusID 
+                                        + " WHERE backlogID = " + swimlaneBacklog[i];
                 myCommand.ExecuteNonQuery();
             }
             conn.Close();

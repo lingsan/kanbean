@@ -237,11 +237,11 @@
 
                 <ajaxToolkit:ModalPopupExtender ID="viewBacklogandTaskPopup" runat="server" TargetControlID="viewBacklogandTaskHiddenField" PopupControlID="viewBacklogandTaskPanel" CancelControlID="btnCancelView" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
                 <asp:HiddenField ID="viewBacklogandTaskHiddenField" runat="server" />
-                <asp:Panel ID="viewBacklogandTaskPanel" runat="server" CssClass="popupmodal">
-                    <fieldset style="padding:1em">
+                <asp:Panel ID="viewBacklogandTaskPanel" style="max-width:50%" runat="server" CssClass="popupmodal">
+                    <fieldset style="padding:1em;">
                         <legend id="viewBacklogandTaskLegend" runat="server"></legend>
                         <asp:Literal ID="viewBacklogandTask" runat="server"></asp:Literal>
-                        <asp:Button ID="btnEditViewTask" runat="server" Text="Edit" />
+                        <asp:Button ID="btnEditViewTask" runat="server" Text="Edit" OnClick="btnEditTask_Click" />
                         <asp:Button ID="btnEditViewBacklog" runat="server" Text="Edit" OnClick="btnEditBacklog_Click" />&nbsp;or&nbsp;<asp:Button ID="btnCancelView" runat="server" Text="Cancel" />
                     </fieldset>
                 </asp:Panel>
