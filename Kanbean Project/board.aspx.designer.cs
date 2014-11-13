@@ -103,6 +103,15 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.LinkButton btnFilter;
         
         /// <summary>
+        /// btnChart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnChart;
+        
+        /// <summary>
         /// kanbanboard control.
         /// </summary>
         /// <remarks>
@@ -364,13 +373,13 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.TextBox estimationHourTaskTextBox;
         
         /// <summary>
-        /// timeSpentTaskTextBox control.
+        /// spentTimeTaskTextBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox timeSpentTaskTextBox;
+        protected global::System.Web.UI.WebControls.TextBox spentTimeTaskTextBox;
         
         /// <summary>
         /// complexityTaskTextBox control.
