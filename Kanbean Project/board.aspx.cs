@@ -754,10 +754,68 @@ namespace Kanbean_Project
             }
             editComplexityPopup.Show();
         }
+        protected void updateAssignee_Click(object sender, EventArgs e)
+        {
+            myUpdateCommand.Connection = myConnection;
+            string value = "";
+            if (editAssigneeLegend.InnerText.Substring(22, 4) == "Back")
+            {
+                if (editAssigneeDropdownList.SelectedItem.Text != "")
+                    value = editAssigneeDropdownList.SelectedValue;
+                myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogAssigneeID = " + value + " WHERE BacklogID = " + editAssigneeLegend.InnerText.Remove(0, 31);
+                myUpdateCommand.ExecuteNonQuery();
+            }
+            if (editComplexityLegend.InnerText.Substring(22, 4) == "Task")
+            {
+                if (editAssigneeDropdownList.SelectedItem.Text != "")
+
+                    value = editAssigneeDropdownList.SelectedValue;
+                myUpdateCommand.CommandText = "UPDATE Tasks SET TaskAssigneeID = " + value + " WHERE TaskID = " + editAssigneeLegend.InnerText.Remove(0, 28);
+                myUpdateCommand.ExecuteNonQuery();
+            }
+
+            myDataSet.Clear();
+            getDatabase();
+            getBacklogs();
+            getTasks();
+        }
 
         protected void btnAssignee_Click(object sender, EventArgs e)
         {
-            //lblTest.Text = ((Control)sender).ID;
+             string id = "";
+             if (((Control)sender).ID.Substring(3, 4) == "Back")
+             {
+                 id = ((Control)sender).ID.Remove(0, 18);
+                 editAssigneeLegend.InnerText = "Edit the Assignee for Backlog #" + id;
+                 editAssigneeDropdownList.Items.Clear();
+                 
+                     foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
+                     {
+                         editAssigneeDropdownList.Items.Add(r["Username"].ToString());
+                         DataRow row = myDataSet.Tables["myBacklogs"].Select("BacklogID = " + id)[0];
+                           editAssigneeDropdownList.Items[ editAssigneeDropdownList.Items.Count - 1].Value = r["UserID"].ToString();
+                            if (row["BacklogAssigneeID"].ToString() == r["UserID"].ToString() )
+                                editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Selected = true;
+                         
+                    }
+             }
+             else if (((Control)sender).ID.Substring(3, 4) == "Task")
+             {
+                 id = ((Control)sender).ID.Remove(0, 15);
+                  editAssigneeLegend.InnerText = "Edit the Assignee for Task #" + id;
+                  editAssigneeDropdownList.Items.Clear();
+                  foreach (DataRow r in myDataSet.Tables["myUsers"].Rows)
+                  {
+                      editAssigneeDropdownList.Items.Add(r["Username"].ToString());
+                      DataRow row = myDataSet.Tables["myBacklogs"].Select("TaskID = " + id)[0];
+                      editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Value = r["UserID"].ToString();
+                      if (row["TaskAssigneeID"].ToString() == r["UserID"].ToString())
+                          editAssigneeDropdownList.Items[editAssigneeDropdownList.Items.Count - 1].Selected = true;
+
+                  }
+             }
+            editAssigneePopup.Show();
+        
         }
 
         protected void btnDueDate_Click(object sender, EventArgs e)

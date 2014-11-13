@@ -269,6 +269,20 @@
                         <asp:Button ID="btnEditComplexity" runat="server" Text="Edit" OnClick="btnUpdateEditComplex_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCancelEditC" runat="server" Text="Cancel" />
                     </fieldset>
                 </asp:Panel>
+
+                <ajaxToolkit:ModalPopupExtender  runat="server" ID="editAssigneePopup" TargetControlID="viewEditAssigneeHiddenField" PopupControlID="editAssigneePanel" CancelControlID="btnCancelEditA" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender> 
+                <asp:HiddenField ID="viewEditAssigneeHiddenField" runat="server"/>
+                <asp:Panel ID="editAssigneePanel" runat="server" CssClass="popupmodal">
+                    <fieldset style="padding:1em">
+                        <legend id="editAssigneeLegend" runat="server"></legend>
+                        <asp:Label ID="lblEditAssign" runat="server" Text="Assignee: "></asp:Label>
+                        <asp:DropDownList ID="editAssigneeDropdownList" runat="server" Width="160"></asp:DropDownList>
+                        <br />
+                        <br />
+                        <asp:Button ID="btnEditAssignee" runat="server" Text="Edit" OnClick="updateAssignee_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCancelEditA" runat="server" Text="Cancel" />
+                        
+                    </fieldset>
+                </asp:Panel>
             </ContentTemplate>
         </asp:UpdatePanel>
      </form>
