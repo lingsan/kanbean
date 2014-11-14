@@ -715,84 +715,84 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.Button btnCancelEditA;
         
         /// <summary>
-        /// editDeadlinePopup control.
+        /// editDueDatePopup control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender editDeadlinePopup;
+        protected global::AjaxControlToolkit.ModalPopupExtender editDueDatePopup;
         
         /// <summary>
-        /// viewEditDeadlineHiddenField control.
+        /// editDueDateHiddenField control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField viewEditDeadlineHiddenField;
+        protected global::System.Web.UI.WebControls.HiddenField editDueDateHiddenField;
         
         /// <summary>
-        /// editDeadlinePanel control.
+        /// editDueDatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel editDeadlinePanel;
+        protected global::System.Web.UI.WebControls.Panel editDueDatePanel;
         
         /// <summary>
-        /// editDeadlineLegend control.
+        /// editDueDateLegend control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl editDeadlineLegend;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl editDueDateLegend;
         
         /// <summary>
-        /// Label1 control.
+        /// editDueDateLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::System.Web.UI.WebControls.Label editDueDateLabel;
         
         /// <summary>
-        /// editDeadlineTextbox control.
+        /// editDueDateTextBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox editDeadlineTextbox;
+        protected global::System.Web.UI.WebControls.TextBox editDueDateTextBox;
         
         /// <summary>
-        /// editDeadlineCalendarExterder control.
+        /// editDueDateCalendarExtender control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.CalendarExtender editDeadlineCalendarExterder;
+        protected global::AjaxControlToolkit.CalendarExtender editDueDateCalendarExtender;
         
         /// <summary>
-        /// btnEditDeadline control.
+        /// btnUpdateDueDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEditDeadline;
+        protected global::System.Web.UI.WebControls.Button btnUpdateDueDate;
         
         /// <summary>
-        /// btnCanceID control.
+        /// btnCancelEditDD control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCanceID;
+        protected global::System.Web.UI.WebControls.Button btnCancelEditDD;
     }
 }

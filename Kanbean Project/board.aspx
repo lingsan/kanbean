@@ -270,7 +270,7 @@
                     </fieldset>
                 </asp:Panel>
 
-                <ajaxToolkit:ModalPopupExtender  runat="server" ID="editAssigneePopup" TargetControlID="viewEditAssigneeHiddenField" PopupControlID="editAssigneePanel" CancelControlID="btnCancelEditA" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender> 
+                <ajaxToolkit:ModalPopupExtender runat="server" ID="editAssigneePopup" TargetControlID="viewEditAssigneeHiddenField" PopupControlID="editAssigneePanel" CancelControlID="btnCancelEditA" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender> 
                 <asp:HiddenField ID="viewEditAssigneeHiddenField" runat="server"/>
                 <asp:Panel ID="editAssigneePanel" runat="server" CssClass="popupmodal">
                     <fieldset style="padding:1em">
@@ -283,20 +283,17 @@
                     </fieldset>
                 </asp:Panel>
 
-
-                 <ajaxToolkit:ModalPopupExtender runat="server" ID="editDeadlinePopup" TargetControlID="viewEditDeadlineHiddenField" PopupControlID="editDeadlinePanel"  CancelControlID="btnCancelID" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
-                <asp:HiddenField ID="viewEditDeadlineHiddenField" runat="server" />
-                <asp:Panel ID="editDeadlinePanel" runat="server" CssClass="popupmodal">
+                <ajaxToolkit:ModalPopupExtender runat="server" ID="editDueDatePopup" TargetControlID="editDueDateHiddenField" PopupControlID="editDueDatePanel" CancelControlID="btnCancelEditDD" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
+                <asp:HiddenField ID="editDueDateHiddenField" runat="server" />
+                <asp:Panel ID="editDueDatePanel" runat="server" CssClass="popupmodal">
                     <fieldset style="padding:1em">
-                        <legend id="editDeadlineLegend" runat="server"></legend>
-                        <asp:Label ID="Label1" runat="server" Text="Deadline: "></asp:Label> 
-                        <asp:TextBox ID="editDeadlineTextbox" runat="server" Width="160" ></asp:TextBox>
-                        <ajax:CalendarExtender ID="editDeadlineCalendarExterder" runat="server" TargetControlID="editDeadlineTextbox" Format="mm/dd/yyyy"></ajax:CalendarExtender><br /><br />
-                        <asp:Button ID="btnEditDeadline" runat="server" Text="Edit" OnClick="updateDueDate_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCanceID" runat="server" Text="Cancel" />
+                        <legend id="editDueDateLegend" runat="server">Edit Deadline</legend>
+                        <asp:Label ID="editDueDateLabel" runat="server" Text="Deadline: "></asp:Label> 
+                        <asp:TextBox ID="editDueDateTextBox" runat="server" Width="160" TextMode="Date"></asp:TextBox>
+                        <ajax:CalendarExtender ID="editDueDateCalendarExtender" runat="server" TargetControlID="editDueDateTextBox" Format="mm/dd/yyyy" /><br /><br />
+                        <asp:Button ID="btnUpdateDueDate" runat="server" Text="Edit" OnClick="btnUpdateDueDate_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCancelEditDD" runat="server" Text="Cancel" />
                     </fieldset>
                 </asp:Panel>
-
-
             </ContentTemplate>
         </asp:UpdatePanel>
      </form>

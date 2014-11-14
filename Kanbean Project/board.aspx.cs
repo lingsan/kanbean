@@ -815,22 +815,43 @@ namespace Kanbean_Project
                 }
             }
             editAssigneePopup.Show();
+        }
+
+        protected void btnUpdateDueDate_Click(object sender, EventArgs e)
+        {
 
         }
-        protected void updateDueDate_Click(object sender, EventArgs e)
-        {
-           
-        }
+
         protected void btnDueDate_Click(object sender, EventArgs e)
         {
-            //nothing happens
-            editDeadlinePopup.Show();
-            //lblTest.Text = ((Control)sender).ID;
+            string id = "";
+            if (((Control)sender).ID.Substring(3, 4) == "Back")
+            {
+                id = ((Control)sender).ID.Remove(0, 17);
+                editDueDateLegend.InnerText = "Edit the Deadline for Backlog #" + id;
+                DataRow row = myDataSet.Tables["myBacklogs"].Select("BacklogID = " + id)[0];
+                editDueDateTextBox.Text = Convert.ToDateTime(row["BacklogDueDate"].ToString()).ToShortDateString();
+            }
+            else if (((Control)sender).ID.Substring(3, 4) == "Task")
+            {
+                id = ((Control)sender).ID.Remove(0, 14);
+                editDueDateLegend.InnerText = "Edit the Deadline for Task #" + id;
+                DataRow row = myDataSet.Tables["myTasks"].Select("TaskID = " + id)[0];
+                editDueDateTextBox.Text = Convert.ToDateTime(row["TaskDueDate"].ToString()).ToShortDateString();
+            }
+            editDueDatePopup.Show();
         }
 
         protected void btnShowHideTask_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;
+            string id = "backlogArea" + ((Control)sender).ID.Remove(0, 15);
+            for (int i = 1; i < kanbanboard.FindControl(id).Controls.Count; i++)
+            {
+                kanbanboard.FindControl(id).Controls[i].Visible = false;
+            }
+            
+
         }
 
         protected void btnComment_Click(object sender, EventArgs e)
@@ -946,5 +967,6 @@ namespace Kanbean_Project
             int test;
             return int.TryParse(input, out test); 
         }
+
     }
 }
