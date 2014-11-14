@@ -118,6 +118,13 @@ namespace Kanbean_Project
             btnAddTask.Click += new EventHandler(btnAddTask_Click);
             backlogHeader.Controls.Add(btnAddTask);
 
+            LinkButton btnAddComment = new LinkButton();
+            btnAddComment.CssClass = "backlogIcon iconAddComment";
+            btnAddComment.ID = "btnAddCommentBacklog" + id;
+            btnAddComment.ToolTip = "Add new comment";
+            btnAddComment.Click += new EventHandler(btnAddComment_Click);
+            backlogHeader.Controls.Add(btnAddComment);
+
             LinkButton backlogTitle = new LinkButton();
             backlogTitle.CssClass = "backlog-title";
             backlogTitle.ID = "backlogTitle" + id;
@@ -126,55 +133,69 @@ namespace Kanbean_Project
             backlogTitle.Click += new EventHandler(showDetail_Click);
             backlogContent.Controls.Add(backlogTitle);
 
-            LinkButton btnComplexity = new LinkButton();
-            btnComplexity.CssClass = "btnComplexity";
-            btnComplexity.ID = "btnBacklogComplexity" + id;
-            btnComplexity.ToolTip = "Edit complexity";
-            btnComplexity.Text = complexity;
-            btnComplexity.Click += new EventHandler(btnComplexity_Click);
-            backlogFooterUp.Controls.Add(btnComplexity);
+            if (complexity != "")
+            {
+                LinkButton btnComplexity = new LinkButton();
+                btnComplexity.CssClass = "btnComplexity";
+                btnComplexity.ID = "btnBacklogComplexity" + id;
+                btnComplexity.ToolTip = "Edit complexity";
+                btnComplexity.Text = complexity;
+                btnComplexity.Click += new EventHandler(btnComplexity_Click);
+                backlogFooterUp.Attributes.Add("height","1.5em");
+                backlogFooterUp.Controls.Add(btnComplexity);
+            }
 
-            LinkButton btnAssignee = new LinkButton();
-            btnAssignee.CssClass = "btnAssignee";
-            btnAssignee.ID = "btnBacklogAssignee" + id;
-            btnAssignee.ToolTip = "Edit assignee";
             if (assignee != "")
+            {
+                LinkButton btnAssignee = new LinkButton();
+                btnAssignee.CssClass = "btnAssignee";
+                btnAssignee.ID = "btnBacklogAssignee" + id;
+                btnAssignee.ToolTip = "Edit assignee";
                 btnAssignee.Text = "Assignee: " + assignee;
-            btnAssignee.Click += new EventHandler(btnAssignee_Click);
-            backlogFooterUp.Controls.Add(btnAssignee);
-
-            LinkButton btnDueDate = new LinkButton();
-            btnDueDate.CssClass = "btnDueDate";
-            btnDueDate.ID = "btnBacklogDueDate" + id;
-            btnDueDate.ToolTip = "Edit deadline";
+                btnAssignee.Click += new EventHandler(btnAssignee_Click);
+                backlogFooterUp.Controls.Add(btnAssignee);
+            }
+            
             if (deadline != "")
+            {
+                LinkButton btnDueDate = new LinkButton();
+                btnDueDate.CssClass = "btnDueDate";
+                btnDueDate.ID = "btnBacklogDueDate" + id;
+                btnDueDate.ToolTip = "Edit deadline";
                 btnDueDate.Text = Convert.ToDateTime(deadline).ToString("dd.MM.yyyy");
-            btnDueDate.Click += new EventHandler(btnDueDate_Click);
-            backlogFooterDown.Controls.Add(btnDueDate);
-
-            LinkButton btnComment = new LinkButton();
-            btnComment.CssClass = "backlogIcon iconComment";
-            btnComment.ID = "btnBacklogComment" + id;
-            btnComment.ToolTip = "Show the comments";
-            btnComment.Click += new EventHandler(btnComment_Click);
+                btnDueDate.Click += new EventHandler(btnDueDate_Click);
+                backlogFooterDown.Controls.Add(btnDueDate);
+            }
+            
             mySelectCommand.CommandText = "SELECT COUNT(CommentID) FROM BacklogsComments WHERE BacklogID=" + id;
             string amountComments = mySelectCommand.ExecuteScalar().ToString();
             if (amountComments != "0")
+            {
+                LinkButton btnComment = new LinkButton();
+                btnComment.CssClass = "backlogIcon iconComment";
+                btnComment.ID = "btnBacklogComment" + id;
+                btnComment.ToolTip = "Show the comments";
+                btnComment.Click += new EventHandler(btnComment_Click);
                 btnComment.Text = " " + amountComments;
-            backlogFooterDown.Controls.Add(btnComment);
+                backlogFooterDown.Style.Add("height", "1.5em");
+                backlogFooterDown.Controls.Add(btnComment);
+            }
 
-            LinkButton btnTask = new LinkButton();
-            btnTask.CssClass = "backlogIcon iconTask";
-            btnTask.ID = "btnShowHideTask" + id;
-            btnTask.ToolTip = "Show the tasks";
-            btnTask.Click += new EventHandler(btnShowHideTask_Click);
             mySelectCommand.CommandText = "SELECT COUNT(TaskID) FROM Tasks WHERE BacklogID=" + id;
             string amountTasks = mySelectCommand.ExecuteScalar().ToString();
-            mySelectCommand.CommandText = "SELECT COUNT(TaskID) FROM Tasks WHERE BacklogID=" + id + "AND TaskStatusID=3";
-            string amountCompletedTasks = mySelectCommand.ExecuteScalar().ToString();
             if (amountTasks != "0")
+            {
+                LinkButton btnTask = new LinkButton();
+                btnTask.CssClass = "backlogIcon iconTask";
+                btnTask.ID = "btnShowHideTask" + id;
+                btnTask.ToolTip = "Show/Hide the tasks";
+                btnTask.Click += new EventHandler(btnShowHideTask_Click);
+                mySelectCommand.CommandText = "SELECT COUNT(TaskID) FROM Tasks WHERE BacklogID=" + id + "AND TaskStatusID=3";
+                string amountCompletedTasks = mySelectCommand.ExecuteScalar().ToString();
                 btnTask.Text = " " + amountCompletedTasks + "/" + amountTasks;
-            backlogFooterDown.Controls.Add(btnTask);
+                backlogFooterDown.Style.Add("height", "1.5em");
+                backlogFooterDown.Controls.Add(btnTask);
+            }
 
             kanbanboard.FindControl("columnContent" + swimlaneID).Controls.Add(newBacklog);
         }
@@ -190,6 +211,7 @@ namespace Kanbean_Project
             if (statusID == "3")
                 task.Style.Add("background-color", "#eee9e9");
             task.ID = "task" + id;
+            task.Visible = false;
 
             Panel taskHeader = new Panel();
             taskHeader.CssClass = "backlog-header";
@@ -226,6 +248,13 @@ namespace Kanbean_Project
             btnEdit.Click += new EventHandler(btnEditTask_Click);
             taskHeader.Controls.Add(btnEdit);
 
+            LinkButton btnAddComment = new LinkButton();
+            btnAddComment.CssClass = "backlogIcon iconAddComment";
+            btnAddComment.ID = "btnAddCommentTask" + id;
+            btnAddComment.ToolTip = "Add new comment";
+            btnAddComment.Click += new EventHandler(btnAddComment_Click);
+            taskHeader.Controls.Add(btnAddComment);
+
             LinkButton taskTitle = new LinkButton();
             taskTitle.CssClass = "backlog-title";
             taskTitle.ID = "taskTitle" + id;
@@ -234,39 +263,53 @@ namespace Kanbean_Project
             taskTitle.Click += new EventHandler(showDetail_Click);
             taskContent.Controls.Add(taskTitle);
 
-            LinkButton btnComplexity = new LinkButton();
-            btnComplexity.CssClass = "btnComplexity";
-            btnComplexity.ID = "btnTaskComplexity" + id;
-            btnComplexity.ToolTip = "Edit complexity";
-            btnComplexity.Text = complexity;
-            btnComplexity.Click += new EventHandler(btnComplexity_Click);
-            taskFooterUp.Controls.Add(btnComplexity);
-
-            LinkButton btnAssignee = new LinkButton();
-            btnAssignee.CssClass = "btnAssignee";
-            btnAssignee.ID = "btnTaskAssignee" + id;
-            btnAssignee.ToolTip = "Edit assignee";
+            if (complexity != "")
+            {
+                LinkButton btnComplexity = new LinkButton();
+                btnComplexity.CssClass = "btnComplexity";
+                btnComplexity.ID = "btnTaskComplexity" + id;
+                btnComplexity.ToolTip = "Edit complexity";
+                btnComplexity.Text = complexity;
+                btnComplexity.Click += new EventHandler(btnComplexity_Click);
+                taskFooterUp.Attributes.Add("height", "1.5em");
+                taskFooterUp.Controls.Add(btnComplexity);
+            }
+            
             if (assignee != "")
+            {
+                LinkButton btnAssignee = new LinkButton();
+                btnAssignee.CssClass = "btnAssignee";
+                btnAssignee.ID = "btnTaskAssignee" + id;
+                btnAssignee.ToolTip = "Edit assignee";
                 btnAssignee.Text = "Assignee: " + assignee;
-            btnAssignee.Click += new EventHandler(btnAssignee_Click);
-            taskFooterUp.Controls.Add(btnAssignee);
-
-            LinkButton btnDueDate = new LinkButton();
-            btnDueDate.CssClass = "btnDueDate";
-            btnDueDate.ID = "btnTaskDueDate" + id;
-            btnDueDate.ToolTip = "Edit deadline";
+                btnAssignee.Click += new EventHandler(btnAssignee_Click);
+                taskFooterUp.Controls.Add(btnAssignee);
+            }
+            
             if (deadline != "")
+            {
+                LinkButton btnDueDate = new LinkButton();
+                btnDueDate.CssClass = "btnDueDate";
+                btnDueDate.ID = "btnTaskDueDate" + id;
+                btnDueDate.ToolTip = "Edit deadline";
                 btnDueDate.Text = Convert.ToDateTime(deadline).ToString("dd.MM.yyyy");
-            btnDueDate.Click += new EventHandler(btnDueDate_Click);
-            taskFooterDown.Controls.Add(btnDueDate);
-
-            LinkButton btnComment = new LinkButton();
-            btnComment.CssClass = "backlogIcon iconComment";
-            btnComment.ID = "btnTaskComment" + id;
-            btnComment.ToolTip = "Show the comments";
-            btnComment.Click += new EventHandler(btnComment_Click);
-            taskFooterDown.Controls.Add(btnComment);
-
+                btnDueDate.Click += new EventHandler(btnDueDate_Click);
+                taskFooterDown.Controls.Add(btnDueDate);
+            }
+            
+            mySelectCommand.CommandText = "SELECT COUNT(CommentID) FROM TasksComments WHERE TaskID=" + id;
+            string amountComments = mySelectCommand.ExecuteScalar().ToString();
+            if (amountComments != "0")
+            {
+                LinkButton btnComment = new LinkButton();
+                btnComment.CssClass = "backlogIcon iconComment";
+                btnComment.ID = "btnTaskComment" + id;
+                btnComment.ToolTip = "Show the comments";
+                btnComment.Text = " " + amountComments;
+                btnComment.Click += new EventHandler(btnComment_Click);
+                taskFooterDown.Attributes.Add("height", "1.5em");
+                taskFooterDown.Controls.Add(btnComment);
+            }
             kanbanboard.FindControl("backlogArea" + BacklogID).Controls.Add(task);
         }
 
@@ -631,6 +674,7 @@ namespace Kanbean_Project
             getDatabase();
             getBacklogs();
             addandEditTaskPopup.Hide();
+            
         }
 
         protected void btnEditTask_Click(object sender, EventArgs e)
@@ -846,14 +890,22 @@ namespace Kanbean_Project
         {
             //lblTest.Text = ((Control)sender).ID;
             string id = "backlogArea" + ((Control)sender).ID.Remove(0, 15);
-            for (int i = 1; i < kanbanboard.FindControl(id).Controls.Count; i++)
+            if (kanbanboard.FindControl(id).Controls[1].Visible == true)
             {
-                kanbanboard.FindControl(id).Controls[i].Visible = false;
+                for (int i = 1; i < kanbanboard.FindControl(id).Controls.Count; i++)
+                    kanbanboard.FindControl(id).Controls[i].Visible = false;
             }
-            
-
+            else
+            {
+                for (int i = 1; i < kanbanboard.FindControl(id).Controls.Count; i++)
+                    kanbanboard.FindControl(id).Controls[i].Visible = true;
+            }
         }
 
+        protected void btnAddComment_Click(object sender, EventArgs e)
+        {
+
+        }
         protected void btnComment_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;

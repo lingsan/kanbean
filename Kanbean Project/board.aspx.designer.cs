@@ -67,22 +67,13 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.LinkButton btnAddBacklog;
         
         /// <summary>
-        /// tbxSearch control.
+        /// btnChart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tbxSearch;
-        
-        /// <summary>
-        /// dropdownFilter control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList dropdownFilter;
+        protected global::System.Web.UI.WebControls.LinkButton btnChart;
         
         /// <summary>
         /// btnSearch control.
@@ -94,6 +85,15 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.LinkButton btnSearch;
         
         /// <summary>
+        /// tbxSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbxSearch;
+        
+        /// <summary>
         /// btnFilter control.
         /// </summary>
         /// <remarks>
@@ -103,13 +103,13 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.LinkButton btnFilter;
         
         /// <summary>
-        /// btnChart control.
+        /// dropdownFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnChart;
+        protected global::System.Web.UI.WebControls.DropDownList dropdownFilter;
         
         /// <summary>
         /// kanbanboard control.

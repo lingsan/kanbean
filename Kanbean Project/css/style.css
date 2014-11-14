@@ -207,6 +207,10 @@ td {
     content:"\f067";
 }
 
+.iconAddComment:before {
+    content:"\f0e6";
+}
+
 .backlog-content {
     font-size:1.1em;
     padding: 0.4em;
@@ -239,7 +243,7 @@ td {
     content:  "\f0e5";
 }
 
-.iconEdit:hover, .iconDelete:hover, .iconTask:hover, .iconComment:hover, .iconAdd:hover {
+.iconEdit:hover, .iconDelete:hover, .iconTask:hover, .iconComment:hover, .iconAdd:hover, .iconAddComment:hover {
     color: black;
 }
 
