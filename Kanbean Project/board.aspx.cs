@@ -861,10 +861,53 @@ namespace Kanbean_Project
             editAssigneePopup.Show();
         }
 
-        protected void btnUpdateDueDate_Click(object sender, EventArgs e)
+       
+             protected void btnUpdateDueDate_Click(object sender, EventArgs e)
         {
+            myUpdateCommand.Connection = myConnection;
+            DateTime value= DateTime.Now;
+            if (editDueDateLegend.InnerText.Substring(21, 4) == "Back")
+            {
+                foreach (DataRow row in myDataSet.Tables["myRawBacklogs"].Rows)
+                {
+                    if (editDueDateTextBox.Text != "")
 
+                        row["BacklogDueDate"] = Convert.ToDateTime(editDueDateTextBox.Text);
+                    //myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogDueDate = " + value + " WHERE BacklogID = " + editDueDateLegend.InnerText.Remove(0, 30);
+                   // myUpdateCommand.ExecuteNonQuery();
+                    myDataSet.Tables["myRawBacklogs"].Rows.Add(row);
+                    myAdapter.SelectCommand.CommandText = "Select * From Backlogs";
+                    OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
+                    myAdapter.InsertCommand = myCommandBuilder.GetInsertCommand();
+                    myAdapter.Update(myDataSet, "myRawBacklogs");
+                    myDataSet.Clear();
+                    getDatabase();
+                    getBacklogs();
+                    getTasks();
+                }
+            }
+            if (editDueDateLegend.InnerText.Substring(21, 4) == "Task")
+            {
+                foreach (DataRow r in myDataSet.Tables["myRawTasks"].Rows)
+                {
+                    if (editDueDateTextBox.Text != "")
+                    r["TaskDueDate"] = Convert.ToDateTime(editDueDateTextBox.Text);
+                    // myUpdateCommand.CommandText = "UPDATE Tasks SET TaskDueDate = " + value + " WHERE TaskID = " + editDueDateLegend.InnerText.Remove(0, 27);
+                    //myUpdateCommand.ExecuteNonQuery();
+                    myDataSet.Tables["myRawTasks"].Rows.Add();
+                    myAdapter.SelectCommand.CommandText = "Select * From Tasks";
+                    OleDbCommandBuilder myCommandBuilder = new OleDbCommandBuilder(myAdapter);
+                    myAdapter.InsertCommand = myCommandBuilder.GetInsertCommand();
+                    myAdapter.Update(myDataSet, "myRawTasks");
+                    myDataSet.Clear();
+                    getDatabase();
+                    getBacklogs();
+                    getTasks();
+                }
+            }
+            
         }
+        
 
         protected void btnDueDate_Click(object sender, EventArgs e)
         {
