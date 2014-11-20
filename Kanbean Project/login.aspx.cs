@@ -58,13 +58,18 @@ namespace Kanbean_Project
             UserPassConn.CommandType = CommandType.Text;
             /*OleDbDataReader CheclogInReader;
             CheclogInReader = UserPassConn.ExecuteReader();*/
+            try {
                 if (passwordTextBox.Text == UserPassConn.ExecuteScalar().ToString())
                 {
                     args.IsValid = true;
                 } else
                 {
                     args.IsValid = false;
-                }
+                } 
+            } catch
+            {
+                args.IsValid = false;
+            }
             LogInConnection.Close();
             /*insert username and password in to string lists
             List<string> Username = new List<string>();
