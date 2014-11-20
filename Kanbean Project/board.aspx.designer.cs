@@ -49,6 +49,15 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.Label LblUsername;
         
         /// <summary>
+        /// LogOutLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink LogOutLink;
+        
+        /// <summary>
         /// projectDropDownList control.
         /// </summary>
         /// <remarks>

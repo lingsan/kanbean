@@ -80,7 +80,7 @@
                         <h1>Lanban</h1>
                     </div>
                     <div id="user-information">
-                        <p>Welcome, <span id="username"><asp:Label ID="LblUsername" runat="server" Text="Username"></asp:Label></span>. (<a href="#">logout</a>)</p>
+                        <p>Welcome, <span id="username"><asp:Label ID="LblUsername" runat="server" Text="Username"></asp:Label></span>. (<asp:HyperLink ID="LogOutLink" runat="server" NavigateUrl="~/login.aspx" OnLoad="EatCookies">logout</asp:HyperLink>)</p>
                         <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList">
                             <asp:ListItem>1</asp:ListItem>
                             <asp:ListItem>2</asp:ListItem>

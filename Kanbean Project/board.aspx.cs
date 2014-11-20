@@ -1034,5 +1034,17 @@ namespace Kanbean_Project
             return int.TryParse(input, out test); 
         }
 
+        protected void EatCookies(object sender, EventArgs e)
+        {
+
+            if (Request.Cookies["UserSetting"] != null)
+            {
+                if (Request.Cookies["UserSetting"]["Name"] != null)
+                {
+                    Response.Cookies["UserSetting"].Expires = DateTime.Now.AddDays(-1);
+                }
+            }
+        }
+
     }
 }
