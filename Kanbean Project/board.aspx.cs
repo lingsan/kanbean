@@ -341,7 +341,6 @@ namespace Kanbean_Project
             //mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1 ORDER BY SwimlaneID";
             //myAdapter.Fill(myDataSet, "mySwimlanes");
             getDatabase();
-
             //Initialize the kanbanboard with swimlane information from database
             DataTable boardTable = myDataSet.Tables["mySwimlanes"];
             TableRow thRow = new TableRow();
@@ -372,6 +371,7 @@ namespace Kanbean_Project
 
             getBacklogs();
             getTasks();
+            myConnection.Close();
 
         }
 
