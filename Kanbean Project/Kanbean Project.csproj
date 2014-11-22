@@ -86,6 +86,7 @@
   <ItemGroup>
     <Content Include="App_Data\LanbanDatabase.mdb" />
     <Content Include="board.aspx" />
+    <Content Include="charts.aspx" />
     <Content Include="css\style.css" />
     <Content Include="Global.asax" />
     <Content Include="login.aspx" />
@@ -100,6 +101,13 @@
     </Compile>
     <Compile Include="board.aspx.designer.cs">
       <DependentUpon>board.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="charts.aspx.cs">
+      <DependentUpon>charts.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="charts.aspx.designer.cs">
+      <DependentUpon>charts.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

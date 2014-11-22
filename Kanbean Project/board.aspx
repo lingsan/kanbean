@@ -81,10 +81,7 @@
                     </div>
                     <div id="user-information">
                         <p>Welcome, <span id="username"><asp:Label ID="LblUsername" runat="server" Text="Username"></asp:Label></span>. (<asp:HyperLink ID="LogOutLink" runat="server" NavigateUrl="~/login.aspx" OnLoad="EatCookies">logout</asp:HyperLink>)</p>
-                        <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList">
-                            <asp:ListItem>1</asp:ListItem>
-                            <asp:ListItem>2</asp:ListItem>
-                            </asp:DropDownList></p>
+                        <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList"></asp:DropDownList></p>
                     </div>
                 </div>
 
@@ -92,7 +89,7 @@
 
                 <div id="toolbar">
                     <asp:LinkButton runat="server" id="btnAddBacklog" CssClass="icon" ToolTip="Add new backlog" OnClick="btnAddBacklog_Click"></asp:LinkButton>
-                    <asp:LinkButton runat="server" id="btnChart" CssClass="icon" ToolTip="Click to display the chart"></asp:LinkButton>
+                    <asp:LinkButton runat="server" id="btnChart" CssClass="icon" ToolTip="Click to display the chart" OnClick="btnChart_Click"></asp:LinkButton>
                     <asp:LinkButton runat="server" id="btnSearch" CssClass="icon" ToolTip="Click to get the search field" OnClick="btnSearch_Click"></asp:LinkButton>
                     <asp:TextBox ID="tbxSearch" runat="server" Visible="False"></asp:TextBox>
                     <asp:LinkButton runat="server" id="btnFilter" CssClass="icon" ToolTip="Click to select category" Enabled="False" OnClick="btnFilter_Click"></asp:LinkButton>
