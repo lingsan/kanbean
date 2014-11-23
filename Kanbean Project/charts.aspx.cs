@@ -8,7 +8,6 @@ using System.Data;
 using System.Data.OleDb;
 using System.Drawing;
 using System.Windows.Forms;
-
 namespace Kanbean_Project
 {
     public partial class charts : System.Web.UI.Page
@@ -24,19 +23,18 @@ namespace Kanbean_Project
             myCommand.Connection = myConnection;
             myAdapter.SelectCommand = myCommand;
             myCommand.CommandText = "SELECT Tasks.TaskID as [Task ID], Tasks.BacklogID as [Backlog ID], " +
-                                    "Tasks.TaskTitle as Title, Tasks.TaskComplexity as Complexity, " +
-                                    "[User].[Username] as Assginee, Status.StatusName as Status, " +
-                                    "Tasks.TaskEstimationHour as [Estimation Hour], Tasks.TaskSpentTime as [Spent Time], " +
-                                    "Tasks.TaskStartDate as [Created Date], Tasks.TaskDueDate as [Due Date], " +
-                                    "Tasks.TaskCompletedDate as [Completed Date] " +
-                                    "FROM Tasks, Backlogs, Status, [User] " +
-                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Tasks.TaskAssigneeID = [User].UserID " + 
-                                    "AND Tasks.TaskStatusID =  Status.StatusID AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
+            "Tasks.TaskTitle as Title, Tasks.TaskComplexity as Complexity, " +
+            "[User].[Username] as Assginee, Status.StatusName as Status, " +
+            "Tasks.TaskEstimationHour as [Estimation Hour], Tasks.TaskSpentTime as [Spent Time], " +
+            "Tasks.TaskStartDate as [Created Date], Tasks.TaskDueDate as [Due Date], " +
+            "Tasks.TaskCompletedDate as [Completed Date] " +
+            "FROM Tasks, Backlogs, Status, [User] " +
+            "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Tasks.TaskAssigneeID = [User].UserID " +
+            "AND Tasks.TaskStatusID = Status.StatusID AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
             myAdapter.Fill(myDataSet, "myTasks");
             taskGridView.DataSource = myDataSet;
             taskGridView.DataMember = "myTasks";
             taskGridView.DataBind();
-           
         }
     }
 }
