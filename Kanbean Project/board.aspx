@@ -72,7 +72,7 @@
 </head>
 <body>
     <form id="lanbanboard" runat="server">
-        <ajaxToolkit:ToolkitScriptManager ID="lanbanScriptManager" EnablePageMethods="true" runat="server" ></ajaxToolkit:ToolkitScriptManager>
+        <ajaxToolkit:ToolkitScriptManager ID="lanbanScriptManager" EnablePartialRendering="true" EnablePageMethods="true" runat="server" ></ajaxToolkit:ToolkitScriptManager>
         <asp:UpdatePanel ID="updatePanel" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
                 <div id="header">
@@ -99,9 +99,6 @@
                         <asp:ListItem>Users</asp:ListItem>
                         <asp:ListItem>Comments</asp:ListItem>
                     </asp:DropDownList>
-                    
-                    
-                    
                 </div>
 
                 <div class="clear"></div>
@@ -293,7 +290,34 @@
                         <asp:Button ID="btnUpdateDueDate" runat="server" Text="Edit" OnClick="btnUpdateDueDate_Click" OnClientClick="refreshBoard()" />&nbsp;or&nbsp;<asp:Button ID="btnCancelEditDD" runat="server" Text="Cancel" />
                     </fieldset>
                 </asp:Panel>
+
+                <ajaxToolkit:ModalPopupExtender runat="server" ID="showAttachedFilesPopup" TargetControlID="showAttachedFilesHiddenField" PopupControlID="showAttachedFilesPanel" CancelControlID="btnCloseFiles" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
+                <asp:HiddenField ID="showAttachedFilesHiddenField" runat="server" />
+                <asp:Panel ID="showAttachedFilesPanel" runat="server" CssClass="popupmodal">
+                    <fieldset style="padding:1em">
+                        <legend id="showAttachedFilesLegend" runat="server"></legend>
+                        <asp:GridView ID="showAttachedFilesGridView" runat="server" AutoGenerateColumns="false" BorderWidth="0" CellPadding="5" EmptyDataText = "No files uploaded">
+                            <Columns>
+                                <asp:BoundField DataField="Text" ItemStyle-BorderWidth="0" HeaderStyle-BorderWidth="0" HeaderText="File Name" />
+                                <asp:TemplateField ItemStyle-BorderWidth="0" HeaderStyle-BorderWidth="0">
+                                    <ItemTemplate>
+                                        <asp:LinkButton ID="btnDownloadFile" CssClass="btnDownloadFileIcon" ToolTip="Download file"  CommandArgument = '<%# Eval("Value") %>' runat="server" OnClick="btnDownloadFile_Click"></asp:LinkButton>&nbsp;&nbsp;
+                                        <asp:LinkButton ID="btnDeleteFile" CssClass="btnDeleteFileIcon" ToolTip="Delete File"  CommandArgument = '<%# Eval("Value") %>' runat = "server" OnClick="btnDeleteFile_Click"></asp:LinkButton>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+                        <hr />
+                        <asp:FileUpload ID="AttachedFileUpload" runat="server" />
+                        <asp:Button ID="btnUploadFile" runat="server" Text="Upload" OnClick="btnUploadFile_Click" />
+                        &nbsp;or&nbsp;<asp:Button ID="btnCloseFiles" runat="server" Text="Close" />
+                    </fieldset>
+                </asp:Panel>
             </ContentTemplate>
+            <Triggers>
+                <asp:PostBackTrigger ControlID="btnUploadFile" />
+                <asp:PostBackTrigger ControlID="showAttachedFilesGridView" />
+            </Triggers>
         </asp:UpdatePanel>
      </form>
 </body>

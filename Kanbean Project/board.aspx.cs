@@ -8,6 +8,7 @@ using System.Data.OleDb;
 using System.Data;
 using System.Collections;
 using System.Web.Services;
+using System.IO;
 
 namespace Kanbean_Project
 {
@@ -282,8 +283,19 @@ namespace Kanbean_Project
                 if (amountComments != "0")
                     btnComment.Text = " " + amountComments;
                 btnComment.Click += new EventHandler(btnComment_Click);
-                taskFooterDown.Attributes.Add("height", "1.5em");
                 taskFooterDown.Controls.Add(btnComment);
+
+                int amountFiles = 0;
+                if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")))
+                    amountFiles = Directory.GetFiles(Server.MapPath("~/Files/task" + id + "/")).Length;
+                LinkButton btnAttachedFile = new LinkButton();
+                btnAttachedFile.CssClass = "backlogIcon iconAttachedFile";
+                btnAttachedFile.ID = "btnTaskAttachedFile" + id;
+                btnAttachedFile.ToolTip = "Show the attached files";
+                if (amountFiles != 0)
+                    btnAttachedFile.Text = " " + amountFiles.ToString();
+                btnAttachedFile.Click += new EventHandler(btnAttachedFile_Click);
+                taskFooterDown.Controls.Add(btnAttachedFile);
 
                 kanbanboard.FindControl("backlogArea" + BacklogID).Controls.Add(task);
             }
@@ -911,10 +923,6 @@ namespace Kanbean_Project
             }
         }
 
-        protected void btnAddComment_Click(object sender, EventArgs e)
-        {
-
-        }
         protected void btnComment_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;
@@ -1058,6 +1066,53 @@ namespace Kanbean_Project
         {
             Session["currentProject"] = 1;
             Response.Redirect("charts.aspx");
+        }
+
+        protected void btnAttachedFile_Click(object sender, EventArgs e)
+        {
+            string id = id = ((Control)sender).ID.Remove(0, 19); 
+            List<ListItem> files = new List<ListItem>();
+            if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")))
+            {
+                string[] filePaths = Directory.GetFiles(Server.MapPath("~/Files/task" + id + "/"));
+                foreach (string filePath in filePaths)
+                {
+                    files.Add(new ListItem(Path.GetFileName(filePath), filePath));
+                }
+            }
+            showAttachedFilesGridView.DataSource = files;
+            showAttachedFilesGridView.DataBind();
+            showAttachedFilesLegend.InnerText = "Attached File of Task #" + id;
+            showAttachedFilesPopup.Show();
+        }
+
+        protected void btnUploadFile_Click(object sender, EventArgs e)
+        {
+            string fileName = Path.GetFileName(AttachedFileUpload.PostedFile.FileName);
+            string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
+            if (fileName != null)
+            {
+                if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")) == false)
+                    Directory.CreateDirectory(Server.MapPath("~/Files/task" + id + "/"));
+                AttachedFileUpload.PostedFile.SaveAs(Server.MapPath("~/Files/task" + id + "/") + fileName);
+                Response.Redirect(Request.Url.AbsoluteUri);
+            }
+        }
+
+        protected void btnDownloadFile_Click(object sender, EventArgs e)
+        {
+            string filePath = (sender as LinkButton).CommandArgument;
+            Response.ContentType = ContentType;
+            Response.AppendHeader("Content-Disposition", "attachment; filename=" + Path.GetFileName(filePath));
+            Response.WriteFile(filePath);
+            Response.End();
+        }
+
+        protected void btnDeleteFile_Click(object sender, EventArgs e)
+        {
+            string filePath = (sender as LinkButton).CommandArgument;
+            File.Delete(filePath);
+            Response.Redirect(Request.Url.AbsoluteUri);
         }
 
     }
