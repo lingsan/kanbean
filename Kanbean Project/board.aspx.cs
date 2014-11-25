@@ -1036,7 +1036,7 @@ namespace Kanbean_Project
                 else
                 {
                     myCommand.CommandText = "UPDATE Backlogs SET BacklogPosition = " + swimlaneBacklogPos[i]
-                                        + ", swimlaneID = " + swimlane + ", BacklogStatusID = " + statusID
+                                        + ", swimlaneID = " + swimlane + ", BacklogStatusID = " + statusID + ", BacklogCompletedDate = null"
                                         + " WHERE backlogID = " + swimlaneBacklog[i];
                     myCommand.ExecuteNonQuery();
                 }
