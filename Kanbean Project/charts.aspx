@@ -12,9 +12,9 @@
 </head>
 <body>
     <form id="chart" runat="server">
-        <asp:GridView ID="taskGridView" runat="server"></asp:GridView>
-        <asp:GridView ID="TaskAssignedGridView" runat="server"></asp:GridView>
-        <asp:GridView ID="TaskDoneGridView" runat="server"></asp:GridView>
+        <asp:GridView ID="taskGridView" runat="server" CellPadding="3"></asp:GridView>
+        <asp:GridView ID="TaskAssignedGridView" runat="server" CellPadding="3"></asp:GridView>
+        <asp:GridView ID="TaskDoneGridView" runat="server" CellPadding="3"></asp:GridView>
 
         <asp:Chart ID="Chart1" runat="server">
             <Series>

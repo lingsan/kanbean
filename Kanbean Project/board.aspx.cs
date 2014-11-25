@@ -25,6 +25,7 @@ namespace Kanbean_Project
         OleDbCommand selectSearch = new OleDbCommand();
 
         DataSet myDataSet = new DataSet();
+        
         private void getDatabase()
         {
             mySelectCommand.Connection = myConnection;
@@ -359,6 +360,7 @@ namespace Kanbean_Project
             }
             getBacklogs();
             getTasks();
+            Session["username"] = "user1";
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -926,6 +928,68 @@ namespace Kanbean_Project
         protected void btnComment_Click(object sender, EventArgs e)
         {
             //lblTest.Text = ((Control)sender).ID;
+            string id = "";
+            if (((Control)sender).ID.Substring(3, 4) == "Back")
+            {
+                id = ((Control)sender).ID.Remove(0, 17);
+                addCommentLegend.InnerText = "Comment for Backlog #" + id;
+                mySelectCommand.CommandText = "SELECT BacklogsComments.*, [User].Username"
+                                              + " FROM BacklogsComments, [User] WHERE BacklogsComments.BacklogID = " + id
+                                              + " AND BacklogsComments.CommenterID =[User].UserID ORDER BY BacklogsComments.CommentID ";
+                myReader = mySelectCommand.ExecuteReader();
+                bool notEoF;
+                notEoF = myReader.Read();
+                Table cmtTable = new Table();
+                cmtTable.CellPadding = 4;
+
+                TableRow hr = new TableRow();
+                TableHeaderCell hcell1 = new TableHeaderCell();
+                hcell1.Text = "User";
+                hr.Controls.Add(hcell1);
+                TableHeaderCell hcell2 = new TableHeaderCell();
+                hcell2.Text = "Comment";
+                hr.Controls.Add(hcell2);
+                TableHeaderCell hcell3 = new TableHeaderCell();
+                hr.Controls.Add(hcell3);
+                cmtTable.Controls.Add(hr);
+
+                while (notEoF)
+                {
+                    TableRow tr = new TableRow();
+                    TableCell cell1 = new TableCell();
+                    cell1.Text = myReader["Username"].ToString();
+                    tr.Controls.Add(cell1);
+                    TableCell cell2 = new TableCell();
+                    cell2.Text = myReader["CommentContent"].ToString();
+                    tr.Controls.Add(cell2);
+                    
+                    TableCell cell3 = new TableCell();
+                    if (myReader["Username"].ToString() == Session["username"].ToString() || Session["username"].ToString() == "admin")
+                    {
+                        LinkButton btnDeleteComment = new LinkButton();
+                        btnDeleteComment.CssClass = "btnDeleteFileIcon";
+                        btnDeleteComment.ID = "btnDeleteBacklogComment" + id;
+                        btnDeleteComment.ToolTip = "Delete the task";
+                        btnDeleteComment.Click += new EventHandler(btnDeleteComment_Click);
+                        cell3.Controls.Add(btnDeleteComment);
+                    }
+                    tr.Controls.Add(cell3);
+                    cmtTable.Controls.Add(tr);
+
+                    notEoF = myReader.Read();
+                }
+                commentPanel.Controls.Add(cmtTable);
+            }
+            addCommentPopup.Show();
+        }
+
+        protected void btnDeleteComment_Click(object sender, EventArgs e)
+        {
+
+        }
+        protected void btnAddComment_Click(object sender, EventArgs e)
+        {
+
         }
 
         protected void btnFilter_Click(object sender, EventArgs e)

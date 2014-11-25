@@ -234,7 +234,7 @@
 
                 <ajaxToolkit:ModalPopupExtender ID="viewBacklogandTaskPopup" runat="server" TargetControlID="viewBacklogandTaskHiddenField" PopupControlID="viewBacklogandTaskPanel" CancelControlID="btnCancelView" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
                 <asp:HiddenField ID="viewBacklogandTaskHiddenField" runat="server" />
-                <asp:Panel ID="viewBacklogandTaskPanel" style="max-width:50%" runat="server" CssClass="popupmodal">
+                <asp:Panel ID="viewBacklogandTaskPanel" runat="server" CssClass="popupmodal">
                     <fieldset style="padding:1em;">
                         <legend id="viewBacklogandTaskLegend" runat="server"></legend>
                         <asp:Literal ID="viewBacklogandTask" runat="server"></asp:Literal>
@@ -291,6 +291,18 @@
                     </fieldset>
                 </asp:Panel>
 
+                <ajaxToolkit:ModalPopupExtender runat="server" ID="addCommentPopup" TargetControlID="addCommentHiddenField" PopupControlID="addCommentPanel" CancelControlID="btnCloseCmt" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
+                <asp:HiddenField ID="addCommentHiddenField" runat="server" />
+                <asp:Panel ID="addCommentPanel" runat="server" CssClass="popupmodal">
+                    <fieldset style="padding:1em">
+                        <legend id="addCommentLegend" runat="server">Add Comment</legend>
+                        <asp:Panel ID="commentPanel" runat="server"></asp:Panel>
+                        <hr />
+                        <asp:TextBox ID="addCommentTextBox" runat="server" ></asp:TextBox>
+                        <asp:Button ID="btnAddComment" runat="server" Text="Add" OnClick="btnAddComment_Click" />&nbsp;&nbsp;<asp:Button ID="btnCloseCmt" runat="server" Text="Close" />
+                    </fieldset>
+                </asp:Panel>
+
                 <ajaxToolkit:ModalPopupExtender runat="server" ID="showAttachedFilesPopup" TargetControlID="showAttachedFilesHiddenField" PopupControlID="showAttachedFilesPanel" CancelControlID="btnCloseFiles" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
                 <asp:HiddenField ID="showAttachedFilesHiddenField" runat="server" />
                 <asp:Panel ID="showAttachedFilesPanel" runat="server" CssClass="popupmodal">
@@ -317,6 +329,7 @@
             <Triggers>
                 <asp:PostBackTrigger ControlID="btnUploadFile" />
                 <asp:PostBackTrigger ControlID="showAttachedFilesGridView" />
+                <asp:PostBackTrigger ControlID="btnAddComment" />
             </Triggers>
         </asp:UpdatePanel>
      </form>

@@ -28,8 +28,9 @@ namespace Kanbean_Project
             "Tasks.TaskTitle as Title, Tasks.TaskComplexity as Complexity, " +
             "[User].[Username] as Assginee, Status.StatusName as Status, " +
             "Tasks.TaskEstimationHour as [Estimation Hour], Tasks.TaskSpentTime as [Spent Time], " +
-            "Tasks.TaskStartDate as [Created Date], Tasks.TaskDueDate as [Due Date], " +
-            "Tasks.TaskCompletedDate as [Completed Date] " +
+            "FORMAT(Tasks.TaskStartDate, 'dd.mm.yyyy') as [Created Date], " +
+            "FORMAT(Tasks.TaskDueDate, 'dd.mm.yyyy') as [Due Date], " +
+            "FORMAT(Tasks.TaskCompletedDate, 'dd.mm.yyyy') as [Completed Date] " +
             "FROM Tasks, Backlogs, Status, [User] " +
             "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Tasks.TaskAssigneeID = [User].UserID " +
             "AND Tasks.TaskStatusID = Status.StatusID AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
@@ -38,7 +39,6 @@ namespace Kanbean_Project
             taskGridView.DataMember = "myTasks";
             taskGridView.DataBind();
             taskGridView.Caption = "Tasks Table";
-
             myCommand.CommandText = "SELECT [User].Username as [User], COUNT(Tasks.TaskAssigneeID) as Amount, SUM(Tasks.TaskEstimationHour) as Point FROM Tasks, [User] WHERE Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskAssigneeID <> 1 GROUP BY Tasks.TaskAssigneeID, [User].Username ORDER BY Tasks.TaskAssigneeID";
             myAdapter.Fill(myDataSet, "TaskAssigned");
             TaskAssignedGridView.DataSource = myDataSet;
@@ -92,7 +92,7 @@ namespace Kanbean_Project
             Chart3.Legends["Legend1"].Alignment = System.Drawing.StringAlignment.Center;
             Chart3.DataBindTable((myDataSet.Tables["TaskAssigned"] as System.ComponentModel.IListSource).GetList(), "User");
 
-
         }
+
     }
 }

@@ -282,6 +282,7 @@ td {
 .popupmodal {
     background-color:white;
     padding:0.6em;
+    max-width:60%;
 }
 
 legend {
