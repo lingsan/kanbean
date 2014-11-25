@@ -1088,10 +1088,10 @@ namespace Kanbean_Project
 
         protected void btnUploadFile_Click(object sender, EventArgs e)
         {
-            string fileName = Path.GetFileName(AttachedFileUpload.PostedFile.FileName);
-            string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
-            if (fileName != null)
+            if (AttachedFileUpload.HasFile)
             {
+                string fileName = Path.GetFileName(AttachedFileUpload.PostedFile.FileName);
+                string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
                 if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")) == false)
                     Directory.CreateDirectory(Server.MapPath("~/Files/task" + id + "/"));
                 AttachedFileUpload.PostedFile.SaveAs(Server.MapPath("~/Files/task" + id + "/") + fileName);
