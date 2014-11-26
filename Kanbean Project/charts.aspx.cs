@@ -18,7 +18,8 @@ namespace Kanbean_Project
         OleDbCommand myCommand = new OleDbCommand();
         OleDbDataAdapter myAdapter = new OleDbDataAdapter();
         DataSet myDataSet = new DataSet();
-        protected void Page_Load(object sender, EventArgs e)
+
+        protected void Page_Init(object sender, EventArgs e)
         {
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
@@ -34,33 +35,18 @@ namespace Kanbean_Project
             "FROM Tasks, Backlogs, Status, [User] " +
             "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Tasks.TaskAssigneeID = [User].UserID " +
             "AND Tasks.TaskStatusID = Status.StatusID AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
-            myAdapter.Fill(myDataSet, "myTasks");
+            myAdapter.Fill(myDataSet, "TasksTable");
             taskGridView.DataSource = myDataSet;
-            taskGridView.DataMember = "myTasks";
+            taskGridView.DataMember = "TasksTable";
             taskGridView.DataBind();
             taskGridView.Caption = "Tasks Table";
+
             myCommand.CommandText = "SELECT [User].Username as [User], COUNT(Tasks.TaskAssigneeID) as Amount, SUM(Tasks.TaskEstimationHour) as Point FROM Tasks, [User] WHERE Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskAssigneeID <> 1 GROUP BY Tasks.TaskAssigneeID, [User].Username ORDER BY Tasks.TaskAssigneeID";
             myAdapter.Fill(myDataSet, "TaskAssigned");
             TaskAssignedGridView.DataSource = myDataSet;
             TaskAssignedGridView.DataMember = "TaskAssigned";
             TaskAssignedGridView.DataBind();
             TaskAssignedGridView.Caption = "Task Assigned";
-
-            Chart1.Titles.Add(new Title("Task Assigned by Person", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
-            Chart1.Series["Series1"].ChartType = SeriesChartType.Pie;
-            Chart1.Series["Series1"]["PieLabelStyle"] = "Outside";
-            Chart1.Series["Series1"].IsValueShownAsLabel = true;
-            Chart1.Series["Series1"].Label = "#PERCENT{P2}";
-            Chart1.Series["Series1"].BorderWidth = 1;
-            Chart1.Series["Series1"].BorderColor = System.Drawing.Color.FromArgb(26, 59, 105);
-            Chart1.Series["Series1"].XValueMember = "User";
-            Chart1.Series["Series1"].YValueMembers = "Amount";
-            Chart1.Legends.Add("Legend1");
-            Chart1.Legends["Legend1"].Docking = Docking.Bottom;
-            Chart1.Legends["Legend1"].Alignment = System.Drawing.StringAlignment.Center;
-            Chart1.Series["Series1"].LegendText = "#VALX";
-            Chart1.DataSource = myDataSet.Tables["TaskAssigned"];
-            Chart1.DataBind();
 
             myCommand.CommandText = "SELECT [User].Username as [User], COUNT(Tasks.TaskAssigneeID) as Amount, SUM(Tasks.TaskEstimationHour) as Point FROM Tasks, [User] WHERE Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskAssigneeID <> 1 AND Tasks.TaskStatusID = 3 GROUP BY Tasks.TaskAssigneeID, [User].Username ORDER BY Tasks.TaskAssigneeID";
             myAdapter.Fill(myDataSet, "TaskDone");
@@ -69,30 +55,90 @@ namespace Kanbean_Project
             TaskDoneGridView.DataBind();
             TaskDoneGridView.Caption = "Task Done";
 
-            Chart2.Titles.Add(new Title("Task Done by Person", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
-            Chart2.Series["Series1"].ChartType = SeriesChartType.Pie;
-            Chart2.Series["Series1"]["PieLabelStyle"] = "Outside";
-            Chart2.Series["Series1"].IsValueShownAsLabel = true;
-            Chart2.Series["Series1"].Label = "#PERCENT";
-            Chart2.Series["Series1"].BorderWidth = 1;
-            Chart2.Series["Series1"].BorderColor = System.Drawing.Color.FromArgb(26, 59, 105);
-            Chart2.Series["Series1"].XValueMember = "User";
-            Chart2.Series["Series1"].YValueMembers = "Amount";
-            Chart2.Legends.Add("Legend1");
-            Chart2.Legends["Legend1"].Docking = Docking.Bottom;
-            Chart2.Legends["Legend1"].Alignment = System.Drawing.StringAlignment.Center;
-            Chart2.Series["Series1"].LegendText = "#VALX";
-            Chart2.DataSource = myDataSet.Tables["TaskDone"];
-            Chart2.DataBind();
 
-            Chart3.Titles.Add(new Title("Estimated Point by Person", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
-            Chart3.Series["Series1"].ChartType = SeriesChartType.Column;
-            Chart3.Legends.Add("Legend1");
-            Chart3.Legends["Legend1"].Docking = Docking.Bottom;
-            Chart3.Legends["Legend1"].Alignment = System.Drawing.StringAlignment.Center;
-            Chart3.DataBindTable((myDataSet.Tables["TaskAssigned"] as System.ComponentModel.IListSource).GetList(), "User");
+            TaskAssignedChart.Titles.Add(new Title("Task Assigned by Person", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
+            TaskAssignedChart.Series["TaskAssigned"]["PieLabelStyle"] = "Outside";
+            TaskAssignedChart.Series["TaskAssigned"].XValueMember = "User";
+            TaskAssignedChart.Series["TaskAssigned"].YValueMembers = "Amount";
+            TaskAssignedChart.DataSource = myDataSet.Tables["TaskAssigned"];
+            TaskAssignedChart.DataBind();
+
+            TaskDoneChart.Titles.Add(new Title("Task Done by Person", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
+            TaskDoneChart.Series["TaskDone"]["PieLabelStyle"] = "Outside";
+            TaskDoneChart.Series["TaskDone"].XValueMember = "User";
+            TaskDoneChart.Series["TaskDone"].YValueMembers = "Amount";
+            TaskDoneChart.DataSource = myDataSet.Tables["TaskDone"];
+            TaskDoneChart.DataBind();
+
+            for (int i = 0; i < myDataSet.Tables["TaskAssigned"].Rows.Count; i++)
+            {
+                EstimationPointChart.Series["Amount"].Points.AddXY(myDataSet.Tables["TaskAssigned"].Rows[i]["User"].ToString(), Convert.ToInt32(myDataSet.Tables["TaskAssigned"].Rows[i]["Amount"]));
+                EstimationPointChart.Series["Point"].Points.AddXY(myDataSet.Tables["TaskAssigned"].Rows[i]["User"].ToString(), Convert.ToInt32(myDataSet.Tables["TaskAssigned"].Rows[i]["Point"]));
+            }
+
+            EstimationPointChart.Titles.Add(new Title("Estimated Point by Person", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
+
+        }
+        protected void Page_Load(object sender, EventArgs e)
+        {
 
         }
 
+        protected void btnBacktheBoard_Click(object sender, EventArgs e)
+        {
+            myConnection.Close();
+            Response.Redirect("board.aspx");
+        }
+
+        protected void btnBurnDown_Click(object sender, EventArgs e)
+        {
+            DateTime startdate = Convert.ToDateTime(startdateBDTextBox.Text);
+            DateTime enddate = Convert.ToDateTime(enddateBDTextBox.Text);
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Date", typeof(string));
+            dt.Columns.Add("Hour", typeof(int));
+            myCommand.CommandText = "SELECT SUM(TaskEstimationHour) FROM Tasks WHERE TaskDueDate >= #" + startdate + "# AND  TaskDueDate <=#" + enddate + "#";
+            int remainhour = Convert.ToInt32(myCommand.ExecuteScalar().ToString());
+            dt.Rows.Add(startdate.ToString("dd.MM.yyyy"), remainhour);
+            foreach (DateTime date in GetDateRange(startdate, enddate))
+            {
+                int hour = remainhour;
+                myCommand.CommandText = "SELECT SUM(TaskEstimationHour) FROM Tasks WHERE TaskCompletedDate >= #" + startdate + "# AND  TaskCompletedDate <=#" + date + "#";
+                if (myCommand.ExecuteScalar() != DBNull.Value)
+                    hour = remainhour - Convert.ToInt32(myCommand.ExecuteScalar());
+                dt.Rows.Add(date.ToString("dd.MM.yyyy"), hour);
+            }
+            dt.Rows.Add(enddate.ToString("dd.MM.yyyy"), 0);
+
+            decimal j = (Convert.ToDecimal(dt.Rows[0]["Hour"]) - Convert.ToDecimal(dt.Rows[dt.Rows.Count - 1]["Hour"])) / (dt.Rows.Count - 3);
+            for (int i = 0; i < dt.Rows.Count - 2; i++)
+            {
+                BurnDownChart.Series["Burn-Down"].Points.AddXY(dt.Rows[i + 1]["Date"].ToString(), Convert.ToDecimal(dt.Rows[i + 1]["Hour"]));
+                BurnDownChart.Series["Optimal"].Points.AddXY(dt.Rows[i + 1]["Date"].ToString(), Convert.ToDecimal(dt.Rows[0]["Hour"]) - i * j);
+            }
+            BurnDownChart.Titles.Add(new Title("Burn-Down Chart", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
+            BurnDownChart.Legends.Add("BurnDownChartLegend");
+            BurnDownChart.Legends["BurnDownChartLegend"].Docking = Docking.Bottom;
+            BurnDownChart.Legends["BurnDownChartLegend"].Alignment = System.Drawing.StringAlignment.Center;
+        }
+
+        protected void btnBurnUp_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private List<DateTime> GetDateRange(DateTime StartingDate, DateTime EndingDate)
+        {
+            if (StartingDate > EndingDate)
+                return null;
+            List<DateTime> rv = new List<DateTime>();
+            DateTime tmpDate = StartingDate;
+            do
+            {
+                rv.Add(tmpDate);
+                tmpDate = tmpDate.AddDays(1);
+            } while (tmpDate <= EndingDate);
+            return rv;
+        }
     }
 }

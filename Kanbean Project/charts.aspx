@@ -12,34 +12,115 @@
 </head>
 <body>
     <form id="chart" runat="server">
-        <asp:GridView ID="taskGridView" runat="server" CellPadding="3"></asp:GridView>
-        <asp:GridView ID="TaskAssignedGridView" runat="server" CellPadding="3"></asp:GridView>
-        <asp:GridView ID="TaskDoneGridView" runat="server" CellPadding="3"></asp:GridView>
-
-        <asp:Chart ID="Chart1" runat="server">
-            <Series>
-                <asp:Series Name="Series1"></asp:Series>
-            </Series>
-            <ChartAreas>
-                <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
-            </ChartAreas>
-        </asp:Chart>
-        <asp:Chart ID="Chart2" runat="server">
-            <Series>
-                <asp:Series Name="Series1"></asp:Series>
-            </Series>
-            <ChartAreas>
-                <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
-            </ChartAreas>
-        </asp:Chart>
-        <asp:Chart ID="Chart3" runat="server">
-            <Series>
-                <asp:Series Name="Series1"></asp:Series>
-            </Series>
-            <ChartAreas>
-                <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
-            </ChartAreas>
-        </asp:Chart>
+        <asp:ScriptManager ID="chartScriptManager" runat="server"></asp:ScriptManager>
+        <asp:UpdatePanel ID="chartUpdatePanel" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <table>
+                    <tr>
+                        <td colspan="6">
+                            <asp:Button ID="btnBacktheBoard" runat="server" Text="Back to the Board" OnClick="btnBacktheBoard_Click" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="6">Chart</th>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <asp:GridView ID="taskGridView" runat="server" CellPadding="3"></asp:GridView>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <asp:GridView ID="TaskAssignedGridView" runat="server" CellPadding="3"></asp:GridView>
+                        </td>
+                        <td colspan="2">
+                            <asp:GridView ID="TaskDoneGridView" runat="server" CellPadding="3"></asp:GridView>
+                        </td>
+                        <td colspan="2">
+                            <asp:GridView ID="EstimationFactorGridView" runat="server" CellPadding="3"></asp:GridView>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <asp:Chart ID="TaskAssignedChart" runat="server" >
+                                <Series>
+                                    <asp:Series Name="TaskAssigned" ChartType="Pie" ChartArea="TaskAssignedChartArea" IsValueShownAsLabel="True" Label="#PERCENT{P2}" BorderWidth="1" BorderColor="#000040" LegendText="#VALX"></asp:Series>
+                                </Series>
+                                <ChartAreas>
+                                    <asp:ChartArea Name="TaskAssignedChartArea"></asp:ChartArea>
+                                </ChartAreas>
+                                <Legends>
+                                    <asp:Legend Name="TaskAssignedLegend" Docking="Bottom" Alignment="Center"></asp:Legend>
+                                </Legends>
+                            </asp:Chart>
+                        </td>
+                        <td colspan="2">
+                            <asp:Chart ID="TaskDoneChart" runat="server">
+                                <Series>
+                                    <asp:Series Name="TaskDone" ChartArea="TaskDoneChartArea" ChartType="Pie" IsValueShownAsLabel="True" Label="#PERCENT{P2}" BorderWidth="1" BorderColor="#000040" LegendText="#VALX"></asp:Series>
+                                </Series>
+                                <ChartAreas>
+                                    <asp:ChartArea Name="TaskDoneChartArea"></asp:ChartArea>
+                                </ChartAreas>
+                                <Legends>
+                                    <asp:Legend Name="TaskDoneLegend" Docking="Bottom" Alignment="Center"></asp:Legend>
+                                </Legends>
+                            </asp:Chart>
+                        </td>
+                        <td colspan="2">
+                            <asp:Chart ID="EstimationPointChart" runat="server">
+                                <Series>
+                                    <asp:Series Name="Amount" ChartArea="EstimationPointChartArea"></asp:Series>
+                                    <asp:Series Name="Point" ChartArea="EstimationPointChartArea"></asp:Series>
+                                </Series>
+                                <ChartAreas>
+                                    <asp:ChartArea Name="EstimationPointChartArea"></asp:ChartArea>
+                                </ChartAreas>
+                                <Legends>
+                                    <asp:Legend Name="EstimationPointChartLegend" Docking="Bottom" Alignment="Center"></asp:Legend>
+                                </Legends>
+                            </asp:Chart>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            Start date: <asp:TextBox ID="startdateBDTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
+                            End date: <asp:TextBox ID="enddateBDTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
+                            <asp:Button ID="btnBurnDown" runat="server" Text="Burn-Down Chart" OnClick="btnBurnDown_Click" />
+                        </td>
+                        <td colspan="3">
+                            Start date: <asp:TextBox ID="startdateBUTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
+                            End date: <asp:TextBox ID="enddateBUTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
+                            <asp:Button ID="btnBurnUp" runat="server" Text="Burn-Up Chart" OnClick="btnBurnUp_Click" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <asp:Chart ID="BurnDownChart" runat="server" Width="600px">
+                                <Series>
+                                    <asp:Series Name="Burn-Down" ChartArea="BurnDownChartArea" BorderWidth="4" ChartType="Line"></asp:Series>
+                                    <asp:Series Name="Optimal" ChartArea="BurnDownChartArea" BorderWidth="4" ChartType="Line"></asp:Series>
+                                </Series>
+                                <ChartAreas>
+                                    <asp:ChartArea Name="BurnDownChartArea"></asp:ChartArea>
+                                </ChartAreas>
+                            </asp:Chart>
+                        </td>
+                        <td colspan="3">
+                            <asp:Chart ID="BurnUpChart" runat="server">
+                                <Series>
+                                    <asp:Series Name="Burn-Up" ChartArea="BurnUpChartArea"></asp:Series>
+                                    <asp:Series Name="Optimal" ChartArea="BurnUpChartArea"></asp:Series>
+                                </Series>
+                                <ChartAreas>
+                                    <asp:ChartArea Name="BurnUpChartArea"></asp:ChartArea>
+                                </ChartAreas>
+                            </asp:Chart>
+                        </td>
+                    </tr>
+                </table>
+            </ContentTemplate>
+        </asp:UpdatePanel>
     </form>
 </body>
 </html>

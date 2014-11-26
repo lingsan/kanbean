@@ -22,6 +22,33 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.HtmlControls.HtmlForm chart;
         
         /// <summary>
+        /// chartScriptManager control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager chartScriptManager;
+        
+        /// <summary>
+        /// chartUpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel chartUpdatePanel;
+        
+        /// <summary>
+        /// btnBacktheBoard control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBacktheBoard;
+        
+        /// <summary>
         /// taskGridView control.
         /// </summary>
         /// <remarks>
@@ -49,30 +76,111 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.GridView TaskDoneGridView;
         
         /// <summary>
-        /// Chart1 control.
+        /// EstimationFactorGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.DataVisualization.Charting.Chart Chart1;
+        protected global::System.Web.UI.WebControls.GridView EstimationFactorGridView;
         
         /// <summary>
-        /// Chart2 control.
+        /// TaskAssignedChart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.DataVisualization.Charting.Chart Chart2;
+        protected global::System.Web.UI.DataVisualization.Charting.Chart TaskAssignedChart;
         
         /// <summary>
-        /// Chart3 control.
+        /// TaskDoneChart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.DataVisualization.Charting.Chart Chart3;
+        protected global::System.Web.UI.DataVisualization.Charting.Chart TaskDoneChart;
+        
+        /// <summary>
+        /// EstimationPointChart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.DataVisualization.Charting.Chart EstimationPointChart;
+        
+        /// <summary>
+        /// startdateBDTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox startdateBDTextBox;
+        
+        /// <summary>
+        /// enddateBDTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox enddateBDTextBox;
+        
+        /// <summary>
+        /// btnBurnDown control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBurnDown;
+        
+        /// <summary>
+        /// startdateBUTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox startdateBUTextBox;
+        
+        /// <summary>
+        /// enddateBUTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox enddateBUTextBox;
+        
+        /// <summary>
+        /// btnBurnUp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBurnUp;
+        
+        /// <summary>
+        /// BurnDownChart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.DataVisualization.Charting.Chart BurnDownChart;
+        
+        /// <summary>
+        /// BurnUpChart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.DataVisualization.Charting.Chart BurnUpChart;
     }
 }
