@@ -329,7 +329,6 @@
             <Triggers>
                 <asp:PostBackTrigger ControlID="btnUploadFile" />
                 <asp:PostBackTrigger ControlID="showAttachedFilesGridView" />
-                <asp:PostBackTrigger ControlID="btnAddComment" />
             </Triggers>
         </asp:UpdatePanel>
      </form>

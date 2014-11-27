@@ -372,7 +372,9 @@ namespace Kanbean_Project
             }
             getBacklogs();
             getTasks();
-            Session["username"] = "user1";
+            Session["username"] = "admin";
+            Session["userID"] = 2;
+            Session["currentProject"] = 1;
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -948,50 +950,73 @@ namespace Kanbean_Project
                 mySelectCommand.CommandText = "SELECT BacklogsComments.*, [User].Username"
                                               + " FROM BacklogsComments, [User] WHERE BacklogsComments.BacklogID = " + id
                                               + " AND BacklogsComments.CommenterID =[User].UserID ORDER BY BacklogsComments.CommentID ";
-                myReader = mySelectCommand.ExecuteReader();
-                bool notEoF;
-                notEoF = myReader.Read();
-                Table cmtTable = new Table();
-                cmtTable.CellPadding = 4;
+            }
+            if (((Control)sender).ID.Substring(3, 4) == "Task")
+            {
+                id = ((Control)sender).ID.Remove(0, 14);
+                addCommentLegend.InnerText = "Comment for Task #" + id;
+                test.Text = ((Control)sender).ID;
+                mySelectCommand.CommandText = "SELECT TasksComments.*, [User].Username"
+                                              + " FROM TasksComments, [User] WHERE TasksComments.TaskID = " + id
+                                              + " AND TasksComments.CommenterID =[User].UserID ORDER BY TasksComments.CommentID ";
+            }
+            myReader = mySelectCommand.ExecuteReader();
+            bool notEoF;
+            notEoF = myReader.Read();
+            Table cmtTable = new Table();
+            cmtTable.CellPadding = 4;
 
-                TableRow hr = new TableRow();
-                TableHeaderCell hcell1 = new TableHeaderCell();
-                hcell1.Text = "User";
-                hr.Controls.Add(hcell1);
-                TableHeaderCell hcell2 = new TableHeaderCell();
-                hcell2.Text = "Comment";
-                hr.Controls.Add(hcell2);
-                TableHeaderCell hcell3 = new TableHeaderCell();
-                hr.Controls.Add(hcell3);
-                cmtTable.Controls.Add(hr);
+            TableRow hr = new TableRow();
+            TableHeaderCell hcell1 = new TableHeaderCell();
+            hcell1.Text = "User";
+            hr.Controls.Add(hcell1);
+            TableHeaderCell hcell2 = new TableHeaderCell();
+            hcell2.Text = "Comment";
+            hr.Controls.Add(hcell2);
+            TableHeaderCell hcell3 = new TableHeaderCell();
+            hr.Controls.Add(hcell3);
+            cmtTable.Controls.Add(hr);
 
-                while (notEoF)
+            while (notEoF)
+            {
+                TableRow tr = new TableRow();
+                TableCell cell1 = new TableCell();
+                cell1.Text = myReader["Username"].ToString();
+                tr.Controls.Add(cell1);
+                TableCell cell2 = new TableCell();
+                cell2.Text = myReader["CommentContent"].ToString();
+                tr.Controls.Add(cell2);
+
+                TableCell cell3 = new TableCell();
+                if (myReader["Username"].ToString() == Session["username"].ToString() || Session["username"].ToString() == "admin")
                 {
-                    TableRow tr = new TableRow();
-                    TableCell cell1 = new TableCell();
-                    cell1.Text = myReader["Username"].ToString();
-                    tr.Controls.Add(cell1);
-                    TableCell cell2 = new TableCell();
-                    cell2.Text = myReader["CommentContent"].ToString();
-                    tr.Controls.Add(cell2);
-                    
-                    TableCell cell3 = new TableCell();
-                    if (myReader["Username"].ToString() == Session["username"].ToString() || Session["username"].ToString() == "admin")
+                    if (((Control)sender).ID.Substring(3, 4) == "Back")
                     {
                         LinkButton btnDeleteComment = new LinkButton();
                         btnDeleteComment.CssClass = "btnDeleteFileIcon";
-                        btnDeleteComment.ID = "btnDeleteBacklogComment" + id;
-                        btnDeleteComment.ToolTip = "Delete the task";
+                        btnDeleteComment.ID = "btnDeleteBacklogComment" + myReader["CommentID"].ToString();
+                        btnDeleteComment.ToolTip = "Delete the comment";
                         btnDeleteComment.Click += new EventHandler(btnDeleteComment_Click);
                         cell3.Controls.Add(btnDeleteComment);
                     }
-                    tr.Controls.Add(cell3);
-                    cmtTable.Controls.Add(tr);
-
-                    notEoF = myReader.Read();
+                    if (((Control)sender).ID.Substring(3, 4) == "Task")
+                    {
+                        LinkButton btnDeleteComment = new LinkButton();
+                        btnDeleteComment.CssClass = "btnDeleteFileIcon";
+                        btnDeleteComment.ID = "btnDeleteTaskComment" + myReader["CommentID"].ToString();
+                        btnDeleteComment.ToolTip = "Delete the comment";
+                        btnDeleteComment.Click += new EventHandler(btnDeleteComment_Click);
+                        cell3.Controls.Add(btnDeleteComment);
+                    }
                 }
-                commentPanel.Controls.Add(cmtTable);
+                tr.Controls.Add(cell3);
+                cmtTable.Controls.Add(tr);
+
+                notEoF = myReader.Read();
             }
+            myReader.Close();
+            commentPanel.Controls.Add(cmtTable);
+            
             addCommentPopup.Show();
         }
 
@@ -1001,6 +1026,23 @@ namespace Kanbean_Project
         }
         protected void btnAddComment_Click(object sender, EventArgs e)
         {
+            myInsertCommand.Connection = myConnection;
+            if (addCommentLegend.InnerText.Substring(12, 4) == "Back")
+            {
+                string id = addCommentLegend.InnerText.Remove(0, 21);
+                myInsertCommand.CommandText = "INSERT INTO BacklogsComments (CommentContent,CommenterID,BacklogID) "
+                                            + "VALUES ('" + addCommentTextBox.Text + "','"+ Session["userID"].ToString() +"','" + id + "')";
+                myInsertCommand.ExecuteNonQuery();
+            }
+            else if (addCommentLegend.InnerText.Substring(12, 4) == "Task")
+            {
+                string id = addCommentLegend.InnerText.Remove(0, 18);
+                myInsertCommand.CommandText = "INSERT INTO TasksComments (CommentContent,CommenterID,TaskID) "
+                                            + "VALUES ('" + addCommentTextBox.Text + "','" + Session["userID"].ToString() + "','" + id + "')";
+                myInsertCommand.ExecuteNonQuery();
+            }
+            myDataSet.Clear();
+            getDatabase();
 
         }
 
@@ -1160,6 +1202,7 @@ namespace Kanbean_Project
             showAttachedFilesGridView.DataBind();
             showAttachedFilesLegend.InnerText = "Attached File of Task #" + id;
             showAttachedFilesPopup.Show();
+            
         }
 
         protected void btnUploadFile_Click(object sender, EventArgs e)
