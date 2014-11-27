@@ -41,21 +41,53 @@ namespace Kanbean_Project
             taskGridView.DataBind();
             taskGridView.Caption = "Tasks Table";
 
-            myCommand.CommandText = "SELECT [User].Username as [User], COUNT(Tasks.TaskAssigneeID) as Amount, SUM(Tasks.TaskEstimationHour) as Point FROM Tasks, [User] WHERE Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskAssigneeID <> 1 GROUP BY Tasks.TaskAssigneeID, [User].Username ORDER BY Tasks.TaskAssigneeID";
+            myCommand.CommandText = "SELECT [User].Username as [User], COUNT(Tasks.TaskAssigneeID) as Amount, " +
+                                    "SUM(Tasks.TaskEstimationHour) as Point FROM Tasks, [User], Backlogs " +
+                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString() + 
+                                    " AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskAssigneeID <> 1 " + 
+                                    "GROUP BY Tasks.TaskAssigneeID, [User].Username ORDER BY Tasks.TaskAssigneeID";
             myAdapter.Fill(myDataSet, "TaskAssigned");
             TaskAssignedGridView.DataSource = myDataSet;
             TaskAssignedGridView.DataMember = "TaskAssigned";
             TaskAssignedGridView.DataBind();
             TaskAssignedGridView.Caption = "Task Assigned";
 
-            myCommand.CommandText = "SELECT [User].Username as [User], COUNT(Tasks.TaskAssigneeID) as Amount, SUM(Tasks.TaskEstimationHour) as Point FROM Tasks, [User] WHERE Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskAssigneeID <> 1 AND Tasks.TaskStatusID = 3 GROUP BY Tasks.TaskAssigneeID, [User].Username ORDER BY Tasks.TaskAssigneeID";
+            myCommand.CommandText = "SELECT [User].Username as [User], COUNT(Tasks.TaskAssigneeID) as Amount, " +
+                                    "SUM(Tasks.TaskEstimationHour) as Point FROM Tasks, [User], Backlogs " +
+                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString() + 
+                                    " AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskAssigneeID <> 1 " +
+                                    "AND Tasks.TaskStatusID = 3 GROUP BY Tasks.TaskAssigneeID, [User].Username " + 
+                                    "ORDER BY Tasks.TaskAssigneeID";
             myAdapter.Fill(myDataSet, "TaskDone");
             TaskDoneGridView.DataSource = myDataSet;
             TaskDoneGridView.DataMember = "TaskDone";
             TaskDoneGridView.DataBind();
             TaskDoneGridView.Caption = "Task Done";
 
-
+            myCommand.CommandText = "SELECT Tasks.TaskID as Task, Tasks.TaskEstimationHour as [Estimation Hour], " +
+                                    "Tasks.TaskSpentTime as [Spent Time], Format (" +
+                                    "SWITCH(Tasks.TaskEstimationHour >= Tasks.TaskSpentTime," +
+                                            "1 - Tasks.TaskEstimationHour/Tasks.TaskSpentTime," +
+                                            "Tasks.TaskEstimationHour < Tasks.TaskSpentTime," +
+                                            "Tasks.TaskSpentTime/Tasks.TaskEstimationHour - 1)," +
+                                    "'Percent') as [Factor] FROM Tasks, Backlogs " +
+                                    "WHERE Tasks.TaskStatusID = 3 AND Tasks.BacklogID = Backlogs.BacklogID " +
+                                    "AND Backlogs.ProjectID = " + Session["currentProject"].ToString() + 
+                                    " UNION ALL SELECT 'Total' As Task, Sum(Tasks.TaskEstimationHour) As [Estimation Hour], " +
+                                    "Sum(Tasks.TaskSpentTime) As [Spent Time], Format (" +
+                                    "SWITCH(Sum(Tasks.TaskEstimationHour) >= Sum(Tasks.TaskSpentTime)," +
+                                            "1 - Sum(Tasks.TaskEstimationHour)/Sum(Tasks.TaskSpentTime)," +
+                                            "Sum(Tasks.TaskEstimationHour) < Sum(Tasks.TaskSpentTime)," +
+                                            "Sum(Tasks.TaskSpentTime)/Sum(Tasks.TaskEstimationHour) - 1)," +
+                                    "'Percent') as [Factor] FROM Tasks, Backlogs " +
+                                    "WHERE Tasks.TaskStatusID = 3 AND Tasks.BacklogID = Backlogs.BacklogID " +
+                                    "AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
+            myAdapter.Fill(myDataSet, "EstimationFactor");
+            EstimationFactorGridView.DataSource = myDataSet;
+            EstimationFactorGridView.DataMember = "EstimationFactor";
+            EstimationFactorGridView.DataBind();
+            EstimationFactorGridView.Caption = "Estimation Factor";
+            
             TaskAssignedChart.Titles.Add(new Title("Task Assigned by Person", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
             TaskAssignedChart.Series["TaskAssigned"]["PieLabelStyle"] = "Outside";
             TaskAssignedChart.Series["TaskAssigned"].XValueMember = "User";
@@ -97,13 +129,18 @@ namespace Kanbean_Project
             DataTable dt = new DataTable();
             dt.Columns.Add("Date", typeof(string));
             dt.Columns.Add("Hour", typeof(int));
-            myCommand.CommandText = "SELECT SUM(TaskEstimationHour) FROM Tasks WHERE TaskDueDate >= #" + startdate + "# AND  TaskDueDate <=#" + enddate + "#";
+            myCommand.CommandText = "SELECT SUM(Tasks.TaskEstimationHour) FROM Tasks, Backlogs " +
+                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString() +
+                                    " AND Tasks.TaskDueDate >= #" + startdate + "# AND Tasks.TaskDueDate <=#" + enddate + "#";
             int remainhour = Convert.ToInt32(myCommand.ExecuteScalar().ToString());
             dt.Rows.Add(startdate.ToString("dd.MM.yyyy"), remainhour);
             foreach (DateTime date in GetDateRange(startdate, enddate))
             {
                 int hour = remainhour;
-                myCommand.CommandText = "SELECT SUM(TaskEstimationHour) FROM Tasks WHERE TaskCompletedDate >= #" + startdate + "# AND  TaskCompletedDate <=#" + date + "#";
+                myCommand.CommandText = "SELECT SUM(Tasks.TaskEstimationHour) FROM Tasks, Backlogs " +
+                                        "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString() +
+                                        " AND Tasks.TaskDueDate >= #" + startdate + "# AND Tasks.TaskDueDate <=#" + enddate + "#" +
+                                        "AND Tasks.TaskCompletedDate >= #" + startdate + "# AND Tasks.TaskCompletedDate <=#" + date + "#";
                 if (myCommand.ExecuteScalar() != DBNull.Value)
                     hour = remainhour - Convert.ToInt32(myCommand.ExecuteScalar());
                 dt.Rows.Add(date.ToString("dd.MM.yyyy"), hour);
