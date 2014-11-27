@@ -299,7 +299,7 @@
                         <asp:Panel ID="commentPanel" runat="server"></asp:Panel>
                         <hr />
                         <asp:TextBox ID="addCommentTextBox" runat="server" ></asp:TextBox>
-                        <asp:Button ID="btnAddComment" runat="server" Text="Add" OnClick="btnAddComment_Click" />&nbsp;&nbsp;<asp:Button ID="btnCloseCmt" runat="server" Text="Close" />
+                        <asp:Button ID="btnAddComment" runat="server" Text="Add" OnClick="btnAddComment_Click" OnClientClick="refreshBoard()" />&nbsp;&nbsp;<asp:Button ID="btnCloseCmt" runat="server" Text="Close" />
                     </fieldset>
                 </asp:Panel>
 

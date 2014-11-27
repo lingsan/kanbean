@@ -1016,7 +1016,6 @@ namespace Kanbean_Project
             }
             myReader.Close();
             commentPanel.Controls.Add(cmtTable);
-            
             addCommentPopup.Show();
         }
 
@@ -1043,6 +1042,7 @@ namespace Kanbean_Project
             }
             myDataSet.Clear();
             getDatabase();
+            addCommentTextBox.Text = "";
 
         }
 
