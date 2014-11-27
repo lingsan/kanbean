@@ -112,58 +112,49 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.DataVisualization.Charting.Chart EstimationPointChart;
         
         /// <summary>
-        /// startdateBDTextBox control.
+        /// startdateTextBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox startdateBDTextBox;
+        protected global::System.Web.UI.WebControls.TextBox startdateTextBox;
         
         /// <summary>
-        /// enddateBDTextBox control.
+        /// startdateCalendarExtender control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox enddateBDTextBox;
+        protected global::AjaxControlToolkit.CalendarExtender startdateCalendarExtender;
         
         /// <summary>
-        /// btnBurnDown control.
+        /// enddateTextBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBurnDown;
+        protected global::System.Web.UI.WebControls.TextBox enddateTextBox;
         
         /// <summary>
-        /// startdateBUTextBox control.
+        /// enddateCalendarExtender control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox startdateBUTextBox;
+        protected global::AjaxControlToolkit.CalendarExtender enddateCalendarExtender;
         
         /// <summary>
-        /// enddateBUTextBox control.
+        /// btnCreateChart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox enddateBUTextBox;
-        
-        /// <summary>
-        /// btnBurnUp control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBurnUp;
+        protected global::System.Web.UI.WebControls.Button btnCreateChart;
         
         /// <summary>
         /// BurnDownChart control.

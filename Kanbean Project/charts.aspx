@@ -83,15 +83,12 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="3">
-                            Start date: <asp:TextBox ID="startdateBDTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
-                            End date: <asp:TextBox ID="enddateBDTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
-                            <asp:Button ID="btnBurnDown" runat="server" Text="Burn-Down Chart" OnClick="btnBurnDown_Click" />
-                        </td>
-                        <td colspan="3">
-                            Start date: <asp:TextBox ID="startdateBUTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
-                            End date: <asp:TextBox ID="enddateBUTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
-                            <asp:Button ID="btnBurnUp" runat="server" Text="Burn-Up Chart" OnClick="btnBurnUp_Click" />
+                        <td colspan="6">
+                            Start date: <asp:TextBox ID="startdateTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
+                            <ajaxToolkit:CalendarExtender ID="startdateCalendarExtender" runat="server" TargetControlID="startdateTextBox" Format="MM/dd/yyyy" />
+                            End date: <asp:TextBox ID="enddateTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
+                            <ajaxToolkit:CalendarExtender ID="enddateCalendarExtender" runat="server" TargetControlID="enddateTextBox" Format="MM/dd/yyyy" />
+                            <asp:Button ID="btnCreateChart" runat="server" Text="Burn-Down and Burn-Up Chart" OnClick="btnCreateChart_Click" />
                         </td>
                     </tr>
                     <tr>
@@ -107,10 +104,10 @@
                             </asp:Chart>
                         </td>
                         <td colspan="3">
-                            <asp:Chart ID="BurnUpChart" runat="server">
+                            <asp:Chart ID="BurnUpChart" runat="server" Width="600px">
                                 <Series>
-                                    <asp:Series Name="Burn-Up" ChartArea="BurnUpChartArea"></asp:Series>
-                                    <asp:Series Name="Optimal" ChartArea="BurnUpChartArea"></asp:Series>
+                                    <asp:Series Name="Burn-Up" ChartArea="BurnUpChartArea" ChartType="Column"></asp:Series>
+                                    <asp:Series Name="Total" ChartArea="BurnUpChartArea" BorderWidth="4" ChartType="Line"></asp:Series>
                                 </Series>
                                 <ChartAreas>
                                     <asp:ChartArea Name="BurnUpChartArea"></asp:ChartArea>
