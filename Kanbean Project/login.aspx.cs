@@ -34,10 +34,11 @@ namespace Kanbean_Project
         private void BakeCookies ()
         {
             String Username = usernameTextBox.Text;
-            HttpCookie UserCookie = new HttpCookie("UserSetting");
+            /*HttpCookie UserCookie = new HttpCookie("UserSetting");
             UserCookie["Name"] = Username;
-            UserCookie.Expires = DateTime.Now.AddDays(1);
-            Response.Cookies.Add(UserCookie);
+            //UserCookie.Expires = DateTime.Now.AddDays(1);
+            Response.Cookies.Add(UserCookie);*/
+            Response.Cookies["UserSettings"]["Name"] = Username;
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)

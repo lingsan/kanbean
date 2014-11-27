@@ -318,6 +318,18 @@ namespace Kanbean_Project
 
         protected void Page_Init(object sender, EventArgs e)
         {
+            //reading cookies
+            string Username;
+            if (Request.Cookies["UserSettings"] != null)
+            {
+                if (Request.Cookies["UserSettings"]["Name"] != null)
+                {
+                    Username = Request.Cookies["UserSettings"]["Name"];
+                    LblUsername.Text = Username;
+                }
+            }
+
+            //
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
             //mySelectCommand.Connection = myConnection;
