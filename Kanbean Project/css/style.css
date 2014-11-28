@@ -316,3 +316,10 @@ legend {
 #addandEditTaskTable table tr td {
     padding:0.4em;
 }
+
+#chartTable {
+    margin:10px auto;
+    padding:10px;
+    width:1000px;
+    text-align:center;
+}

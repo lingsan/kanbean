@@ -15,29 +15,29 @@
         <asp:ScriptManager ID="chartScriptManager" runat="server"></asp:ScriptManager>
         <asp:UpdatePanel ID="chartUpdatePanel" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
-                <table>
+                <table id="chartTable">
                     <tr>
                         <td colspan="6">
                             <asp:Button ID="btnBacktheBoard" runat="server" Text="Back to the Board" OnClick="btnBacktheBoard_Click" />
                         </td>
                     </tr>
                     <tr>
-                        <th colspan="6">Chart</th>
+                        <th colspan="6"><h1>Chart</h1></th>
                     </tr>
                     <tr>
                         <td colspan="6">
-                            <asp:GridView ID="taskGridView" runat="server" CellPadding="3"></asp:GridView>
+                            <asp:GridView ID="taskGridView" runat="server" CellPadding="3" HorizontalAlign="Center"></asp:GridView>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <asp:GridView ID="TaskAssignedGridView" runat="server" CellPadding="3"></asp:GridView>
+                            <asp:GridView ID="TaskAssignedGridView" runat="server" CellPadding="3" HorizontalAlign="Center"></asp:GridView>
                         </td>
                         <td colspan="2">
-                            <asp:GridView ID="TaskDoneGridView" runat="server" CellPadding="3"></asp:GridView>
+                            <asp:GridView ID="TaskDoneGridView" runat="server" CellPadding="3" HorizontalAlign="Center"></asp:GridView>
                         </td>
                         <td colspan="2">
-                            <asp:GridView ID="EstimationFactorGridView" runat="server" CellPadding="3"></asp:GridView>
+                            <asp:GridView ID="EstimationFactorGridView" runat="server" CellPadding="3" HorizontalAlign="Center"></asp:GridView>
                         </td>
                     </tr>
                     <tr>
@@ -93,7 +93,7 @@
                     </tr>
                     <tr>
                         <td colspan="3">
-                            <asp:Chart ID="BurnDownChart" runat="server" Width="600px">
+                            <asp:Chart ID="BurnDownChart" runat="server" Width="500px">
                                 <Series>
                                     <asp:Series Name="Burn-Down" ChartArea="BurnDownChartArea" BorderWidth="4" ChartType="Line"></asp:Series>
                                     <asp:Series Name="Optimal" ChartArea="BurnDownChartArea" BorderWidth="4" ChartType="Line"></asp:Series>
@@ -104,7 +104,7 @@
                             </asp:Chart>
                         </td>
                         <td colspan="3">
-                            <asp:Chart ID="BurnUpChart" runat="server" Width="600px">
+                            <asp:Chart ID="BurnUpChart" runat="server" Width="500px">
                                 <Series>
                                     <asp:Series Name="Burn-Up" ChartArea="BurnUpChartArea" ChartType="Column"></asp:Series>
                                     <asp:Series Name="Total" ChartArea="BurnUpChartArea" BorderWidth="4" ChartType="Line"></asp:Series>
