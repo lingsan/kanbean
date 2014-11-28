@@ -257,7 +257,7 @@
                 <asp:HiddenField ID="viewEditComplexityHiddenField" runat="server" />
                 <asp:Panel ID="editComplexityPanel" runat="server" CssClass="popupmodal">
                     <fieldset style="padding:1em">
-                        <legend id="editComplexityLegend" runat="server">Edit the complexity</legend>
+                        <legend id="editComplexityLegend" runat="server"></legend>
                         <asp:Label ID="lblEditComplexity" runat="server" Text="Complexity: "></asp:Label>
                         <asp:TextBox ID="txtBacklogComplexity" runat="server" TextMode="Number"></asp:TextBox>
                         <br />
@@ -283,7 +283,7 @@
                 <asp:HiddenField ID="editDueDateHiddenField" runat="server" />
                 <asp:Panel ID="editDueDatePanel" runat="server" CssClass="popupmodal">
                     <fieldset style="padding:1em">
-                        <legend id="editDueDateLegend" runat="server">Edit Deadline</legend>
+                        <legend id="editDueDateLegend" runat="server"></legend>
                         <asp:Label ID="editDueDateLabel" runat="server" Text="Deadline: "></asp:Label> 
                         <asp:TextBox ID="editDueDateTextBox" runat="server" Width="160" TextMode="Date"></asp:TextBox>
                         <ajax:CalendarExtender ID="editDueDateCalendarExtender" runat="server" TargetControlID="editDueDateTextBox" Format="mm/dd/yyyy" /><br /><br />
@@ -295,8 +295,18 @@
                 <asp:HiddenField ID="addCommentHiddenField" runat="server" />
                 <asp:Panel ID="addCommentPanel" runat="server" CssClass="popupmodal">
                     <fieldset style="padding:1em">
-                        <legend id="addCommentLegend" runat="server">Add Comment</legend>
-                        <asp:Panel ID="commentPanel" runat="server"></asp:Panel>
+                        <legend id="addCommentLegend" runat="server"></legend>
+                        <asp:GridView ID="commentGridView" runat="server" AutoGenerateColumns="false" BorderWidth="0" CellPadding="3" EmptyDataText = "No Comment">
+                            <Columns>
+                                <asp:BoundField DataField="User" ItemStyle-BorderWidth="0" HeaderStyle-BorderWidth="0" HeaderText="User" />
+                                <asp:BoundField DataField="Comment" ItemStyle-BorderWidth="0" HeaderStyle-BorderWidth="0" HeaderText="Comment" />
+                                <asp:TemplateField ItemStyle-BorderWidth="0" HeaderStyle-BorderWidth="0">
+                                    <ItemTemplate>
+                                        <asp:LinkButton ID="btnDeleteComment" CssClass="btnDeleteFileIcon" ToolTip="Delete Comment"  CommandArgument = '<%# Eval("ID") %>' runat = "server" OnClick="btnDeleteComment_Click" OnClientClick="refreshBoard()"></asp:LinkButton>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
                         <hr />
                         <asp:TextBox ID="addCommentTextBox" runat="server" ></asp:TextBox>
                         <asp:Button ID="btnAddComment" runat="server" Text="Add" OnClick="btnAddComment_Click" OnClientClick="refreshBoard()" />&nbsp;&nbsp;<asp:Button ID="btnCloseCmt" runat="server" Text="Close" />
@@ -308,7 +318,7 @@
                 <asp:Panel ID="showAttachedFilesPanel" runat="server" CssClass="popupmodal">
                     <fieldset style="padding:1em">
                         <legend id="showAttachedFilesLegend" runat="server"></legend>
-                        <asp:GridView ID="showAttachedFilesGridView" runat="server" AutoGenerateColumns="false" BorderWidth="0" CellPadding="5" EmptyDataText = "No files uploaded">
+                        <asp:GridView ID="showAttachedFilesGridView" runat="server" AutoGenerateColumns="false" BorderWidth="0" CellPadding="3" EmptyDataText = "No files uploaded">
                             <Columns>
                                 <asp:BoundField DataField="Text" ItemStyle-BorderWidth="0" HeaderStyle-BorderWidth="0" HeaderText="File Name" />
                                 <asp:TemplateField ItemStyle-BorderWidth="0" HeaderStyle-BorderWidth="0">

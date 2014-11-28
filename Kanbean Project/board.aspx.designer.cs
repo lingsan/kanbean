@@ -841,13 +841,13 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl addCommentLegend;
         
         /// <summary>
-        /// commentPanel control.
+        /// commentGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel commentPanel;
+        protected global::System.Web.UI.WebControls.GridView commentGridView;
         
         /// <summary>
         /// addCommentTextBox control.
