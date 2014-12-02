@@ -377,7 +377,7 @@ namespace Kanbean_Project
             Session["currentProject"] = 1;
         }
 
-        protected void Page_Load(object sender, EventArgs e)
+         protected void Page_Load(object sender, EventArgs e)
         {
             string Username;
             if (Request.Cookies["UserSetting"] != null)
@@ -387,8 +387,28 @@ namespace Kanbean_Project
                     Username = Request.Cookies["UserSetting"]["Name"];
                     LblUsername.Text = Username;
                 }
+
             }
 
+            if ((string[])Session["Controls"] != null)
+            {
+                foreach (string control in (string[])Session["Controls"])
+                {
+                    Control c = kanbanboard.FindControl(control);
+                    if (c != null)
+                        for (int i = 0; i < c.Controls.Count; i++)
+                            c.Controls[i].Visible = true;
+                    else for (int i = 0; i < c.Controls.Count; i++)
+                            c.Controls[i].Visible = false;
+                    Session["Controls"] = null;
+                }
+            }
+            if ((string)Session["Popup"] == "true")
+            {
+                attachFile((object)Session["BacklogUpload"]);
+                Session["Popup"] = null;
+                Session["BacklogUpload"] = null;
+            }
         }
 
         protected void btnAddBacklog_Click(object sender, EventArgs e)
@@ -1142,7 +1162,11 @@ namespace Kanbean_Project
 
         protected void btnAttachedFile_Click(object sender, EventArgs e)
         {
-            string id = id = ((Control)sender).ID.Remove(0, 19); 
+            attachFile(((Control)sender).ID.Remove(0, 19));
+        }
+
+        private void attachFile(object id) //- transfered from btnAttachedFile code
+        {
             List<ListItem> files = new List<ListItem>();
             if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")))
             {
@@ -1156,20 +1180,27 @@ namespace Kanbean_Project
             showAttachedFilesGridView.DataBind();
             showAttachedFilesLegend.InnerText = "Attached File of Task #" + id;
             showAttachedFilesPopup.Show();
-            
         }
 
-        protected void btnUploadFile_Click(object sender, EventArgs e)
+         protected void btnUploadFile_Click(object sender, EventArgs e)
         {
+            string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
             if (AttachedFileUpload.HasFile)
             {
                 string fileName = Path.GetFileName(AttachedFileUpload.PostedFile.FileName);
-                string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
+               
                 if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")) == false)
                     Directory.CreateDirectory(Server.MapPath("~/Files/task" + id + "/"));
                 AttachedFileUpload.PostedFile.SaveAs(Server.MapPath("~/Files/task" + id + "/") + fileName);
-                Response.Redirect(Request.Url.AbsoluteUri);
             }
+            else
+            {
+                attachFile(id);
+            }
+
+            saveBacklogsToSession();
+            saveAttachedFilesPopup(id);
+            Response.Redirect(Request.Url.AbsoluteUri);
         }
 
         protected void btnDownloadFile_Click(object sender, EventArgs e)
@@ -1181,12 +1212,46 @@ namespace Kanbean_Project
             Response.End();
         }
 
-        protected void btnDeleteFile_Click(object sender, EventArgs e)
+        
+             protected void btnDeleteFile_Click(object sender, EventArgs e)
         {
+            string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
             string filePath = (sender as LinkButton).CommandArgument;
             File.Delete(filePath);
+
+            saveBacklogsToSession();
+            saveAttachedFilesPopup(id);
             Response.Redirect(Request.Url.AbsoluteUri);
         }
+
+             private void saveAttachedFilesPopup(object blid)
+             {
+                 if (showAttachedFilesLegend.Visible == true)
+                 {
+                     Session["Popup"] = "true";
+                     Session["BacklogUpload"] = blid;
+                 }
+                 else Session["Popup"] = "false";
+             }
+             private void saveBacklogsToSession()
+             {
+                 string backlogs = "";
+
+                 for (int j = 1; j <= myDataSet.Tables["myRawBacklogs"].Rows.Count; j++)
+                 {
+                     string backlogid = "backlogArea" + j;
+                     Control c = kanbanboard.FindControl(backlogid);
+                     if (c.Controls.Count > 1 && c.Controls[1].Visible == true)
+                     {
+                         backlogs += backlogid + " ";
+                     }
+                 }
+
+                 backlogs = backlogs.Remove(backlogs.Length - 1);
+
+
+                 Session["Controls"] = backlogs.Split(' ');
+             }
 
     }
 }
