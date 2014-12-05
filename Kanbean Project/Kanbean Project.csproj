@@ -92,6 +92,7 @@
     <Content Include="css\style.css" />
     <Content Include="Global.asax" />
     <Content Include="login.aspx" />
+    <Content Include="Profile.aspx" />
     <Content Include="registration.aspx" />
     <Content Include="SearchResults.aspx" />
     <Content Include="Web.config" />
@@ -120,6 +121,13 @@
     </Compile>
     <Compile Include="login.aspx.designer.cs">
       <DependentUpon>login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="registration.aspx.cs">
