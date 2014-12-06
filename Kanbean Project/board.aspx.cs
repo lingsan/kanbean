@@ -73,11 +73,7 @@ namespace Kanbean_Project
                                         + "WHERE (User_1.Username = '" + _username + "') "
                                         + "ORDER BY [User].UserID";
             myAdapter.Fill(myDataSet, "myProjectNembers");
-            mySelectCommand.CommandText = "SELECT Backlogs.BacklogID, Backlogs.ProjectID, Backlogs.SwimlaneID, "
-                                        +   "Backlogs.BacklogTitle, Backlogs.BacklogDescription, Backlogs.BacklogColor, "
-                                        +   "Backlogs.BacklogColorHeader, Backlogs.BacklogComplexity, "
-                                        +   "Backlogs.BacklogStartDate, Backlogs.BacklogDueDate, Backlogs.BacklogPosition, "
-                                        +   "Backlogs.BacklogAssigneeID, Backlogs.BacklogStatusID, Backlogs.BacklogCompletedDate, User_1.Username" 
+            mySelectCommand.CommandText = "SELECT Backlogs.*, [User].Username, Swimlanes.SwimlaneName, Projects.ProjectName, Status.StatusName " 
                                         + "FROM (((((Backlogs INNER JOIN [User] ON Backlogs.BacklogAssigneeID = [User].UserID) "
                                         +   "INNER JOIN Swimlanes ON Backlogs.SwimlaneID = Swimlanes.SwimlaneID) "
                                         +   "INNER JOIN Projects ON Backlogs.ProjectID = Projects.ProjectID) "
@@ -86,15 +82,9 @@ namespace Kanbean_Project
                                         + "WHERE (User_1.Username = '" + _username + "')"
                                         + "ORDER BY Backlogs.SwimlaneID, Backlogs.BacklogPosition";
             myAdapter.Fill(myDataSet, "myBacklogs");
-            /*mySelectCommand.CommandText = "SELECT Backlogs.* FROM ((Backlogs " 
-                                        + "INNER JOIN Projects ON Backlogs.ProjectID = Projects.ProjectID) "
-                                        + "INNER JOIN [User] ON Projects.ProjectID = [User].DefaultProjectID)"
-                                        + "WHERE ([User].Username = '" + _username + "')";*/
             mySelectCommand.CommandText = "SELECT * From Backlogs";
             myAdapter.Fill(myDataSet, "myRawBacklogs");
-            mySelectCommand.CommandText = "SELECT Tasks.TaskID, Tasks.BacklogID, Tasks.TaskTitle, Tasks.TaskComplexity, "
-                                        +   "Tasks.TaskEstimationHour, Tasks.TaskSpentTime, Tasks.TaskStartDate, "
-                                        +   "Tasks.TaskDueDate, Tasks.TaskCompletedDate, [User].Username, Status.StatusName"
+            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username, Status.StatusName "
                                         + "FROM (((((Tasks INNER JOIN Backlogs ON Tasks.BacklogID = Backlogs.BacklogID) "
                                         +   "INNER JOIN [User] ON Tasks.TaskAssigneeID = [User].UserID) "
                                         +   "INNER JOIN Status ON Tasks.TaskStatusID = Status.StatusID) "
@@ -111,9 +101,9 @@ namespace Kanbean_Project
                                         + "FROM ((Projects INNER JOIN ProjectsMembers ON Projects.ProjectID = ProjectsMembers.ProjectID) "
                                         +   "INNER JOIN [User] ON ProjectsMembers.UserID = [User].UserID)"
                                         + "WHERE ([User].Username = 'user3')";
-            myAdapter.Fill(myDataSet, "myProjects");
+            myAdapter.Fill(myDataSet, "myDefaultProjects");
             mySelectCommand.CommandText = "Select * From Projects";
-            myAdapter.Fill(myDataSet, "myRawProjects");
+            myAdapter.Fill(myDataSet, "myProjects");
         }
 
         private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee)
@@ -366,12 +356,6 @@ namespace Kanbean_Project
                 createBacklog(row["BacklogID"].ToString(), row["BacklogComplexity"].ToString(), row["BacklogTitle"].ToString(), row["BacklogDueDate"].ToString(), row["BacklogColor"].ToString(), row["BacklogColorHeader"].ToString(), row["SwimlaneID"].ToString(), row["Username"].ToString());
         }
         
-        private void getBacklogs(string _username)
-        {
-            DataTable backlogsTable = myDataSet.Tables["myBacklogs"];
-            foreach (DataRow row in backlogsTable.Rows)
-                createBacklog(row["BacklogID"].ToString(), row["BacklogComplexity"].ToString(), row["BacklogTitle"].ToString(), row["BacklogDueDate"].ToString(), row["BacklogColor"].ToString(), row["BacklogColorHeader"].ToString(), row["SwimlaneID"].ToString(), row["Username"].ToString());
-        }
 
         private void getTasks()
         {
@@ -391,6 +375,10 @@ namespace Kanbean_Project
                     Username = Request.Cookies["UserSettings"]["Name"].ToString();
                     LblUsername.Text = Username;
                 }
+            }
+            else
+            {
+                Response.Redirect("login.aspx");
             }
 
             //
@@ -429,7 +417,7 @@ namespace Kanbean_Project
             kanbanboard.Controls.Add(tRow);
             //myDataSet.Clear();
 
-            foreach (DataRow row in myDataSet.Tables["myRawProjects"].Rows)
+            foreach (DataRow row in myDataSet.Tables["myProjects"].Rows)
             {
                 projectDropDownList.Items.Add(row["ProjectName"].ToString());
                 projectDropDownList.Items[projectDropDownList.Items.Count - 1].Value = row["ProjectID"].ToString();
@@ -452,6 +440,10 @@ namespace Kanbean_Project
                     LblUsername.Text = Username;
                 }
 
+            }
+            else
+            {
+                Response.Redirect("login.aspx");
             }
 
             if ((string[])Session["Controls"] != null)
