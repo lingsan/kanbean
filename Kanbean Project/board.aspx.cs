@@ -58,6 +58,52 @@ namespace Kanbean_Project
             mySelectCommand.CommandText = "Select * From Projects";
             myAdapter.Fill(myDataSet, "myProjects");
         }
+        
+        private void getDatabase(string _username)
+        {
+            mySelectCommand.Connection = myConnection;
+            myAdapter.SelectCommand = mySelectCommand;
+            mySelectCommand.CommandText = "SELECT * FROM Swimlanes ORDER BY SwimlaneID";
+            myAdapter.Fill(myDataSet, "mySwimlanes");
+            mySelectCommand.CommandText = "SELECT Projects.ProjectName, [User].UserID, [User].Username, [User].[Level], Projects.ProjectID "
+                                        + "FROM (((ProjectsMembers INNER JOIN Projects ON ProjectsMembers.ProjectID = Projects.ProjectID) "
+                                        +   "INNER JOIN [User] ON ProjectsMembers.UserID = [User].UserID) "
+                                        +   "INNER JOIN [User] User_1 ON Projects.ProjectID = User_1.DefaultProjectID) "
+                                        + "WHERE (User_1.Username = '" + _username + "') "
+                                        + "ORDER BY [User].UserID";
+            myAdapter.Fill(myDataSet, "myProjectNembers");
+            mySelectCommand.CommandText = "SELECT Backlogs.BacklogID, Backlogs.ProjectID, Backlogs.SwimlaneID, "
+                                        +   "Backlogs.BacklogTitle, Backlogs.BacklogDescription, Backlogs.BacklogColor, "
+                                        +   "Backlogs.BacklogColorHeader, Backlogs.BacklogComplexity, "
+                                        +   "Backlogs.BacklogStartDate, Backlogs.BacklogDueDate, Backlogs.BacklogPosition, "
+                                        +   "Backlogs.BacklogAssigneeID, Backlogs.BacklogStatusID, Backlogs.BacklogCompletedDate, User_1.Username" 
+                                        + "FROM (((((Backlogs INNER JOIN [User] ON Backlogs.BacklogAssigneeID = [User].UserID) "
+                                        +   "INNER JOIN Swimlanes ON Backlogs.SwimlaneID = Swimlanes.SwimlaneID) "
+                                        +   "INNER JOIN Projects ON Backlogs.ProjectID = Projects.ProjectID) "
+                                        +   "INNER JOIN Status ON Backlogs.BacklogStatusID = Status.StatusID) "
+                                        +   "INNER JOIN [User] User_1 ON Projects.ProjectID = User_1.DefaultProjectID)"
+                                        + "WHERE (User_1.Username = '"+ _username + "')"
+                                        + "ORDER BY Backlogs.SwimlaneID, Backlogs.BacklogPosition";
+            myAdapter.Fill(myDataSet, "myBacklogs");
+            /*mySelectCommand.CommandText = "SELECT Backlogs.* FROM ((Backlogs " 
+                                        + "INNER JOIN Projects ON Backlogs.ProjectID = Projects.ProjectID) "
+                                        + "INNER JOIN [User] ON Projects.ProjectID = [User].DefaultProjectID)"
+                                        + "WHERE ([User].Username = '" + _username + "')";*/
+            mySelectCommand.CommandText = "SELECT * From Backlogs";
+            myAdapter.Fill(myDataSet, "myRawBacklogs");
+            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username, Status.StatusName "
+                                        + "FROM Tasks, [User], Backlogs, Status " 
+                                        + "WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogID = Tasks.BacklogID " 
+                                        + "AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskStatusID = Status.StatusID " 
+                                        + "ORDER BY Tasks.TaskID";
+            myAdapter.Fill(myDataSet, "myTasks");
+            mySelectCommand.CommandText = "Select * From Tasks";
+            myAdapter.Fill(myDataSet, "myRawTasks");
+            mySelectCommand.CommandText = "Select * From Status";
+            myAdapter.Fill(myDataSet, "myStatus");
+            mySelectCommand.CommandText = "Select * From Projects";
+            myAdapter.Fill(myDataSet, "myProjects");
+        }
 
         private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee)
         {
@@ -303,6 +349,13 @@ namespace Kanbean_Project
         }
 
         private void getBacklogs()
+        {
+            DataTable backlogsTable = myDataSet.Tables["myBacklogs"];
+            foreach (DataRow row in backlogsTable.Rows)
+                createBacklog(row["BacklogID"].ToString(), row["BacklogComplexity"].ToString(), row["BacklogTitle"].ToString(), row["BacklogDueDate"].ToString(), row["BacklogColor"].ToString(), row["BacklogColorHeader"].ToString(), row["SwimlaneID"].ToString(), row["Username"].ToString());
+        }
+        
+        private void getBacklogs(string _username)
         {
             DataTable backlogsTable = myDataSet.Tables["myBacklogs"];
             foreach (DataRow row in backlogsTable.Rows)
