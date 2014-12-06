@@ -59,6 +59,7 @@ namespace Kanbean_Project
             myAdapter.Fill(myDataSet, "myProjects");
         }
         
+        // get database base on username (Default Project)
         private void getDatabase(string _username)
         {
             mySelectCommand.Connection = myConnection;
@@ -82,7 +83,7 @@ namespace Kanbean_Project
                                         +   "INNER JOIN Projects ON Backlogs.ProjectID = Projects.ProjectID) "
                                         +   "INNER JOIN Status ON Backlogs.BacklogStatusID = Status.StatusID) "
                                         +   "INNER JOIN [User] User_1 ON Projects.ProjectID = User_1.DefaultProjectID)"
-                                        + "WHERE (User_1.Username = '"+ _username + "')"
+                                        + "WHERE (User_1.Username = '" + _username + "')"
                                         + "ORDER BY Backlogs.SwimlaneID, Backlogs.BacklogPosition";
             myAdapter.Fill(myDataSet, "myBacklogs");
             /*mySelectCommand.CommandText = "SELECT Backlogs.* FROM ((Backlogs " 
@@ -91,18 +92,28 @@ namespace Kanbean_Project
                                         + "WHERE ([User].Username = '" + _username + "')";*/
             mySelectCommand.CommandText = "SELECT * From Backlogs";
             myAdapter.Fill(myDataSet, "myRawBacklogs");
-            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username, Status.StatusName "
-                                        + "FROM Tasks, [User], Backlogs, Status " 
-                                        + "WHERE Backlogs.ProjectID = 1 AND Backlogs.BacklogID = Tasks.BacklogID " 
-                                        + "AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskStatusID = Status.StatusID " 
+            mySelectCommand.CommandText = "SELECT Tasks.TaskID, Tasks.BacklogID, Tasks.TaskTitle, Tasks.TaskComplexity, "
+                                        +   "Tasks.TaskEstimationHour, Tasks.TaskSpentTime, Tasks.TaskStartDate, "
+                                        +   "Tasks.TaskDueDate, Tasks.TaskCompletedDate, [User].Username, Status.StatusName"
+                                        + "FROM (((((Tasks INNER JOIN Backlogs ON Tasks.BacklogID = Backlogs.BacklogID) "
+                                        +   "INNER JOIN [User] ON Tasks.TaskAssigneeID = [User].UserID) "
+                                        +   "INNER JOIN Status ON Tasks.TaskStatusID = Status.StatusID) "
+                                        +   "INNER JOIN Projects ON Backlogs.ProjectID = Projects.ProjectID) "
+                                        +   "INNER JOIN [User] User_1 ON Projects.ProjectID = User_1.DefaultProjectID)" 
+                                        + "WHERE (User_1.Username = 'admin')"
                                         + "ORDER BY Tasks.TaskID";
             myAdapter.Fill(myDataSet, "myTasks");
             mySelectCommand.CommandText = "Select * From Tasks";
             myAdapter.Fill(myDataSet, "myRawTasks");
             mySelectCommand.CommandText = "Select * From Status";
             myAdapter.Fill(myDataSet, "myStatus");
-            mySelectCommand.CommandText = "Select * From Projects";
+            mySelectCommand.CommandText = "SELECT Projects.* "
+                                        + "FROM ((Projects INNER JOIN ProjectsMembers ON Projects.ProjectID = ProjectsMembers.ProjectID) "
+                                        +   "INNER JOIN [User] ON ProjectsMembers.UserID = [User].UserID)"
+                                        + "WHERE ([User].Username = 'user3')";
             myAdapter.Fill(myDataSet, "myProjects");
+            mySelectCommand.CommandText = "Select * From Projects";
+            myAdapter.Fill(myDataSet, "myRawProjects");
         }
 
         private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee)
@@ -372,12 +383,12 @@ namespace Kanbean_Project
         protected void Page_Init(object sender, EventArgs e)
         {
             //reading cookies
-            string Username;
+            string Username = "";
             if (Request.Cookies["UserSettings"] != null)
             {
                 if (Request.Cookies["UserSettings"]["Name"] != null)
                 {
-                    Username = Request.Cookies["UserSettings"]["Name"];
+                    Username = Request.Cookies["UserSettings"]["Name"].ToString();
                     LblUsername.Text = Username;
                 }
             }
@@ -389,7 +400,7 @@ namespace Kanbean_Project
             //myAdapter.SelectCommand = mySelectCommand;
             //mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1 ORDER BY SwimlaneID";
             //myAdapter.Fill(myDataSet, "mySwimlanes");
-            getDatabase();
+            getDatabase(Username);
             //Initialize the kanbanboard with swimlane information from database
             DataTable boardTable = myDataSet.Tables["mySwimlanes"];
             TableRow thRow = new TableRow();
@@ -418,7 +429,7 @@ namespace Kanbean_Project
             kanbanboard.Controls.Add(tRow);
             //myDataSet.Clear();
 
-            foreach (DataRow row in myDataSet.Tables["myProjects"].Rows)
+            foreach (DataRow row in myDataSet.Tables["myRawProjects"].Rows)
             {
                 projectDropDownList.Items.Add(row["ProjectName"].ToString());
                 projectDropDownList.Items[projectDropDownList.Items.Count - 1].Value = row["ProjectID"].ToString();
@@ -433,11 +444,11 @@ namespace Kanbean_Project
          protected void Page_Load(object sender, EventArgs e)
         {
             string Username;
-            if (Request.Cookies["UserSetting"] != null)
+            if (Request.Cookies["UserSettings"] != null)
             {
-                if (Request.Cookies["UserSetting"]["Name"] != null)
+                if (Request.Cookies["UserSettings"]["Name"] != null)
                 {
-                    Username = Request.Cookies["UserSetting"]["Name"];
+                    Username = Request.Cookies["UserSettings"]["Name"];
                     LblUsername.Text = Username;
                 }
 

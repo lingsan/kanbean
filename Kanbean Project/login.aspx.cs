@@ -48,7 +48,7 @@ namespace Kanbean_Project
             //connect to DB
             LogInConnection.Open();
             string UserName = usernameTextBox.Text;
-            OleDbCommand UserPassConn = new OleDbCommand("SELECT [Password] FROM [User] WHERE [Username]='" + UserName +"'", LogInConnection);
+            OleDbCommand UserPassConn = new OleDbCommand("SELECT [Password] FROM [User] WHERE [Username]='" + UserName + "'", LogInConnection);
             UserPassConn.CommandType = CommandType.Text;
             /*OleDbDataReader CheclogInReader;
             CheclogInReader = UserPassConn.ExecuteReader();*/
