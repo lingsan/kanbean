@@ -90,7 +90,7 @@ namespace Kanbean_Project
                                         +   "INNER JOIN Status ON Tasks.TaskStatusID = Status.StatusID) "
                                         +   "INNER JOIN Projects ON Backlogs.ProjectID = Projects.ProjectID) "
                                         +   "INNER JOIN [User] User_1 ON Projects.ProjectID = User_1.DefaultProjectID)" 
-                                        + "WHERE (User_1.Username = '"+ _username + "')"
+                                        + "WHERE (User_1.Username = 'admin')"
                                         + "ORDER BY Tasks.TaskID";
             myAdapter.Fill(myDataSet, "myTasks");
             mySelectCommand.CommandText = "Select * From Tasks";
@@ -100,7 +100,7 @@ namespace Kanbean_Project
             mySelectCommand.CommandText = "SELECT Projects.* "
                                         + "FROM ((Projects INNER JOIN ProjectsMembers ON Projects.ProjectID = ProjectsMembers.ProjectID) "
                                         +   "INNER JOIN [User] ON ProjectsMembers.UserID = [User].UserID)"
-                                        + "WHERE ([User].Username = '"+ _username +"')";
+                                        + "WHERE ([User].Username = 'user3')";
             myAdapter.Fill(myDataSet, "myDefaultProjects");
             mySelectCommand.CommandText = "Select * From Projects";
             myAdapter.Fill(myDataSet, "myProjects");
@@ -1201,11 +1201,11 @@ namespace Kanbean_Project
         protected void EatCookies(object sender, EventArgs e)
         {
 
-            if (Request.Cookies["UserSettings"] != null)
+            if (Request.Cookies["UserSetting"] != null)
             {
-                if (Request.Cookies["UserSettings"]["Name"] != null)
+                if (Request.Cookies["UserSetting"]["Name"] != null)
                 {
-                    Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
+                    Response.Cookies["UserSetting"].Expires = DateTime.Now.AddDays(-1);
                 }
             }
         }
