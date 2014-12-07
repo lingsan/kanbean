@@ -26,40 +26,56 @@ namespace Kanbean_Project
             if ((isNum > -1) && (isLetterSmall > -1) && (isLetterBig > -1) && isLongEnough)
                 args.IsValid = true;
             else
-                args.IsValid = false; 
+                args.IsValid = false;
         }
 
         protected void btnRegiter_Click(object sender, EventArgs e)
         {
-            if (this.IsValid) {
+            if (this.IsValid)
+            {
 
                 OleDbConnection myConnection = new OleDbConnection();
                 myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
                 myConnection.Open();
 
                 OleDbCommand myCommand = new OleDbCommand();
-                myCommand.CommandText = "INSERT INTO [User]([Username], [password], [Email], [Level]) VALUES ('"+usernameTextBox.Text+"','"+passwordTextBox.Text+"','"+emailTextBox.Text+"',2)";
-                myCommand.CommandType = CommandType.Text;
                 myCommand.Connection = myConnection;
-                myConnection.Open();
-                myCommand.ExecuteNonQuery();
-                myConnection.Close();
-                //Response.Write("<script>alert('The new user is registered');</script>");
-                resultLabel.Text = "Information is submitted.";
-                registerFormPopup.Show(); 
+                myCommand.CommandText = "SELECT * FROM [User] WHERE [Username] = '" + usernameTextBox.Text + "' OR [Email] = '" + emailTextBox.Text + "'";
+                try
+                {
+                    if (myCommand.ExecuteScalar().ToString() != "")
+                    {
+                        resultLabel.Text = "This username or email is used!";
+                        btnOK.Visible = false;
+                        btnCancel.Visible = true;
+                        registerFormPopup.Show();
+                    }
+                }
+                catch
+                {
+                    myCommand.CommandText = "INSERT INTO [User]([Username], [Password], [Email], [Level]) VALUES ('" + usernameTextBox.Text + "','" + passwordTextBox.Text + "','" + emailTextBox.Text + "',2)";
+                    myCommand.ExecuteNonQuery();
+                    myConnection.Close();
+                    resultLabel.Text = "Your account is created! Click OK to login.";
+                    btnOK.Visible = true;
+                    btnCancel.Visible = false;
+                    registerFormPopup.Show();
+                }
             }
             else
             {
-                resultLabel.Text = "Check information again.";
+                resultLabel.Text = "Invalid information! Check information again.";
+                btnOK.Visible = false;
+                btnCancel.Visible = true;
                 registerFormPopup.Show();
             }
-            
+
         }
 
         protected void btnOK_Click(object sender, EventArgs e)
         {
-            if (this.IsValid) 
-			    Response.Redirect("login.aspx");
+            Response.Redirect("login.aspx");
         }
     }
 }
+
