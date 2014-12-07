@@ -23,6 +23,9 @@ namespace Kanbean_Project
             }
 
             Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
+            /*string path = @"\App_Data";
+            string constr = "Provider=Microsoft.Jet.OleDB.4.0 " +
+                "Data Source = " + path + @"\LanbanDatabase.mdb";*/
             string constr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             LogInConnection.ConnectionString = constr;
         }
@@ -31,6 +34,10 @@ namespace Kanbean_Project
         private void BakeCookies ()
         {
             String Username = usernameTextBox.Text;
+            /*HttpCookie UserCookie = new HttpCookie("UserSetting");
+            UserCookie["Name"] = Username;
+            //UserCookie.Expires = DateTime.Now.AddDays(1);
+            Response.Cookies.Add(UserCookie);*/
             Response.Cookies["UserSettings"]["Name"] = Username;
         }
 
@@ -65,6 +72,31 @@ namespace Kanbean_Project
                 args.IsValid = false;
             }
             LogInConnection.Close();
+            /*insert username and password in to string lists
+            List<string> Username = new List<string>();
+            List<string> PassWord = new List<string>();
+            OleDbDataReader CheckLoginReader;
+            CheckLoginReader = UserPassConn.ExecuteReader();
+            bool notEoF = CheckLoginReader.Read();
+            while (notEoF)
+            {
+                Username.Add(CheckLoginReader["Username"].ToString());
+                PassWord.Add(CheckLoginReader["Password"].ToString());
+                notEoF = CheckLoginReader.Read();
+            }
+            LogInConnection.Close();
+            //check matching between username and password
+            string InputUser = usernameTextBox.Text;
+            string InputPass = passwordTextBox.Text;
+            int UserIndex = Username.IndexOf(InputUser);
+            if (InputPass == PassWord[UserIndex])
+            {
+                args.IsValid = true;
+            }
+            else
+            {
+                args.IsValid = false;
+            }*/
         }
     }
 }
