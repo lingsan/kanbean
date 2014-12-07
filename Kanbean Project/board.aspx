@@ -81,7 +81,7 @@
                     </div>
                     <div id="user-information">
                         <p>Welcome, <span id="username"><asp:Label ID="LblUsername" runat="server" Text="Username"></asp:Label></span>. (<asp:HyperLink ID="LogOutLink" runat="server" NavigateUrl="~/login.aspx" OnLoad="EatCookies">logout</asp:HyperLink>)</p>
-                        <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList"></asp:DropDownList></p>
+                        <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList" OnSelectedIndexChanged="OtherProject"></asp:DropDownList></p>
                     </div>
                 </div>
 
