@@ -17,7 +17,7 @@ namespace Kanbean_Project
         protected void Page_Load(object sender, EventArgs e)
         {
             //read cookie to check if User Loged on or not
-            if ( Request.Cookies["UserSetting"] != null && Request.Cookies["UserSetting"]["Name"] != null)
+            if ( Request.Cookies["UserSettings"] != null && Request.Cookies["UserSettings"]["Name"] != null)
             {
                 Response.Redirect("Board.aspx");
             }
