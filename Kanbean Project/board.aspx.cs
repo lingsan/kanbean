@@ -57,6 +57,37 @@ namespace Kanbean_Project
             myAdapter.Fill(myDataSet, "myStatus");
             mySelectCommand.CommandText = "Select * From Projects";
             myAdapter.Fill(myDataSet, "myProjects");
+        }private void getDatabase(string _Project)
+        {
+            mySelectCommand.Connection = myConnection;
+            myAdapter.SelectCommand = mySelectCommand;
+            mySelectCommand.CommandText = "SELECT * FROM Swimlanes ORDER BY SwimlaneID";
+            myAdapter.Fill(myDataSet, "mySwimlanes");
+            mySelectCommand.CommandText = "SELECT Projects.ProjectName, [User].UserID, [User].Username, [User].Level "
+                                        + "FROM ProjectsMembers, Projects, [User] " 
+                                        + "WHERE ProjectsMembers.ProjectID = Projects.ProjectID AND ProjectsMembers.UserID = [User].UserID AND Projects.ProjectID = " + _Project + " " 
+                                        + "ORDER BY [User].UserID";
+            myAdapter.Fill(myDataSet, "myProjectNembers");
+            mySelectCommand.CommandText = "SELECT Backlogs.*, [User].Username, Swimlanes.SwimlaneName, Projects.ProjectName, Status.StatusName "
+                                        + "FROM Backlogs, [User], Swimlanes, Projects, Status "
+                                        + "WHERE Backlogs.ProjectID = " + _Project + " AND Backlogs.BacklogAssigneeID = [User].UserID AND Backlogs.SwimlaneID = Swimlanes.SwimlaneID "
+                                        + "AND Backlogs.ProjectID = Projects.ProjectID AND Backlogs.BacklogStatusID = Status.StatusID " 
+                                        + "ORDER BY Backlogs.SwimlaneID, Backlogs.BacklogPosition";
+            myAdapter.Fill(myDataSet, "myBacklogs");
+            mySelectCommand.CommandText = "Select * From Backlogs";
+            myAdapter.Fill(myDataSet, "myRawBacklogs");
+            mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username, Status.StatusName "
+                                        + "FROM Tasks, [User], Backlogs, Status " 
+                                        + "WHERE Backlogs.ProjectID = " + _Project + " AND Backlogs.BacklogID = Tasks.BacklogID " 
+                                        + "AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskStatusID = Status.StatusID " 
+                                        + "ORDER BY Tasks.TaskID";
+            myAdapter.Fill(myDataSet, "myTasks");
+            mySelectCommand.CommandText = "Select * From Tasks";
+            myAdapter.Fill(myDataSet, "myRawTasks");
+            mySelectCommand.CommandText = "Select * From Status";
+            myAdapter.Fill(myDataSet, "myStatus");
+            mySelectCommand.CommandText = "Select * From Projects";
+            myAdapter.Fill(myDataSet, "myProjects");
         }
 
         private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee)
@@ -319,7 +350,7 @@ namespace Kanbean_Project
         protected void Page_Init(object sender, EventArgs e)
         {
             //reading cookies
-            string Username;
+            string Username = "";
             if (Request.Cookies["UserSettings"] != null)
             {
                 if (Request.Cookies["UserSettings"]["Name"] != null)
@@ -328,15 +359,19 @@ namespace Kanbean_Project
                     LblUsername.Text = Username;
                 }
             }
-
             //
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
+            //get the Default Project by Username
+            mySelectCommand.Connection = myConnection;
+            mySelectCommand.CommandType = CommandType.Text;
+            mySelectCommand.CommandText = "SELECT User.DefaultProjectID FROM [User] WHERE User.Username = '" + Username + "';";
+            string DefaultProject = mySelectCommand.ExecuteScalar().ToString();
             //mySelectCommand.Connection = myConnection;
             //myAdapter.SelectCommand = mySelectCommand;
             //mySelectCommand.CommandText = "SELECT * FROM Swimlanes WHERE ProjectID = 1 ORDER BY SwimlaneID";
             //myAdapter.Fill(myDataSet, "mySwimlanes");
-            getDatabase();
+            getDatabase(DefaultProject);
             //Initialize the kanbanboard with swimlane information from database
             DataTable boardTable = myDataSet.Tables["mySwimlanes"];
             TableRow thRow = new TableRow();
@@ -444,7 +479,7 @@ namespace Kanbean_Project
         protected void btnAddNewBacklog_Click(object sender, EventArgs e)
         {
             DataRow row = myDataSet.Tables["myRawBacklogs"].NewRow();
-            row["ProjectID"] = 1;
+            row["ProjectID"] = projectDropDownList.SelectedValue.ToString();
             row["SwimlaneID"] = Convert.ToInt32(swimlaneDropDownList.SelectedValue);
             if (swimlaneDropDownList.SelectedValue == "5") {
                 row["BacklogStatusID"] = 3;
@@ -478,7 +513,7 @@ namespace Kanbean_Project
             myAdapter.Update(myDataSet, "myRawBacklogs");
             myDataSet.Clear();
 
-            getDatabase();
+            getDatabase(row["ProjectID"].ToString());
             getBacklogs();
             addandEditBacklogPopup.Hide();
         }
