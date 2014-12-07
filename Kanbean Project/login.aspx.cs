@@ -17,10 +17,9 @@ namespace Kanbean_Project
         protected void Page_Load(object sender, EventArgs e)
         {
             //read cookie to check if User Loged on or not
-            if ( Request.Cookies["UserSettings"] != null ) 
+            if ( Request.Cookies["UserSettings"] != null && Request.Cookies["UserSettings"]["Name"] != null)
             {
-                if (Request.Cookies["UserSettings"]["Name"] != null)
-                { Response.Redirect("Board.aspx"); }
+                Response.Redirect("Board.aspx");
             }
 
             Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
@@ -31,7 +30,7 @@ namespace Kanbean_Project
         //Write a cookie for username
         private void BakeCookies ()
         {
-            string Username = usernameTextBox.Text;
+            String Username = usernameTextBox.Text;
             Response.Cookies["UserSettings"]["Name"] = Username;
         }
 

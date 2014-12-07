@@ -106,19 +106,6 @@ namespace Kanbean_Project
             myAdapter.Fill(myDataSet, "myProjects");
         }
 
-        private void getPrjMemDB(string _username)
-        {
-            mySelectCommand.Connection = myConnection;
-            myAdapter.SelectCommand = mySelectCommand;
-            mySelectCommand.CommandText = "SELECT Projects.ProjectName, [User].UserID, [User].Username, [User].[Level], Projects.ProjectID "
-                                        + "FROM (((ProjectsMembers INNER JOIN Projects ON ProjectsMembers.ProjectID = Projects.ProjectID) "
-                                        + "INNER JOIN [User] ON ProjectsMembers.UserID = [User].UserID) "
-                                        + "INNER JOIN [User] User_1 ON Projects.ProjectID = User_1.DefaultProjectID) "
-                                        + "WHERE (User_1.Username = '" + _username + "') "
-                                        + "ORDER BY [User].UserID";
-            myAdapter.Fill(myDataSet, "myProjectNembers");
-        }
-
         private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee)
         {
             if (kanbanboard.FindControl("backlogArea" + id) == null)
@@ -380,14 +367,18 @@ namespace Kanbean_Project
         protected void Page_Init(object sender, EventArgs e)
         {
             //reading cookies
-            string Username ="";
+            string Username = "";
             if (Request.Cookies["UserSettings"] != null)
             {
                 if (Request.Cookies["UserSettings"]["Name"] != null)
                 {
-                    Username = Request.Cookies["UserSettings"]["Name"];
+                    Username = Request.Cookies["UserSettings"]["Name"].ToString();
                     LblUsername.Text = Username;
                 }
+            }
+            else
+            {
+                Response.Redirect("login.aspx");
             }
 
             //
@@ -440,6 +431,21 @@ namespace Kanbean_Project
 
          protected void Page_Load(object sender, EventArgs e)
         {
+            string Username;
+            if (Request.Cookies["UserSettings"] != null)
+            {
+                if (Request.Cookies["UserSettings"]["Name"] != null)
+                {
+                    Username = Request.Cookies["UserSettings"]["Name"];
+                    LblUsername.Text = Username;
+                }
+
+            }
+            else
+            {
+                Response.Redirect("login.aspx");
+            }
+
             if ((string[])Session["Controls"] != null)
             {
                 foreach (string control in (string[])Session["Controls"])
@@ -494,7 +500,7 @@ namespace Kanbean_Project
         protected void btnAddNewBacklog_Click(object sender, EventArgs e)
         {
             DataRow row = myDataSet.Tables["myRawBacklogs"].NewRow();
-            row["ProjectID"] = projectDropDownList.SelectedValue.ToString();
+            row["ProjectID"] = 1;
             row["SwimlaneID"] = Convert.ToInt32(swimlaneDropDownList.SelectedValue);
             if (swimlaneDropDownList.SelectedValue == "5") {
                 row["BacklogStatusID"] = 3;
@@ -1301,11 +1307,6 @@ namespace Kanbean_Project
 
 
                  Session["Controls"] = backlogs.Split(' ');
-             }
-
-             protected void OtherProject(object sender, EventArgs e)
-             {
-
              }
 
     }
