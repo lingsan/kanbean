@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="/css/style.css" type="text/css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
     <script>
+
+        $(function () {
+            $('#LogoutLink').click(function () {
+                document.cookie = "UserSettings=; expires=Thu, 01 Jan 1970 00:00:00 UTC)";
+            });
+        });
+
         function refreshBoard() {
             setTimeout(function () { document.getElementById('btnRefresh').click(); }, 500);
         }
@@ -80,7 +87,7 @@
                         <h1>Lanban</h1>
                     </div>
                     <div id="user-information">
-                        <p>Welcome, <span id="username"><asp:Label ID="LblUsername" runat="server" Text="Username"></asp:Label></span>. (<asp:HyperLink ID="LogOutLink" runat="server" NavigateUrl="~/login.aspx" OnLoad="EatCookies">logout</asp:HyperLink>)</p>
+                        <p>Welcome, <span id="username"><asp:Label ID="LblUsername" runat="server" Text="Username"></asp:Label></span>. (<asp:LinkButton ID="LinkButton1" runat="server" OnClick="EatCookies">Logout</asp:LinkButton>)</p>
                         <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList"></asp:DropDownList></p>
                     </div>
                 </div>

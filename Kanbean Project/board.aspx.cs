@@ -358,8 +358,10 @@ namespace Kanbean_Project
                     Username = Request.Cookies["UserSettings"]["Name"];
                     LblUsername.Text = Username;
                 }
+                else { Response.Redirect("login.aspx"); }
             }
-            //
+            else { Response.Redirect("login.aspx"); }
+            //open connection
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
             //get the Default Project by Username
@@ -415,15 +417,16 @@ namespace Kanbean_Project
          protected void Page_Load(object sender, EventArgs e)
         {
             string Username;
-            if (Request.Cookies["UserSetting"] != null)
+            if (Request.Cookies["UserSettings"] != null)
             {
-                if (Request.Cookies["UserSetting"]["Name"] != null)
+                if (Request.Cookies["UserSettings"]["Name"] != null)
                 {
-                    Username = Request.Cookies["UserSetting"]["Name"];
+                    Username = Request.Cookies["UserSettings"]["Name"];
                     LblUsername.Text = Username;
                 }
-
+                else { Response.Redirect("login.aspx"); }
             }
+            else { Response.Redirect("login.aspx"); }
 
             if ((string[])Session["Controls"] != null)
             {
@@ -1177,15 +1180,11 @@ namespace Kanbean_Project
             return int.TryParse(input, out test); 
         }
 
-        protected void EatCookies(object sender, EventArgs e)
-        {
-
-            if (Request.Cookies["UserSetting"] != null)
+        protected void EatCookies(object sender, EventArgs e){
+            if (Request.Cookies["UserSettings"] != null)
             {
-                if (Request.Cookies["UserSetting"]["Name"] != null)
-                {
-                    Response.Cookies["UserSetting"].Expires = DateTime.Now.AddDays(-1);
-                }
+                Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
+                Response.Redirect("login.aspx");
             }
         }
 
