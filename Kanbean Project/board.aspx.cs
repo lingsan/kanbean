@@ -1025,7 +1025,6 @@ namespace Kanbean_Project
             editAssigneePopup.Show();
         }
 
-       
         protected void btnUpdateDueDate_Click(object sender, EventArgs e)
         {
             if (editDueDateTextBox.Text != "" && !IsDate(editDueDateTextBox.Text))
@@ -1060,7 +1059,6 @@ namespace Kanbean_Project
             
         }
         
-
         protected void btnDueDate_Click(object sender, EventArgs e)
         {
             string id = "";
@@ -1293,12 +1291,14 @@ namespace Kanbean_Project
             if (Request.Cookies["UserSettings"] != null)
             {
                 Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
+                myConnection.Close();
                 Response.Redirect("login.aspx");
             }
         }
 
         protected void btnChart_Click(object sender, EventArgs e)
         {
+            myConnection.Close();
             Response.Redirect("charts.aspx");
         }
 
@@ -1324,7 +1324,7 @@ namespace Kanbean_Project
             showAttachedFilesPopup.Show();
         }
 
-         protected void btnUploadFile_Click(object sender, EventArgs e)
+        protected void btnUploadFile_Click(object sender, EventArgs e)
         {
             string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
             if (AttachedFileUpload.HasFile)
@@ -1374,6 +1374,7 @@ namespace Kanbean_Project
             }
             else Session["Popup"] = "false";
         }
+
         private void saveBacklogsToSession()
         {
             string backlogs = "";
@@ -1396,11 +1397,13 @@ namespace Kanbean_Project
 
         protected void linkBtnUsername_Click(object sender, EventArgs e)
         {
+            myConnection.Close();
             Response.Redirect("Profile.aspx?userID=" + Session["userID"].ToString());
         }
 
         protected void projectDropDownList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            myConnection.Close();
             Response.Redirect("board.aspx?projectID=" + projectDropDownList.SelectedValue);
         }
 
