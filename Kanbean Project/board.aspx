@@ -355,6 +355,69 @@
                         &nbsp;or&nbsp;<asp:Button ID="btnCloseFiles" runat="server" Text="Close" />
                     </fieldset>
                 </asp:Panel>
+                
+
+               <ajaxToolkit:ModalPopupExtender runat="server" ID="showUserinformationPopup" TargetControlID="showUserinformationHiddenField" PopupControlID="showUserInformationPanel" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>\
+               <asp:HiddenField id="showUserinformationHiddenField" runat="server" />
+                <asp:Panel ID="showUserInformationPanel" runat="server" CssClass="popupmodal">
+                    <fieldset style="padding:1em">
+                        <table id="registerTable">
+                
+                <tr>
+                    
+                    <td class="registerLabel">UserID</td>
+                    <td>
+                        <asp:Label ID="UserIDLabel" runat="server"></asp:Label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="registerLabel">
+                        <br />
+                        Username</td>
+                    <td>
+                        <br />
+                        <asp:Label ID="UsernameLabel" runat="server"></asp:Label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="registerLabel">
+                        <br />
+                        Email</td>
+                    <td>
+                        <br />
+                        <asp:Label ID="EmailLabel" runat="server"></asp:Label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="registerLabel">
+                        <br />
+                        Level</td>
+                    <td>
+                        <br />
+                        <asp:Label ID="LevelLabel" runat="server"></asp:Label>
+                    </td>
+                </tr>
+               <tr>
+                   <td class="registerLabel">
+                       <br />
+                       Project</td>
+                   <td>
+                       <br />
+                       <asp:Label ID="ProjectLabel" runat="server"></asp:Label>
+                   </td>
+               </tr>
+               <tr>
+                   <br />
+                   <td class="registerLabel">
+                    <asp:Button ID="btnBack" runat="server" Text="Back" />
+                   </td>
+               </tr>
+               
+            </table>
+                
+               </fieldset>
+               </asp:Panel>
+                
             </ContentTemplate>
             <Triggers>
                 <asp:PostBackTrigger ControlID="btnUploadFile" />
