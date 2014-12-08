@@ -88,7 +88,7 @@
                     </div>
                     <div id="user-information">
                         <p>Welcome, <span id="username"><asp:Label ID="LblUsername" runat="server" Text="Username"></asp:Label></span>. (<asp:LinkButton ID="LinkButton1" runat="server" OnClick="EatCookies">Logout</asp:LinkButton>)</p>
-                        <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList"></asp:DropDownList></p>
+                        <p>Project: <asp:DropDownList runat="server" ID="projectDropDownList" AutoPostBack="True"></asp:DropDownList></p>
                     </div>
                 </div>
 
@@ -110,7 +110,7 @@
 
                 <div class="clear"></div>
 
-                <asp:Table id="kanbanboard" border="1" runat="server"></asp:Table>
+                <asp:Table id="kanbanboard" runat="server" BorderStyle="None"></asp:Table>
 
                 <div class="clear"></div>
                 <asp:Label ID="test" runat="server" Text=""></asp:Label>

@@ -414,6 +414,7 @@ namespace Kanbean_Project
             Session["currentProject"] = 1;
         }
 
+        
          protected void Page_Load(object sender, EventArgs e)
         {
             string Username;
@@ -482,7 +483,8 @@ namespace Kanbean_Project
         protected void btnAddNewBacklog_Click(object sender, EventArgs e)
         {
             DataRow row = myDataSet.Tables["myRawBacklogs"].NewRow();
-            row["ProjectID"] = projectDropDownList.SelectedValue.ToString();
+            //row["ProjectID"] = projectDropDownList.SelectedValue.ToString();
+            row["ProjectID"] = 1;
             row["SwimlaneID"] = Convert.ToInt32(swimlaneDropDownList.SelectedValue);
             if (swimlaneDropDownList.SelectedValue == "5") {
                 row["BacklogStatusID"] = 3;
@@ -516,7 +518,7 @@ namespace Kanbean_Project
             myAdapter.Update(myDataSet, "myRawBacklogs");
             myDataSet.Clear();
 
-            getDatabase(row["ProjectID"].ToString());
+            getDatabase();
             getBacklogs();
             addandEditBacklogPopup.Hide();
         }
@@ -1258,34 +1260,75 @@ namespace Kanbean_Project
             Response.Redirect(Request.Url.AbsoluteUri);
         }
 
-             private void saveAttachedFilesPopup(object blid)
-             {
-                 if (showAttachedFilesLegend.Visible == true)
-                 {
-                     Session["Popup"] = "true";
-                     Session["BacklogUpload"] = blid;
-                 }
-                 else Session["Popup"] = "false";
-             }
-             private void saveBacklogsToSession()
-             {
-                 string backlogs = "";
+        private void saveAttachedFilesPopup(object blid)
+        {
+            if (showAttachedFilesLegend.Visible == true)
+            {
+                Session["Popup"] = "true";
+                Session["BacklogUpload"] = blid;
+            }
+            else Session["Popup"] = "false";
+        }
+        private void saveBacklogsToSession()
+        {
+            string backlogs = "";
 
-                 for (int j = 1; j <= myDataSet.Tables["myRawBacklogs"].Rows.Count; j++)
-                 {
-                     string backlogid = "backlogArea" + j;
-                     Control c = kanbanboard.FindControl(backlogid);
-                     if (c.Controls.Count > 1 && c.Controls[1].Visible == true)
-                     {
-                         backlogs += backlogid + " ";
-                     }
-                 }
+            for (int j = 1; j <= myDataSet.Tables["myRawBacklogs"].Rows.Count; j++)
+            {
+                string backlogid = "backlogArea" + j;
+                Control c = kanbanboard.FindControl(backlogid);
+                if (c.Controls.Count > 1 && c.Controls[1].Visible == true)
+                {
+                    backlogs += backlogid + " ";
+                }
+            }
 
-                 backlogs = backlogs.Remove(backlogs.Length - 1);
+            backlogs = backlogs.Remove(backlogs.Length - 1);
 
 
-                 Session["Controls"] = backlogs.Split(' ');
-             }
+            Session["Controls"] = backlogs.Split(' ');
+        }
+        
+        private void buildSwimlane()
+        {
+            DataTable boardTable = myDataSet.Tables["mySwimlanes"];
+            TableRow thRow = new TableRow();
+            TableRow tRow = new TableRow();
+
+            foreach (DataRow row in boardTable.Rows)
+            {
+                //the board header
+                TableHeaderCell thCell = new TableHeaderCell();
+                thCell.CssClass = "board-header";
+                thCell.ID = "columnHeader" + row["SwimlaneID"].ToString();
+                thCell.Text = row["SwimlaneName"].ToString();
+                thCell.Width = new Unit(100 / boardTable.Rows.Count, UnitType.Percentage);
+                thRow.Cells.Add(thCell);
+
+                //the board content
+                TableCell tCell = new TableCell();
+                tCell.CssClass = "board-content";
+                tCell.ID = "columnContent" + row["SwimlaneID"].ToString();
+                tCell.Width = new Unit(100 / boardTable.Rows.Count, UnitType.Percentage);
+                tCell.Attributes.Add("ondrop", "drop(event)");
+                tCell.Attributes.Add("ondragover", "dragover(event)");
+                tRow.Cells.Add(tCell);
+            }
+            kanbanboard.Controls.Add(thRow);
+            kanbanboard.Controls.Add(tRow);
+            //myDataSet.Clear();
+            getBacklogs();
+            getTasks();
+        }
+        private void clearBacklog()
+        {
+        }
+        protected void ChangeProject(object sender, EventArgs e)
+        {
+            string project = projectDropDownList.SelectedValue.ToString();
+            getDatabase(project);
+            buildSwimlane();
+        }
 
     }
 }
