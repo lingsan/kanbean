@@ -285,10 +285,21 @@ td {
     max-width:60%;
 }
 
+.popupmodal fieldset {
+    padding:1em;
+}
+
 legend {
     font-size:1.6em;
     font-weight:bold;
 }
+
+.noticeField {
+    color:red;
+    font-size:1em;
+    font-style:italic;
+}
+
 #btnRefresh {
     visibility:hidden;
 }

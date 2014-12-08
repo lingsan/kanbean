@@ -40,22 +40,22 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.UpdatePanel updatePanel;
         
         /// <summary>
-        /// LblUsername control.
+        /// linkBtnUsername control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblUsername;
+        protected global::System.Web.UI.WebControls.LinkButton linkBtnUsername;
         
         /// <summary>
-        /// LinkButton1 control.
+        /// linkBtnLogout control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
+        protected global::System.Web.UI.WebControls.LinkButton linkBtnLogout;
         
         /// <summary>
         /// projectDropDownList control.
@@ -130,15 +130,6 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.Table kanbanboard;
         
         /// <summary>
-        /// test control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label test;
-        
-        /// <summary>
         /// btnRefresh control.
         /// </summary>
         /// <remarks>
@@ -191,6 +182,15 @@ namespace Kanbean_Project {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl addandEditBacklogTable;
+        
+        /// <summary>
+        /// lblBacklogNotice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBacklogNotice;
         
         /// <summary>
         /// titleTextBox control.
@@ -344,6 +344,15 @@ namespace Kanbean_Project {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblAddedBacklogID;
+        
+        /// <summary>
+        /// lblTaskNotice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTaskNotice;
         
         /// <summary>
         /// titleTaskTextBox control.
@@ -616,6 +625,15 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl editComplexityLegend;
         
         /// <summary>
+        /// lblComplexityNotice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblComplexityNotice;
+        
+        /// <summary>
         /// lblEditComplexity control.
         /// </summary>
         /// <remarks>
@@ -758,6 +776,15 @@ namespace Kanbean_Project {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl editDueDateLegend;
+        
+        /// <summary>
+        /// lblDueDateNotice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDueDateNotice;
         
         /// <summary>
         /// editDueDateLabel control.

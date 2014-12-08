@@ -14,20 +14,20 @@ namespace Kanbean_Project
     public partial class login : System.Web.UI.Page
     {
         OleDbConnection LogInConnection = new OleDbConnection();
+
+        protected void Page_Init(object sender, EventArgs e)
+        {
+            Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
+            LogInConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
+
+            //read cookie to check if User Loged on or not
+            if (Request.Cookies["UserSettings"] != null && Request.Cookies["UserSettings"]["Name"] != null)
+                Response.Redirect("board.aspx");
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            //read cookie to check if User Loged on or not
-            if ( Request.Cookies["UserSettings"] != null && Request.Cookies["UserSettings"]["Name"] != null)
-            {
-                Response.Redirect("Board.aspx");
-            }
-
-            Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
-            /*string path = @"\App_Data";
-            string constr = "Provider=Microsoft.Jet.OleDB.4.0 " +
-                "Data Source = " + path + @"\LanbanDatabase.mdb";*/
-            string constr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
-            LogInConnection.ConnectionString = constr;
+            
         }
 
         //Write a cookie for username
@@ -52,22 +52,18 @@ namespace Kanbean_Project
 
         protected void LoginValidation(object source, ServerValidateEventArgs args)
         {
-            //connect to DB
             LogInConnection.Open();
-            string UserName = usernameTextBox.Text;
-            OleDbCommand UserPassConn = new OleDbCommand("SELECT [Password] FROM [User] WHERE [Username]='" + UserName +"'", LogInConnection);
+            OleDbCommand UserPassConn = new OleDbCommand("SELECT [Password] FROM [User] WHERE [Username]='" + usernameTextBox.Text + "'", LogInConnection);
             UserPassConn.CommandType = CommandType.Text;
-            /*OleDbDataReader CheclogInReader;
-            CheclogInReader = UserPassConn.ExecuteReader();*/
-            try {
+
+            try
+            {
                 if (passwordTextBox.Text == UserPassConn.ExecuteScalar().ToString())
-                {
                     args.IsValid = true;
-                } else
-                {
+                else
                     args.IsValid = false;
-                } 
-            } catch
+            }
+            catch
             {
                 args.IsValid = false;
             }

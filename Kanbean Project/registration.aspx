@@ -54,12 +54,13 @@
         <ajaxToolkit:ToolkitScriptManager ID="registerFormToolkitscript" runat="server" ></ajaxToolkit:ToolkitScriptManager>
         <asp:UpdatePanel ID="registerFormUpdatePanel" runat="server">
             <ContentTemplate>
-                <ajaxToolkit:ModalPopupExtender ID="registerFormPopup" runat="server" TargetControlID="registerFormHiddenField" PopupControlID="registerFormPanel" CancelControlID="btnOK" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
+                <ajaxToolkit:ModalPopupExtender ID="registerFormPopup" runat="server" TargetControlID="registerFormHiddenField" PopupControlID="registerFormPanel" CancelControlID="btnCancel" BackgroundCssClass="popupbackground"></ajaxToolkit:ModalPopupExtender>
                 <asp:HiddenField ID="registerFormHiddenField" runat="server" />
                 <asp:Panel ID="registerFormPanel" runat="server" CssClass="popupmodal">
                     <fieldset>
                         <asp:Label ID="resultLabel" runat="server" Text=""></asp:Label><br />
                         <asp:Button ID="btnOK" runat="server" Text="OK" OnClick="btnOK_Click" />
+                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" />
                     </fieldset>
                 </asp:Panel>
             </ContentTemplate>

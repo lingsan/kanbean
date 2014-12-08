@@ -31,8 +31,7 @@
                 <tr>
                     <td></td>
                     <td>
-                        <a href="#">Forgot username and password ???</a> <br />
-                        <a href="registration.aspx">Not yet had an account ???</a>
+                        <a href="registration.aspx" style="font-size:15px;float:right">Register an account</a>
                     </td>
                 </tr>
                 <tr>
