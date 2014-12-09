@@ -407,25 +407,25 @@ namespace Kanbean_Project
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if ((string[])Session["Controls"] != null)
-            {
-                foreach (string control in (string[])Session["Controls"])
-                {
-                    Control c = kanbanboard.FindControl(control);
-                    if (c != null)
-                        for (int i = 0; i < c.Controls.Count; i++)
-                            c.Controls[i].Visible = true;
-                    else for (int i = 0; i < c.Controls.Count; i++)
-                            c.Controls[i].Visible = false;
-                    Session["Controls"] = null;
-                }
-            }
-            if ((string)Session["Popup"] == "true")
-            {
-                attachFile((object)Session["BacklogUpload"]);
-                Session["Popup"] = null;
-                Session["BacklogUpload"] = null;
-            }
+            //if ((string[])Session["Controls"] != null)
+            //{
+            //    foreach (string control in (string[])Session["Controls"])
+            //    {
+            //        Control c = kanbanboard.FindControl(control);
+            //        if (c != null)
+            //            for (int i = 0; i < c.Controls.Count; i++)
+            //                c.Controls[i].Visible = true;
+            //        else for (int i = 0; i < c.Controls.Count; i++)
+            //                c.Controls[i].Visible = false;
+            //        Session["Controls"] = null;
+            //    }
+            //}
+            //if ((string)Session["Popup"] == "true")
+            //{
+            //    attachFile((object)Session["BacklogUpload"]);
+            //    Session["Popup"] = null;
+            //    Session["BacklogUpload"] = null;
+            //}
         }
 
         protected void btnAddBacklog_Click(object sender, EventArgs e)
@@ -1310,7 +1310,21 @@ namespace Kanbean_Project
 
         protected void btnAttachedFile_Click(object sender, EventArgs e)
         {
-            attachFile(((Control)sender).ID.Remove(0, 19));
+            //attachFile(((Control)sender).ID.Remove(0, 19));
+            string id = ((Control)sender).ID.Remove(0, 19);
+            List<ListItem> files = new List<ListItem>();
+            if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")))
+            {
+                string[] filePaths = Directory.GetFiles(Server.MapPath("~/Files/task" + id + "/"));
+                foreach (string filePath in filePaths)
+                {
+                    files.Add(new ListItem(Path.GetFileName(filePath), filePath));
+                }
+            }
+            showAttachedFilesGridView.DataSource = files;
+            showAttachedFilesGridView.DataBind();
+            showAttachedFilesLegend.InnerText = "Attached File of Task #" + id;
+            showAttachedFilesPopup.Show();
         }
 
         private void attachFile(object id) //- transfered from btnAttachedFile code
@@ -1340,15 +1354,15 @@ namespace Kanbean_Project
                 if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")) == false)
                     Directory.CreateDirectory(Server.MapPath("~/Files/task" + id + "/"));
                 AttachedFileUpload.PostedFile.SaveAs(Server.MapPath("~/Files/task" + id + "/") + fileName);
+                Response.Redirect(Request.Url.AbsoluteUri);
             }
-            else
-            {
-                attachFile(id);
-            }
+            //else
+            //{
+            //    attachFile(id);
+            //}
 
-            saveBacklogsToSession();
-            saveAttachedFilesPopup(id);
-            Response.Redirect(Request.Url.AbsoluteUri);
+            //saveBacklogsToSession();
+            //saveAttachedFilesPopup(id);
         }
 
         protected void btnDownloadFile_Click(object sender, EventArgs e)
@@ -1362,12 +1376,12 @@ namespace Kanbean_Project
 
         protected void btnDeleteFile_Click(object sender, EventArgs e)
         {
-            string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
+            //string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
             string filePath = (sender as LinkButton).CommandArgument;
             File.Delete(filePath);
 
-            saveBacklogsToSession();
-            saveAttachedFilesPopup(id);
+            //saveBacklogsToSession();
+            //saveAttachedFilesPopup(id);
             Response.Redirect(Request.Url.AbsoluteUri);
         }
 
