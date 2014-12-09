@@ -21,7 +21,15 @@ namespace Kanbean_Project
 
         protected void Page_Init(object sender, EventArgs e)
         {
-            linkBtnUsername.Text = Session["username"].ToString();
+            if (Request.Cookies["UserSettings"] != null)
+            {
+                if (Request.Cookies["UserSettings"]["Name"] != null)
+                    linkBtnUsername.Text = Request.Cookies["UserSettings"]["Name"];
+                else
+                    Response.Redirect("login.aspx");
+            }
+            else
+                Response.Redirect("login.aspx");
 
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();

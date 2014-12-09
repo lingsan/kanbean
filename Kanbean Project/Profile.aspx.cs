@@ -21,6 +21,16 @@ namespace Kanbean_Project
 
         protected void Page_Init(object sender, EventArgs e)
         {
+            if (Request.Cookies["UserSettings"] != null)
+            {
+                if (Request.Cookies["UserSettings"]["Name"] != null)
+                    linkBtnUsername.Text = Request.Cookies["UserSettings"]["Name"];
+                else
+                    Response.Redirect("login.aspx");
+            }
+            else
+                Response.Redirect("login.aspx");
+
             userProfile.Visible = true;
             projectManagement.Visible = false;
             accountManagement.Visible = false;
@@ -29,11 +39,10 @@ namespace Kanbean_Project
             tableEditProfile.Visible = false;
             tableChangePass.Visible = false;
 
-            linkBtnUsername.Text = Session["username"].ToString();
             myConnection.Open();
             mySelectCommand.Connection = myConnection;
             mySelectCommand.CommandText = "SELECT [User].*, Projects.ProjectName FROM [User], Projects " +
-                                        "WHERE [User].DefaultProjectID = Projects.ProjectID AND [User].[Username] = '" + Session["username"].ToString() + "';";
+                                        "WHERE [User].DefaultProjectID = Projects.ProjectID AND [User].[Username] = '" + linkBtnUsername.Text + "';";
             //string DefaultProject = mySelectCommand.ExecuteScalar().ToString();
             myReader = mySelectCommand.ExecuteReader();
             bool notEoF = myReader.Read();
@@ -43,6 +52,7 @@ namespace Kanbean_Project
                 lblEmail.Text = myReader["Email"].ToString();
                 lblUserLevel.Text = myReader["Level"].ToString();
                 lblDefaultProject.Text = myReader["ProjectName"].ToString();
+                Session["userID"] = myReader["UserID"].ToString();
                 notEoF = myReader.Read();
             }
             myReader.Close();
@@ -56,6 +66,7 @@ namespace Kanbean_Project
                 notEoF = myReader.Read();
             }
             myReader.Close();
+
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -65,14 +76,14 @@ namespace Kanbean_Project
 
         protected void btnBacktheBoard_Click(object sender, EventArgs e)
         {
-            //myConnection.Close();
+            myConnection.Close();
             Response.Redirect("board.aspx");
         }
 
         protected void linkBtnUsername_Click(object sender, EventArgs e)
         {
-            //myConnection.Close();
-            Response.Redirect("Profile.aspx?userID=" + Session["userID"].ToString());
+            myConnection.Close();
+            Response.Redirect("Profile.aspx");
         }
 
         protected void EatCookies(object sender, EventArgs e)
@@ -80,7 +91,7 @@ namespace Kanbean_Project
             if (Request.Cookies["UserSettings"] != null)
             {
                 Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
-                //myConnection.Close();
+                myConnection.Close();
                 Response.Redirect("login.aspx");
             }
         }
