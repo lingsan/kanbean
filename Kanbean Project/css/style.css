@@ -341,3 +341,51 @@ legend {
     width:1000px;
     text-align:center;
 }
+
+/*Profile*/
+
+#btnUserProfile:before {
+    content: "\f007";
+}
+
+#btnProjectManagement:before {
+    content:"\f022";
+}
+
+#btnUserManagement:before {
+    content:"\f0c0";
+}
+
+#content {
+    background-color:whitesmoke;
+}
+
+#userProfile, #projectManagement, #accountManagement {
+    max-width:60%;
+    margin:0 auto;
+    background-color:white;
+    padding:10px 20px 30px 20px;
+}
+
+.accountselectbox {
+    width:15.1em;
+}
+
+.accounttextbox {
+    width:15em;
+}
+
+.accountlistbox {
+    width:15em;
+    height:15em;
+}
+
+.buttonSubmit {
+    float:right;
+}
+
+ul {
+    margin-top:2em;
+    margin-right:3.4em;
+}
+

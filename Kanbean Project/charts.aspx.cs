@@ -247,7 +247,7 @@ namespace Kanbean_Project
         protected void linkBtnUsername_Click(object sender, EventArgs e)
         {
             myConnection.Close();
-            Response.Redirect("Profile.aspx?userID=" + Session["userID"].ToString());
+            Response.Redirect("Profile.aspx");
         }
 
         protected void EatCookies(object sender, EventArgs e)

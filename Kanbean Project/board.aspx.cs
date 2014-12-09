@@ -347,9 +347,9 @@ namespace Kanbean_Project
             bool notEoF = myReader.Read();
             while (notEoF)
             {
-                Session["username"] = myReader["Username"].ToString(); ;
-                Session["userID"] = myReader["UserID"].ToString(); ;
-                Session["currentProject"] = myReader["DefaultProjectID"].ToString(); ;
+                Session["username"] = myReader["Username"].ToString();
+                Session["userID"] = myReader["UserID"].ToString();
+                Session["currentProject"] = myReader["DefaultProjectID"].ToString();
                 notEoF = myReader.Read();
             }
             myReader.Close();
@@ -1354,7 +1354,7 @@ namespace Kanbean_Project
                 if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")) == false)
                     Directory.CreateDirectory(Server.MapPath("~/Files/task" + id + "/"));
                 AttachedFileUpload.PostedFile.SaveAs(Server.MapPath("~/Files/task" + id + "/") + fileName);
-                Response.Redirect(Request.Url.AbsoluteUri);
+                //Response.Redirect(Request.Url.AbsoluteUri);
             }
             //else
             //{
@@ -1382,7 +1382,7 @@ namespace Kanbean_Project
 
             //saveBacklogsToSession();
             //saveAttachedFilesPopup(id);
-            Response.Redirect(Request.Url.AbsoluteUri);
+            //Response.Redirect(Request.Url.AbsoluteUri);
         }
 
         private void saveAttachedFilesPopup(object blid)
@@ -1418,7 +1418,7 @@ namespace Kanbean_Project
         protected void linkBtnUsername_Click(object sender, EventArgs e)
         {
             myConnection.Close();
-            Response.Redirect("Profile.aspx?userID=" + Session["userID"].ToString());
+            Response.Redirect("Profile.aspx");
         }
 
         protected void projectDropDownList_SelectedIndexChanged(object sender, EventArgs e)
