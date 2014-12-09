@@ -1167,81 +1167,81 @@ namespace Kanbean_Project
 
         protected void btnFilter_Click(object sender, EventArgs e)
         {
-            dropdownFilter.Visible = true;
+            //dropdownFilter.Visible = true;
 
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            tbxSearch.Visible = true;
-            btnFilter.Enabled = true;
+            //tbxSearch.Visible = true;
+            //btnFilter.Enabled = true;
         }
 
         protected void dropdownFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
-            List<string> links = new List<string>();
-            selectSearch.Connection = myConnection;
-            if (myConnection.State == ConnectionState.Closed)
-                myConnection.Open();
+            //List<string> links = new List<string>();
+            //selectSearch.Connection = myConnection;
+            //if (myConnection.State == ConnectionState.Closed)
+            //    myConnection.Open();
 
-            if (dropdownFilter.SelectedItem.Text == "Users")
-            {
-                selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] "
-                                        + "WHERE ([Username] LIKE '%" + tbxSearch.Text + "%' OR [Email] LIKE '%" + tbxSearch.Text + "%')"
-                                        + "AND UserID IN (SELECT UserID FROM ProjectsMembers " 
-                                        + "WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "') ";
+            //if (dropdownFilter.SelectedItem.Text == "Users")
+            //{
+            //    selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] "
+            //                            + "WHERE ([Username] LIKE '%" + tbxSearch.Text + "%' OR [Email] LIKE '%" + tbxSearch.Text + "%')"
+            //                            + "AND UserID IN (SELECT UserID FROM ProjectsMembers " 
+            //                            + "WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "') ";
 
-                myReader = selectSearch.ExecuteReader();
-                bool notEoF;
-                notEoF = myReader.Read();
-                while (notEoF)
-                {
-                    //string linkItem = myReader["Username"].ToString() + ", " + myReader["Email"].ToString();
-                    //linkItem.Value = myReader["UserID"].ToString();
-                    links.Add(myReader["Username"].ToString() + ", " + myReader["Email"].ToString());
-                    notEoF = myReader.Read();
-                }
-            }
-            else if (dropdownFilter.SelectedItem.Text == "Tasks")
-            {
-                selectSearch.CommandText = "SELECT TaskTitle, TaskComplexity, TaskStartDate, TaskDueDate, [Username] " 
-                                        + "FROM Tasks INNER JOIN [User] ON Tasks.TaskAssigneeID = [User].UserID " 
-                                        + "WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "' " 
-                                        + "AND (TaskTitle LIKE '%" + tbxSearch.Text + "%' "
-                                        + "OR TaskComplexity LIKE '" + tbxSearch.Text + "' " 
-                                        + "OR TaskStartDate LIKE '%" + tbxSearch.Text + "%' " 
-                                        + "OR TaskDueDate LIKE '%" + tbxSearch.Text + "%')";
+            //    myReader = selectSearch.ExecuteReader();
+            //    bool notEoF;
+            //    notEoF = myReader.Read();
+            //    while (notEoF)
+            //    {
+            //        //string linkItem = myReader["Username"].ToString() + ", " + myReader["Email"].ToString();
+            //        //linkItem.Value = myReader["UserID"].ToString();
+            //        links.Add(myReader["Username"].ToString() + ", " + myReader["Email"].ToString());
+            //        notEoF = myReader.Read();
+            //    }
+            //}
+            //else if (dropdownFilter.SelectedItem.Text == "Tasks")
+            //{
+            //    selectSearch.CommandText = "SELECT TaskTitle, TaskComplexity, TaskStartDate, TaskDueDate, [Username] " 
+            //                            + "FROM Tasks INNER JOIN [User] ON Tasks.TaskAssigneeID = [User].UserID " 
+            //                            + "WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "' " 
+            //                            + "AND (TaskTitle LIKE '%" + tbxSearch.Text + "%' "
+            //                            + "OR TaskComplexity LIKE '" + tbxSearch.Text + "' " 
+            //                            + "OR TaskStartDate LIKE '%" + tbxSearch.Text + "%' " 
+            //                            + "OR TaskDueDate LIKE '%" + tbxSearch.Text + "%')";
 
-                myReader = selectSearch.ExecuteReader();
-                bool notEoF;
-                notEoF = myReader.Read();
-                while (notEoF)
-                {
-                    links.Add(myReader["TaskTitle"].ToString() + ", complexity: " + myReader["TaskComplexity"].ToString() 
-                                + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"] 
-                                + ", assignee: " + myReader["Username"]);
-                    notEoF = myReader.Read();
-                }
-            }
-            else if (dropdownFilter.SelectedItem.Text == "Comments")
-            {
-                selectSearch.CommandText = "SELECT CommentContent, [Username] FROM BacklogsComments " 
-                                        + "INNER JOIN [User] ON [User].UserID = BacklogsComments.CommenterID " 
-                                        + "WHERE CommentContent LIKE '%" + tbxSearch.Text + "%' " 
-                                        + "AND BacklogID IN (SELECT BacklogID FROM Backlogs WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "')";
+            //    myReader = selectSearch.ExecuteReader();
+            //    bool notEoF;
+            //    notEoF = myReader.Read();
+            //    while (notEoF)
+            //    {
+            //        links.Add(myReader["TaskTitle"].ToString() + ", complexity: " + myReader["TaskComplexity"].ToString() 
+            //                    + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"] 
+            //                    + ", assignee: " + myReader["Username"]);
+            //        notEoF = myReader.Read();
+            //    }
+            //}
+            //else if (dropdownFilter.SelectedItem.Text == "Comments")
+            //{
+            //    selectSearch.CommandText = "SELECT CommentContent, [Username] FROM BacklogsComments " 
+            //                            + "INNER JOIN [User] ON [User].UserID = BacklogsComments.CommenterID " 
+            //                            + "WHERE CommentContent LIKE '%" + tbxSearch.Text + "%' " 
+            //                            + "AND BacklogID IN (SELECT BacklogID FROM Backlogs WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "')";
 
-                myReader = selectSearch.ExecuteReader();
-                bool notEoF;
-                notEoF = myReader.Read();
-                while (notEoF)
-                {
-                    links.Add(myReader["CommentContent"].ToString() + ", - " + myReader["Username"].ToString());
-                    notEoF = myReader.Read();
-                }
-            }
-            Session["links"] = links;
-            //Server.Transfer("SearchResults.aspx", true);
-            Response.Redirect("SearchResults.aspx");
+            //    myReader = selectSearch.ExecuteReader();
+            //    bool notEoF;
+            //    notEoF = myReader.Read();
+            //    while (notEoF)
+            //    {
+            //        links.Add(myReader["CommentContent"].ToString() + ", - " + myReader["Username"].ToString());
+            //        notEoF = myReader.Read();
+            //    }
+            //}
+            //Session["links"] = links;
+            ////Server.Transfer("SearchResults.aspx", true);
+            //Response.Redirect("SearchResults.aspx");
         }
 
         [WebMethod]
