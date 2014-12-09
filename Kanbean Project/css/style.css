@@ -144,6 +144,10 @@
     content:"\f00e";
 }
 
+#btnBacktheBoard:before {
+    content:"\f0a8";
+}
+
 .btnDownloadFileIcon:before {
     content:"\f019";
 }

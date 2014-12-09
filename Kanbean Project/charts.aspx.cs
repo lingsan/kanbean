@@ -21,6 +21,8 @@ namespace Kanbean_Project
 
         protected void Page_Init(object sender, EventArgs e)
         {
+            linkBtnUsername.Text = Session["username"].ToString();
+
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
             myCommand.Connection = myConnection;
@@ -110,6 +112,65 @@ namespace Kanbean_Project
 
             EstimationPointChart.Titles.Add(new Title("Estimated Point by Person", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
 
+
+            myCommand.CommandText = "SELECT MIN(Tasks.TaskStartDate) FROM Tasks, Backlogs " +
+                        "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + 1;
+            DateTime startdate = DateTime.Parse(myCommand.ExecuteScalar().ToString());
+            startdateTextBox.Text = Convert.ToDateTime(myCommand.ExecuteScalar()).ToShortDateString();
+
+            myCommand.CommandText = "SELECT MAX(Tasks.TaskDueDate) FROM Tasks, Backlogs " +
+                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + 1;
+            DateTime enddate = DateTime.Parse(myCommand.ExecuteScalar().ToString());
+            enddateTextBox.Text = Convert.ToDateTime(myCommand.ExecuteScalar()).ToShortDateString();
+            //DateTime currentdate = DateTime.Parse("28/11/2014");
+            //if (Convert.ToDateTime(myCommand.ExecuteScalar()) < DateTime.Today)
+            //    enddateTextBox.Text = DateTime.Today.ToString();
+            //else
+            //    enddateTextBox.Text = myCommand.ExecuteScalar().ToString();
+
+            decimal gap = Convert.ToDecimal(enddate.Subtract(startdate).TotalDays) - 1;
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Date", typeof(string));
+            dt.Columns.Add("SpentHour", typeof(decimal));
+            dt.Columns.Add("RemainingHour", typeof(decimal));
+            myCommand.CommandText = "SELECT SUM(Tasks.TaskEstimationHour) FROM Tasks, Backlogs " +
+                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = 1" +
+                                    " AND (Tasks.TaskStatusID = 1 OR Tasks.TaskStatusID = 2 OR Tasks.TaskCompletedDate >= #" + startdate + "#)" +
+                                    " AND Tasks.TaskDueDate <= #" + enddate + "#";
+            if (myCommand.ExecuteScalar() != DBNull.Value)
+            {
+                decimal totalhour = Convert.ToDecimal(myCommand.ExecuteScalar());
+                foreach (DateTime date in GetDateRange(startdate, enddate))
+                {
+                    decimal spenthour = 0;
+                    myCommand.CommandText = "SELECT SUM(Tasks.TaskEstimationHour) FROM Tasks, Backlogs " +
+                                            "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + 1 +
+                                            " AND (Tasks.TaskStatusID = 1 OR Tasks.TaskStatusID = 2 OR Tasks.TaskCompletedDate >= #" + startdate + "#)" +
+                                            " AND Tasks.TaskDueDate <=#" + enddate + "# AND Tasks.TaskCompletedDate <=#" + date + "#";
+                    if (myCommand.ExecuteScalar() != DBNull.Value)
+                        spenthour = Convert.ToDecimal(myCommand.ExecuteScalar());
+                    dt.Rows.Add(date.ToString("dd.MM.yyyy"), spenthour, totalhour - spenthour);
+                }
+
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    BurnDownChart.Series["Burn-Down"].Points.AddXY(dt.Rows[i]["Date"].ToString(), Convert.ToDecimal(dt.Rows[i]["RemainingHour"]));
+                    BurnDownChart.Series["Optimal"].Points.AddXY(dt.Rows[i]["Date"].ToString(), totalhour - i * gap);
+                    BurnUpChart.Series["Burn-Up"].Points.AddXY(dt.Rows[i]["Date"].ToString(), Convert.ToDecimal(dt.Rows[i]["SpentHour"]));
+                    BurnUpChart.Series["Total"].Points.AddXY(dt.Rows[i]["Date"].ToString(), totalhour);
+                }
+                BurnDownChart.Titles.Add(new Title("Burn-Down Chart", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
+                BurnDownChart.Legends.Add("BurnDownChartLegend");
+                BurnDownChart.Legends["BurnDownChartLegend"].Docking = Docking.Bottom;
+                BurnDownChart.Legends["BurnDownChartLegend"].Alignment = System.Drawing.StringAlignment.Center;
+
+                BurnUpChart.Titles.Add(new Title("Burn-Up Chart", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
+                BurnUpChart.Legends.Add("BurnUpChartLegend");
+                BurnUpChart.Legends["BurnUpChartLegend"].Docking = Docking.Bottom;
+                BurnUpChart.Legends["BurnUpChartLegend"].Alignment = System.Drawing.StringAlignment.Center;
+            }
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -181,6 +242,22 @@ namespace Kanbean_Project
                 tmpDate = tmpDate.AddDays(1);
             } while (tmpDate <= EndingDate);
             return rv;
+        }
+
+        protected void linkBtnUsername_Click(object sender, EventArgs e)
+        {
+            myConnection.Close();
+            Response.Redirect("Profile.aspx?userID=" + Session["userID"].ToString());
+        }
+
+        protected void EatCookies(object sender, EventArgs e)
+        {
+            if (Request.Cookies["UserSettings"] != null)
+            {
+                Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
+                myConnection.Close();
+                Response.Redirect("login.aspx");
+            }
         }
     }
 }

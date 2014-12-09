@@ -40,76 +40,58 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.UpdatePanel chartUpdatePanel;
         
         /// <summary>
+        /// linkBtnUsername control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton linkBtnUsername;
+        
+        /// <summary>
+        /// linkBtnLogout control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton linkBtnLogout;
+        
+        /// <summary>
         /// btnBacktheBoard control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBacktheBoard;
+        protected global::System.Web.UI.WebControls.LinkButton btnBacktheBoard;
         
         /// <summary>
-        /// taskGridView control.
+        /// lbl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView taskGridView;
+        protected global::System.Web.UI.WebControls.Label lbl;
         
         /// <summary>
-        /// TaskAssignedGridView control.
+        /// BurnDownChart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView TaskAssignedGridView;
+        protected global::System.Web.UI.DataVisualization.Charting.Chart BurnDownChart;
         
         /// <summary>
-        /// TaskDoneGridView control.
+        /// BurnUpChart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView TaskDoneGridView;
-        
-        /// <summary>
-        /// EstimationFactorGridView control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView EstimationFactorGridView;
-        
-        /// <summary>
-        /// TaskAssignedChart control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.DataVisualization.Charting.Chart TaskAssignedChart;
-        
-        /// <summary>
-        /// TaskDoneChart control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.DataVisualization.Charting.Chart TaskDoneChart;
-        
-        /// <summary>
-        /// EstimationPointChart control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.DataVisualization.Charting.Chart EstimationPointChart;
+        protected global::System.Web.UI.DataVisualization.Charting.Chart BurnUpChart;
         
         /// <summary>
         /// startdateTextBox control.
@@ -157,21 +139,66 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.Button btnCreateChart;
         
         /// <summary>
-        /// BurnDownChart control.
+        /// TaskAssignedChart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.DataVisualization.Charting.Chart BurnDownChart;
+        protected global::System.Web.UI.DataVisualization.Charting.Chart TaskAssignedChart;
         
         /// <summary>
-        /// BurnUpChart control.
+        /// TaskDoneChart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.DataVisualization.Charting.Chart BurnUpChart;
+        protected global::System.Web.UI.DataVisualization.Charting.Chart TaskDoneChart;
+        
+        /// <summary>
+        /// EstimationPointChart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.DataVisualization.Charting.Chart EstimationPointChart;
+        
+        /// <summary>
+        /// TaskAssignedGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView TaskAssignedGridView;
+        
+        /// <summary>
+        /// TaskDoneGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView TaskDoneGridView;
+        
+        /// <summary>
+        /// EstimationFactorGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView EstimationFactorGridView;
+        
+        /// <summary>
+        /// taskGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView taskGridView;
     }
 }

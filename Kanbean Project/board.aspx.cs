@@ -396,6 +396,12 @@ namespace Kanbean_Project
                 getBacklogs();
                 getTasks();
             }
+            else
+            {
+                ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "alert", "alert('You aren't member of any project.\r\nPlease contact with admin.');", true);
+                Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
+                Response.Redirect("login.aspx");
+            }
 
         }
 
