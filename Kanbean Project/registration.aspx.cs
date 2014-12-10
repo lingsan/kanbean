@@ -40,7 +40,9 @@ namespace Kanbean_Project
 
                 OleDbCommand myCommand = new OleDbCommand();
                 myCommand.Connection = myConnection;
-                myCommand.CommandText = "SELECT * FROM [User] WHERE [Username] = '" + usernameTextBox.Text + "' OR [Email] = '" + emailTextBox.Text + "'";
+                myCommand.CommandText = "SELECT * FROM [User] WHERE [Username] = @Username OR [Email] = @Email";
+                myCommand.Parameters.AddWithValue("@Username", usernameTextBox.Text);
+                myCommand.Parameters.AddWithValue("@Email", emailTextBox.Text);
                 try
                 {
                     if (myCommand.ExecuteScalar().ToString() != "")
@@ -53,7 +55,10 @@ namespace Kanbean_Project
                 }
                 catch
                 {
-                    myCommand.CommandText = "INSERT INTO [User]([Username], [Password], [Email], [Level]) VALUES ('" + usernameTextBox.Text + "','" + passwordTextBox.Text + "','" + emailTextBox.Text + "',2)";
+                    myCommand.CommandText = "INSERT INTO [User]([Username], [Password], [Email], [Level]) VALUES ( @Username, @Password, @Email, 2)";
+                    myCommand.Parameters.AddWithValue("@Username", usernameTextBox.Text);
+                    myCommand.Parameters.AddWithValue("@Password", passwordTextBox.Text);
+                    myCommand.Parameters.AddWithValue("@Email", emailTextBox.Text);
                     myCommand.ExecuteNonQuery();
                     myConnection.Close();
                     resultLabel.Text = "Your account is created! Click OK to login.";

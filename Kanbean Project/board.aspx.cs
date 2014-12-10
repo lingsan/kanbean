@@ -342,7 +342,6 @@ namespace Kanbean_Project
             //get the Default Project by Username
             mySelectCommand.Connection = myConnection;
             mySelectCommand.CommandText = "SELECT * FROM [User] WHERE [Username] = '" + Username + "';";
-            //string DefaultProject = mySelectCommand.ExecuteScalar().ToString();
             myReader = mySelectCommand.ExecuteReader();
             bool notEoF = myReader.Read();
             while (notEoF)
@@ -930,14 +929,18 @@ namespace Kanbean_Project
                 {
                     if (txtBacklogComplexity.Text != "")
                         value = txtBacklogComplexity.Text;
-                    myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogComplexity = " + value + " WHERE backlogID = " + editComplexityLegend.InnerText.Remove(0, 33);
+                    myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogComplexity = @BacklogComplexity WHERE backlogID = @backlogID";
+                    myUpdateCommand.Parameters.AddWithValue("@BacklogComplexity", value);
+                    myUpdateCommand.Parameters.AddWithValue("@backlogID", editComplexityLegend.InnerText.Remove(0, 33));
                     myUpdateCommand.ExecuteNonQuery();
                 }
                 if (editComplexityLegend.InnerText.Substring(24, 4) == "Task")
                 {
                     if (txtBacklogComplexity.Text != "")
                         value = txtBacklogComplexity.Text;
-                    myUpdateCommand.CommandText = "UPDATE Tasks SET TaskComplexity = " + value + " WHERE taskID = " + editComplexityLegend.InnerText.Remove(0, 30);
+                    myUpdateCommand.CommandText = "UPDATE Tasks SET TaskComplexity = @TaskComplexity WHERE taskID = @taskID";
+                    myUpdateCommand.Parameters.AddWithValue("@TaskComplexity", value);
+                    myUpdateCommand.Parameters.AddWithValue("@taskID", editComplexityLegend.InnerText.Remove(0, 30));
                     myUpdateCommand.ExecuteNonQuery();
                 }
 
@@ -977,14 +980,18 @@ namespace Kanbean_Project
             {
                 if (editAssigneeDropdownList.SelectedItem.Text != "")
                     value = editAssigneeDropdownList.SelectedValue;
-                myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogAssigneeID = " + value + " WHERE BacklogID = " + editAssigneeLegend.InnerText.Remove(0, 31);
+                myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogAssigneeID = @BacklogAssigneeID WHERE BacklogID = @backlogID";
+                myUpdateCommand.Parameters.AddWithValue("@BacklogAssigneeID", value);
+                myUpdateCommand.Parameters.AddWithValue("@backlogID", editAssigneeLegend.InnerText.Remove(0, 31));
                 myUpdateCommand.ExecuteNonQuery();
             }
             if (editAssigneeLegend.InnerText.Substring(22, 4) == "Task")
             {
                 if (editAssigneeDropdownList.SelectedItem.Text != "")
                     value = editAssigneeDropdownList.SelectedValue;
-                myUpdateCommand.CommandText = "UPDATE Tasks SET TaskAssigneeID = " + value + " WHERE TaskID = " + editAssigneeLegend.InnerText.Remove(0, 28);
+                myUpdateCommand.CommandText = "UPDATE Tasks SET TaskAssigneeID = @TaskAssigneeID WHERE TaskID = @taskID";
+                myUpdateCommand.Parameters.AddWithValue("@TaskAssigneeID", value);
+                myUpdateCommand.Parameters.AddWithValue("@backlogID", editAssigneeLegend.InnerText.Remove(0, 28));
                 myUpdateCommand.ExecuteNonQuery();
             }
 
@@ -1046,14 +1053,18 @@ namespace Kanbean_Project
                 {
                     if (editDueDateTextBox.Text != "")
                         value = Convert.ToDateTime(editDueDateTextBox.Text);
-                    myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogDueDate = '" + value + "' WHERE BacklogID = " + editDueDateLegend.InnerText.Remove(0, 31);
+                    myUpdateCommand.CommandText = "UPDATE Backlogs SET BacklogDueDate = @BacklogDueDate WHERE BacklogID = @backlogID";
+                    myUpdateCommand.Parameters.AddWithValue("@BacklogDueDate", value);
+                    myUpdateCommand.Parameters.AddWithValue("@backlogID", editDueDateLegend.InnerText.Remove(0, 31));
                     myUpdateCommand.ExecuteNonQuery();
                 }
                 if (editDueDateLegend.InnerText.Substring(22, 4) == "Task")
                 {
                     if (editDueDateTextBox.Text != "")
                         value = Convert.ToDateTime(editDueDateTextBox.Text);
-                    myUpdateCommand.CommandText = "UPDATE Tasks SET TaskDueDate = '" + value + "' WHERE TaskID = " + editDueDateLegend.InnerText.Remove(0, 28);
+                    myUpdateCommand.CommandText = "UPDATE Tasks SET TaskDueDate = @TaskDueDate WHERE TaskID = @taskID";
+                    myUpdateCommand.Parameters.AddWithValue("@TaskDueDate", value);
+                    myUpdateCommand.Parameters.AddWithValue("@taskID", editDueDateLegend.InnerText.Remove(0, 28));
                     myUpdateCommand.ExecuteNonQuery();
                 }
 
@@ -1143,26 +1154,36 @@ namespace Kanbean_Project
 
         protected void btnAddComment_Click(object sender, EventArgs e)
         {
-            myInsertCommand.Connection = myConnection;
-            if (addCommentLegend.InnerText.Substring(12, 4) == "Back")
+            if (addCommentTextBox.Text != "")
             {
-                string id = addCommentLegend.InnerText.Remove(0, 21);
-                myInsertCommand.CommandText = "INSERT INTO BacklogsComments (CommentContent,CommenterID,BacklogID) "
-                                            + "VALUES ('" + addCommentTextBox.Text + "','"+ Session["userID"].ToString() +"','" + id + "')";
-                myInsertCommand.ExecuteNonQuery();
+                myInsertCommand.Connection = myConnection;
+                if (addCommentLegend.InnerText.Substring(12, 4) == "Back")
+                {
+                    myInsertCommand.CommandText = "INSERT INTO BacklogsComments (CommentContent, CommenterID, BacklogID) "
+                                                + "VALUES (@CommentContent, @CommenterID, @BacklogID)";
+                    myInsertCommand.Parameters.AddWithValue("@CommentContent", addCommentTextBox.Text);
+                    myInsertCommand.Parameters.AddWithValue("@CommenterID", Session["userID"].ToString());
+                    myInsertCommand.Parameters.AddWithValue("@BacklogID", addCommentLegend.InnerText.Remove(0, 21));
+                    myInsertCommand.ExecuteNonQuery();
+                }
+                else if (addCommentLegend.InnerText.Substring(12, 4) == "Task")
+                {
+                    myInsertCommand.CommandText = "INSERT INTO TasksComments (CommentContent, CommenterID, TaskID) "
+                                                + "VALUES (@CommentContent, @CommenterID, @TaskID)";
+                    myInsertCommand.Parameters.AddWithValue("@CommentContent", addCommentTextBox.Text);
+                    myInsertCommand.Parameters.AddWithValue("@CommenterID", Session["userID"].ToString());
+                    myInsertCommand.Parameters.AddWithValue("@TaskID", addCommentLegend.InnerText.Remove(0, 18)); 
+                    myInsertCommand.ExecuteNonQuery();
+                }
+                myDataSet.Clear();
+                getDatabase();
+                ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "refreshBoard", "refreshBoard();", true);
+                addCommentTextBox.Text = "";
             }
-            else if (addCommentLegend.InnerText.Substring(12, 4) == "Task")
+            else
             {
-                string id = addCommentLegend.InnerText.Remove(0, 18);
-                myInsertCommand.CommandText = "INSERT INTO TasksComments (CommentContent,CommenterID,TaskID) "
-                                            + "VALUES ('" + addCommentTextBox.Text + "','" + Session["userID"].ToString() + "','" + id + "')";
-                myInsertCommand.ExecuteNonQuery();
+                addCommentPopup.Show();
             }
-            myDataSet.Clear();
-            getDatabase();
-            ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "refreshBoard", "refreshBoard();", true);
-            addCommentTextBox.Text = "";
-
         }
 
         protected void btnFilter_Click(object sender, EventArgs e)
@@ -1346,20 +1367,19 @@ namespace Kanbean_Project
 
         protected void btnUploadFile_Click(object sender, EventArgs e)
         {
-            string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
             if (AttachedFileUpload.HasFile)
             {
                 string fileName = Path.GetFileName(AttachedFileUpload.PostedFile.FileName);
-               
+                string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
                 if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")) == false)
                     Directory.CreateDirectory(Server.MapPath("~/Files/task" + id + "/"));
                 AttachedFileUpload.PostedFile.SaveAs(Server.MapPath("~/Files/task" + id + "/") + fileName);
-                //Response.Redirect(Request.Url.AbsoluteUri);
+                Response.Redirect(Request.Url.AbsoluteUri);
             }
-            //else
-            //{
-            //    attachFile(id);
-            //}
+            else
+            {
+                showAttachedFilesPopup.Show();
+            }
 
             //saveBacklogsToSession();
             //saveAttachedFilesPopup(id);
