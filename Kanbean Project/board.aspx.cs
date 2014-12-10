@@ -406,25 +406,7 @@ namespace Kanbean_Project
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if ((string[])Session["Controls"] != null)
-            //{
-            //    foreach (string control in (string[])Session["Controls"])
-            //    {
-            //        Control c = kanbanboard.FindControl(control);
-            //        if (c != null)
-            //            for (int i = 0; i < c.Controls.Count; i++)
-            //                c.Controls[i].Visible = true;
-            //        else for (int i = 0; i < c.Controls.Count; i++)
-            //                c.Controls[i].Visible = false;
-            //        Session["Controls"] = null;
-            //    }
-            //}
-            //if ((string)Session["Popup"] == "true")
-            //{
-            //    attachFile((object)Session["BacklogUpload"]);
-            //    Session["Popup"] = null;
-            //    Session["BacklogUpload"] = null;
-            //}
+
         }
 
         protected void btnAddBacklog_Click(object sender, EventArgs e)
@@ -1186,83 +1168,46 @@ namespace Kanbean_Project
             }
         }
 
-        protected void btnFilter_Click(object sender, EventArgs e)
-        {
-            //dropdownFilter.Visible = true;
-
-        }
-
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            //tbxSearch.Visible = true;
-            //btnFilter.Enabled = true;
-        }
+            List<string> links = new List<string>();
+            selectSearch.Connection = myConnection;
+            if (myConnection.State == ConnectionState.Closed)
+                myConnection.Open();
 
-        protected void dropdownFilter_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //List<string> links = new List<string>();
-            //selectSearch.Connection = myConnection;
-            //if (myConnection.State == ConnectionState.Closed)
-            //    myConnection.Open();
+            if (dropdownFilter.SelectedItem.Text == "Tasks")
+            {
+                selectSearch.CommandText = "SELECT TaskTitle, TaskStartDate, TaskDueDate, Username "
+                + "FROM Tasks INNER JOIN [User] ON Tasks.TaskAssigneeID = [User].UserID "
+                + "WHERE TaskTitle LIKE '%" + tbxSearch.Text + "%'";
 
-            //if (dropdownFilter.SelectedItem.Text == "Users")
-            //{
-            //    selectSearch.CommandText = "SELECT [Username],[Email] FROM [User] "
-            //                            + "WHERE ([Username] LIKE '%" + tbxSearch.Text + "%' OR [Email] LIKE '%" + tbxSearch.Text + "%')"
-            //                            + "AND UserID IN (SELECT UserID FROM ProjectsMembers " 
-            //                            + "WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "') ";
-
-            //    myReader = selectSearch.ExecuteReader();
-            //    bool notEoF;
-            //    notEoF = myReader.Read();
-            //    while (notEoF)
-            //    {
-            //        //string linkItem = myReader["Username"].ToString() + ", " + myReader["Email"].ToString();
-            //        //linkItem.Value = myReader["UserID"].ToString();
-            //        links.Add(myReader["Username"].ToString() + ", " + myReader["Email"].ToString());
-            //        notEoF = myReader.Read();
-            //    }
-            //}
-            //else if (dropdownFilter.SelectedItem.Text == "Tasks")
-            //{
-            //    selectSearch.CommandText = "SELECT TaskTitle, TaskComplexity, TaskStartDate, TaskDueDate, [Username] " 
-            //                            + "FROM Tasks INNER JOIN [User] ON Tasks.TaskAssigneeID = [User].UserID " 
-            //                            + "WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "' " 
-            //                            + "AND (TaskTitle LIKE '%" + tbxSearch.Text + "%' "
-            //                            + "OR TaskComplexity LIKE '" + tbxSearch.Text + "' " 
-            //                            + "OR TaskStartDate LIKE '%" + tbxSearch.Text + "%' " 
-            //                            + "OR TaskDueDate LIKE '%" + tbxSearch.Text + "%')";
-
-            //    myReader = selectSearch.ExecuteReader();
-            //    bool notEoF;
-            //    notEoF = myReader.Read();
-            //    while (notEoF)
-            //    {
-            //        links.Add(myReader["TaskTitle"].ToString() + ", complexity: " + myReader["TaskComplexity"].ToString() 
-            //                    + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"] 
-            //                    + ", assignee: " + myReader["Username"]);
-            //        notEoF = myReader.Read();
-            //    }
-            //}
-            //else if (dropdownFilter.SelectedItem.Text == "Comments")
-            //{
-            //    selectSearch.CommandText = "SELECT CommentContent, [Username] FROM BacklogsComments " 
-            //                            + "INNER JOIN [User] ON [User].UserID = BacklogsComments.CommenterID " 
-            //                            + "WHERE CommentContent LIKE '%" + tbxSearch.Text + "%' " 
-            //                            + "AND BacklogID IN (SELECT BacklogID FROM Backlogs WHERE ProjectID LIKE '" + projectDropDownList.SelectedItem.Text + "')";
-
-            //    myReader = selectSearch.ExecuteReader();
-            //    bool notEoF;
-            //    notEoF = myReader.Read();
-            //    while (notEoF)
-            //    {
-            //        links.Add(myReader["CommentContent"].ToString() + ", - " + myReader["Username"].ToString());
-            //        notEoF = myReader.Read();
-            //    }
-            //}
-            //Session["links"] = links;
-            ////Server.Transfer("SearchResults.aspx", true);
-            //Response.Redirect("SearchResults.aspx");
+                myReader = selectSearch.ExecuteReader();
+                bool notEoF;
+                notEoF = myReader.Read();
+                while (notEoF)
+                {
+                    links.Add(myReader["TaskTitle"].ToString()
+                    + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"]
+                    + ", assignee: " + myReader["Username"]);
+                    notEoF = myReader.Read();
+                }
+            }
+            else
+            {
+                selectSearch.CommandText = @"SELECT BacklogTitle, BacklogStartDate, BacklogDueDate, Username
+                                            FROM Backlogs INNER JOIN [User] ON Backlogs.BacklogAssigneeID=User.UserID
+                                            WHERE BacklogTitle LIKE '%" + tbxSearch.Text + "%' OR BacklogDescription LIKE '%" + tbxSearch.Text + "%'";
+                myReader = selectSearch.ExecuteReader();
+                bool notEoF;
+                notEoF = myReader.Read();
+                while (notEoF)
+                {
+                    links.Add(myReader["BacklogTitle"].ToString() + ", - " + myReader["Username"].ToString() + ". Period: " + myReader["BacklogStartDate"] + " - " + myReader["BacklogDueDate"]);
+                    notEoF = myReader.Read();
+                }
+            }
+            Session["links"] = links;
+            Response.Redirect("SearchResults.aspx");
         }
 
         [WebMethod]
@@ -1332,25 +1277,7 @@ namespace Kanbean_Project
 
         protected void btnAttachedFile_Click(object sender, EventArgs e)
         {
-            //attachFile(((Control)sender).ID.Remove(0, 19));
             string id = ((Control)sender).ID.Remove(0, 19);
-            List<ListItem> files = new List<ListItem>();
-            if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")))
-            {
-                string[] filePaths = Directory.GetFiles(Server.MapPath("~/Files/task" + id + "/"));
-                foreach (string filePath in filePaths)
-                {
-                    files.Add(new ListItem(Path.GetFileName(filePath), filePath));
-                }
-            }
-            showAttachedFilesGridView.DataSource = files;
-            showAttachedFilesGridView.DataBind();
-            showAttachedFilesLegend.InnerText = "Attached File of Task #" + id;
-            showAttachedFilesPopup.Show();
-        }
-
-        private void attachFile(object id) //- transfered from btnAttachedFile code
-        {
             List<ListItem> files = new List<ListItem>();
             if (Directory.Exists(Server.MapPath("~/Files/task" + id + "/")))
             {
@@ -1381,9 +1308,6 @@ namespace Kanbean_Project
             {
                 showAttachedFilesPopup.Show();
             }
-
-            //saveBacklogsToSession();
-            //saveAttachedFilesPopup(id);
         }
 
         protected void btnDownloadFile_Click(object sender, EventArgs e)
@@ -1397,43 +1321,9 @@ namespace Kanbean_Project
 
         protected void btnDeleteFile_Click(object sender, EventArgs e)
         {
-            //string id = showAttachedFilesLegend.InnerText.Remove(0, 23);
             string filePath = (sender as LinkButton).CommandArgument;
             File.Delete(filePath);
-
-            //saveBacklogsToSession();
-            //saveAttachedFilesPopup(id);
-            //Response.Redirect(Request.Url.AbsoluteUri);
-        }
-
-        private void saveAttachedFilesPopup(object blid)
-        {
-            if (showAttachedFilesLegend.Visible == true)
-            {
-                Session["Popup"] = "true";
-                Session["BacklogUpload"] = blid;
-            }
-            else Session["Popup"] = "false";
-        }
-
-        private void saveBacklogsToSession()
-        {
-            string backlogs = "";
-
-            for (int j = 1; j <= myDataSet.Tables["myRawBacklogs"].Rows.Count; j++)
-            {
-                string backlogid = "backlogArea" + j;
-                Control c = kanbanboard.FindControl(backlogid);
-                if (c.Controls.Count > 1 && c.Controls[1].Visible == true)
-                {
-                    backlogs += backlogid + " ";
-                }
-            }
-
-            backlogs = backlogs.Remove(backlogs.Length - 1);
-
-
-            Session["Controls"] = backlogs.Split(' ');
+            Response.Redirect(Request.Url.AbsoluteUri);
         }
 
         protected void linkBtnUsername_Click(object sender, EventArgs e)

@@ -15,6 +15,7 @@ namespace Kanbean_Project
         OleDbCommand mySelectCommand = new OleDbCommand();
         OleDbCommand myUpdateCommand = new OleDbCommand();
         OleDbCommand myDeleteCommand = new OleDbCommand();
+        OleDbCommand myInsertCommand = new OleDbCommand();
         OleDbDataAdapter myAdapter = new OleDbDataAdapter();
         DataSet myDataSet = new DataSet();
         OleDbDataReader myReader;
@@ -198,6 +199,10 @@ namespace Kanbean_Project
             tableCreateAccount.Visible = true;
             tableEditAccount.Visible = false;
             GetDB();
+            FillProject(newAccountDefaultProjectDropDownList, myDataSet.Tables["Projects"]);
+            newAccountUserLevelDropDownList.Items.Add("Choose User Level");
+            newAccountUserLevelDropDownList.Items.Add("1");
+            newAccountUserLevelDropDownList.Items.Add("2");
         }
 
         protected void linkbtnSummary_Click(object sender, EventArgs e)
@@ -228,6 +233,19 @@ namespace Kanbean_Project
             {
                 _Project.Items.Add(row["ProjectName"].ToString());
                 _Project.Items[_Project.Items.Count - 1].Value = row["ProjectID"].ToString();
+            }
+        }
+        private void FillUser(DropDownList _Account, DataTable _projectTable)
+        {
+
+            //fill projectlist
+            _Account.Items.Clear();
+            _Account.Items.Add("Choose a User Account!");
+            _Account.Items[0].Value = "0";
+            foreach (DataRow row in _projectTable.Rows)
+            {
+                _Account.Items.Add(row["Username"].ToString());
+                _Account.Items[_Account.Items.Count - 1].Value = row["Username"].ToString();
             }
         }
 
@@ -387,22 +405,58 @@ namespace Kanbean_Project
         {
             tableCreateAccount.Visible = true;
             tableEditAccount.Visible = false;
+            GetDB();
+            FillProject(newAccountDefaultProjectDropDownList, myDataSet.Tables["Projects"]);
         }
 
         protected void linkbtnEditAccount_Click(object sender, EventArgs e)
         {
             tableCreateAccount.Visible = false;
             tableEditAccount.Visible = true;
+            GetDB();
+            FillUser(selectAccountDropDownList, myDataSet.Tables["User"]);
+            GetDB();
+            FillProject(editDefaultProjectDropDownList, myDataSet.Tables["Projects"]);
+
+            editUserLevelDropDownList.Items.Add("Choose User Level");
+            editUserLevelDropDownList.Items.Add("1");
+            editUserLevelDropDownList.Items.Add("2");
         }
 
         protected void btnCreateAccount_Click(object sender, EventArgs e)
         {
+            myInsertCommand.Connection = myConnection;
+            myInsertCommand.CommandType = CommandType.Text;
 
+            myInsertCommand.CommandText = "INSERT INTO User (Username, Password, Email, Level, DefaultProjectID) "
+                                                + "VALUES (@Username, @Password, @Email, @Level, @DefaultProjectID)";
+            myInsertCommand.Parameters.AddWithValue("@Username", newAccountUsernameTextBox.Text);
+            myInsertCommand.Parameters.AddWithValue("@Password", newAccountPasswordTextBox.Text);
+            myInsertCommand.Parameters.AddWithValue("@Email", newAccountEmailTextBox2.Text);
+            myInsertCommand.Parameters.AddWithValue("@Level", newAccountUserLevelDropDownList.SelectedValue);
+            myInsertCommand.Parameters.AddWithValue("@DefaultProjectID", newAccountDefaultProjectDropDownList.SelectedValue);
+
+            myInsertCommand.ExecuteNonQuery();
+            myDataSet.Clear();
+            GetDB();
+          
         }
 
         protected void btnSaveEditAccount_Click(object sender, EventArgs e)
         {
+            myUpdateCommand.Connection = myConnection;
+            myUpdateCommand.CommandType = CommandType.Text;
 
+            myUpdateCommand.CommandText = "UPDATE User SET Password = @Password, Email=@Email, Level=@Level, DefaultProjectID=@DefaultProjectID WHERE Username =@Username";
+            myUpdateCommand.Parameters.AddWithValue("@Username", selectAccountDropDownList.SelectedItem.Text);
+            myUpdateCommand.Parameters.AddWithValue("@Password", editPasswordTextBox.Text);
+            myUpdateCommand.Parameters.AddWithValue("@Email", editEmailTextBox.Text);
+            myUpdateCommand.Parameters.AddWithValue("@Level", editUserLevelDropDownList.SelectedValue.ToString());
+            myUpdateCommand.Parameters.AddWithValue("@DefaultProjectID", editDefaultProjectDropDownList.SelectedValue.ToString());
+
+            myUpdateCommand.ExecuteNonQuery();
+            myDataSet.Clear();
+            GetDB();
         }
     }
 }

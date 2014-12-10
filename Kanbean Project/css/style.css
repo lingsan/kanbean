@@ -29,9 +29,6 @@
     margin:0em 0em 0.6em 0em;
     font-size:2.5em;
 }
-.TextBox {
-    width: 250px;
-}
 
 #RegisterPanel {
     width:28em;
@@ -128,16 +125,16 @@
     color:deepskyblue;
 }
 
+#tbxSearch {
+    margin-left:0.8em;
+}
+
 #btnAddBacklog:before {
     content:"\f055";
 }
 
 #btnChart:before {
     content:"\f080";
-}
-
-#btnFilter:before {
-    content:"\f0b0";
 }
 
 #btnSearch:before {
