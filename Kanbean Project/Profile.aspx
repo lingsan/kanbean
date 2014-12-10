@@ -80,7 +80,7 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Default Project: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="defaultProjectDropDownList" CssClass="accountselectbox" runat="server"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell><asp:DropDownList ID="defaultProjectDropDownList" CssClass="accounttextbox" runat="server"></asp:DropDownList></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell ColumnSpan="2">
@@ -154,7 +154,7 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Project: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="AddMembersProjectDropDownList" CssClass="accountselectbox" runat="server"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell><asp:DropDownList ID="AddMembersProjectDropDownList" CssClass="accountselectbox" runat="server" AutoPostBack ="true" OnSelectedIndexChanged ="OuterMem"></asp:DropDownList></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Add Member(s): </asp:TableCell>
@@ -172,7 +172,7 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Project: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="RemoveMembersProjectDropDownList" CssClass="accountselectbox" runat="server"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell><asp:DropDownList ID="RemoveMembersProjectDropDownList" CssClass="accountselectbox" runat="server" AutoPostBack="true" OnSelectedIndexChanged="InnerMem"></asp:DropDownList></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Remmove Member(s): </asp:TableCell>
@@ -252,7 +252,7 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>User level: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="editUserLevelDropDownList" CssClass="accountselectbox" runat="server"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell><asp:DropDownList ID="editUserLevelDropDownList" CssClass="accountselectbox" runat="server" AutoPostBack ="true" ></asp:DropDownList></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Default Project: </asp:TableCell>
