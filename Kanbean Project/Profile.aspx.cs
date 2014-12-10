@@ -63,7 +63,10 @@ namespace Kanbean_Project
         {
             lblUsername.Text = myDataSet.Tables["User"].Rows[0]["Username"].ToString();
             lblEmail.Text = myDataSet.Tables["User"].Rows[0]["Email"].ToString();
-            lblUserLevel.Text = myDataSet.Tables["User"].Rows[0]["Level"].ToString();
+            if (myDataSet.Tables["User"].Rows[0]["Level"].ToString() == "1"){
+                lblUserLevel.Text = "admin";
+            }
+            else { lblUserLevel.Text = "User"; }
             lblDefaultProject.Text = myDataSet.Tables["User"].Rows[0]["ProjectName"].ToString();
             lblParticipatedProjects.Text = "";
             foreach (DataRow row in myDataSet.Tables["ProjectsMembers"].Rows)
@@ -105,7 +108,6 @@ namespace Kanbean_Project
                 } else Response.Redirect("login.aspx");
             } else Response.Redirect("login.aspx");
 
-
             userProfile.Visible = true;
             projectManagement.Visible = false;
             accountManagement.Visible = false;
@@ -116,6 +118,11 @@ namespace Kanbean_Project
 
             //myConnection.Open();
             GetDB(Session["username"].ToString());
+            if (myDataSet.Tables["User"].Rows[0]["Level"].ToString() != "1")
+            {
+                projectManagement.Enabled = btnProjectManagement.Visible = btnProjectManagement.Enabled = false;
+                accountManagement.Enabled = btnUserManagement.Visible = btnUserManagement.Enabled = false;
+            }
             FillContent();
         }
 
@@ -198,21 +205,21 @@ namespace Kanbean_Project
 
         protected void linkbtnEditProfile_Click(object sender, EventArgs e)
         {
-            FillProject(defaultProjectDropDownList);
+            FillProject(defaultProjectDropDownList, myDataSet.Tables["ProjectsMembers"]);
             tableSummary.Visible = false;
             tableEditProfile.Visible = true;
             tableChangePass.Visible = false;
 
         }
 
-        private void FillProject(DropDownList _Project)
+        private void FillProject(DropDownList _Project,DataTable _projectTable)
         {
 
             //fill projectlist
             _Project.Items.Clear();
             _Project.Items.Add("Choose a project!");
             _Project.Items[0].Value = "0";
-            foreach (DataRow row in myDataSet.Tables["Projects"].Rows)
+            foreach (DataRow row in _projectTable.Rows)
             {
                 _Project.Items.Add(row["ProjectName"].ToString());
                 _Project.Items[_Project.Items.Count - 1].Value = row["ProjectID"].ToString();
@@ -230,10 +237,10 @@ namespace Kanbean_Project
         {
             //update Default Project
             if (defaultProjectDropDownList.SelectedValue != "0") {
-                Update("[User]", "DefaultProjectID", "'" + defaultProjectDropDownList.SelectedValue.ToString() + "'", "[Username]", Session["username"].ToString());
+                Update("[User]", "DefaultProjectID",defaultProjectDropDownList.SelectedValue.ToString(), "[Username]", Session["username"].ToString());
             }
             //up date email
-            Update("[User]", "Email", "'" + emailTextbox.Text + "'", "[Username]", Session["username"].ToString());
+            Update("[User]", "Email", emailTextbox.Text, "[Username]", Session["username"].ToString());
             backSummary();
         }
 
@@ -259,7 +266,7 @@ namespace Kanbean_Project
         protected void linkbtnAddMembers_Click(object sender, EventArgs e)
         {
             GetDB();
-            FillProject(AddMembersProjectDropDownList);
+            FillProject(AddMembersProjectDropDownList, myDataSet.Tables["Projects"]);
             tableCreateProject.Visible = false;
             tableAddMembers.Visible = true;
             tableRemoveMembers.Visible = false;
@@ -268,7 +275,7 @@ namespace Kanbean_Project
         protected void linkbtnRemoveMembers_Click(object sender, EventArgs e)
         {
             GetDB();
-            FillProject(RemoveMembersProjectDropDownList);
+            FillProject(RemoveMembersProjectDropDownList,myDataSet.Tables["Projects"]);
             tableCreateProject.Visible = false;
             tableAddMembers.Visible = false;
             tableRemoveMembers.Visible = true;
@@ -281,7 +288,6 @@ namespace Kanbean_Project
             myUpdateCommand.CommandType = CommandType.Text;
             myAdapter.SelectCommand.CommandText = "SELECT * FROM Projects;";
             myAdapter.Fill(myDataSet, "Project");
-            myAdapter.Fill(myDataSet, "Projects");
             DataRow Inrow = myDataSet.Tables["Project"].NewRow();
             Inrow["ProjectName"] = newProjectNameTextBox.Text;
             myDataSet.Tables["Project"].Rows.Add(Inrow);
@@ -290,7 +296,6 @@ namespace Kanbean_Project
             myAdapter.InsertCommand = myUpdateCommand;
             myAdapter.Update(myDataSet, "Projects");
             myConnection.Close();
-            linkbtnAddMembers_Click(new object(), EventArgs.Empty);
         }
 
         protected void InnerMem(object sender, EventArgs e)
@@ -301,7 +306,6 @@ namespace Kanbean_Project
             foreach(DataRow row in myDataSet.Tables["ProjectsMembers"].Rows){
                 if (row["ProjectID"].ToString() == RemoveMembersProjectDropDownList.SelectedValue.ToString())
                 {
-                    
                     RemoveProjectMembersListBox.Items.Add(row["Username"].ToString());
                     RemoveProjectMembersListBox.Items[RemoveProjectMembersListBox.Items.Count - 1].Value = row["UserID"].ToString();
                 }
@@ -314,16 +318,20 @@ namespace Kanbean_Project
             AddProjectMembersListBox.Items.Clear();
             foreach(DataRow row in myDataSet.Tables["ProjectsMembers"].Rows){
                 if (row["ProjectID"].ToString() == AddMembersProjectDropDownList.SelectedValue.ToString())
+                {
                     foreach (DataRow r1 in myDataSet.Tables["User"].Rows)
                     {
-                        if (r1["UserID"].ToString() == row["UserID"].ToString()) { break; }
-                        else
-                        {
-                            AddProjectMembersListBox.Items.Add(row["Username"].ToString());
-                            AddProjectMembersListBox.Items[AddProjectMembersListBox.Items.Count - 1].Value = row["UserID"].ToString();
-                        }
-
+                        if (r1["UserID"].ToString() == row["UserID"].ToString()) { r1["UserID"] = "-1"; }
                     }
+                }
+            }
+            foreach (DataRow row in myDataSet.Tables["User"].Rows)
+            {
+                if (row["UserID"].ToString() != "-1")
+                {
+                    AddProjectMembersListBox.Items.Add(row["Username"].ToString());
+                    AddProjectMembersListBox.Items[AddProjectMembersListBox.Items.Count - 1].Value = row["UserID"].ToString();
+                }
             }
         }
         protected void btnAddMembers_Click(object sender, EventArgs e)

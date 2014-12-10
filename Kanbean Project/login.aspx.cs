@@ -53,9 +53,9 @@ namespace Kanbean_Project
         protected void LoginValidation(object source, ServerValidateEventArgs args)
         {
             LogInConnection.Open();
-            OleDbCommand UserPassConn = new OleDbCommand("SELECT [Password] FROM [User] WHERE [Username]='" + usernameTextBox.Text + "'", LogInConnection);
+            OleDbCommand UserPassConn = new OleDbCommand("SELECT [Password] FROM [User] WHERE [Username]= @Username", LogInConnection);
+            UserPassConn.Parameters.AddWithValue("@Username", usernameTextBox.Text);
             UserPassConn.CommandType = CommandType.Text;
-
             try
             {
                 if (passwordTextBox.Text == UserPassConn.ExecuteScalar().ToString())
