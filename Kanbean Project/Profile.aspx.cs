@@ -28,13 +28,13 @@ namespace Kanbean_Project
             myDataSet.Clear();
             mySelectCommand.CommandText = "SELECT [User].*, Projects.ProjectName FROM [User], Projects " 
                                         + "WHERE [User].DefaultProjectID = Projects.ProjectID AND "
-                                        +   "[User].[Username] = '" + _UserID + "';";
+                                        +   "[User].[UserID] = " + _UserID + ";";
             myAdapter.Fill(myDataSet, "User");
             mySelectCommand.CommandText = "SELECT ProjectsMembers.ProjectID, ProjectsMembers.UserID, Projects.ProjectName, User.Username "
                                         + "FROM ProjectsMembers, Projects, [User] "
                                         + "WHERE (((ProjectsMembers.ProjectID)=[Projects].[ProjectID]) AND "
                                         +   "((ProjectsMembers.UserID)=[User].[UserID])) AND "
-                                        + "[User].[Username] = '" + _UserID + "';";
+                                        + "[User].[UserID] = " + _UserID + ";";
             myAdapter.Fill(myDataSet, "ProjectsMembers");
             myConnection.Close();
         }
@@ -117,7 +117,7 @@ namespace Kanbean_Project
             tableChangePass.Visible = false;
 
             //myConnection.Open();
-            GetDB(Session["username"].ToString());
+            GetDB(Request.QueryString["UserID"].ToString());
             if (myDataSet.Tables["User"].Rows[0]["Level"].ToString() != "1")
             {
                 projectManagement.Enabled = btnProjectManagement.Visible = btnProjectManagement.Enabled = false;
@@ -168,12 +168,13 @@ namespace Kanbean_Project
             tableSummary.Visible = true;
             tableEditProfile.Visible = false;
             tableChangePass.Visible = false;
-            GetDB(Session["username"].ToString());
+            GetDB(Request.QueryString["UserID"].ToString());
             FillContent();
         }
 
         protected void btnProjectManagement_Click(object sender, EventArgs e)
         {
+            GetDB();
             userProfile.Visible = false;
             projectManagement.Visible = true;
             accountManagement.Visible = false;
@@ -181,6 +182,11 @@ namespace Kanbean_Project
             tableCreateProject.Visible = true;
             tableAddMembers.Visible = false;
             tableRemoveMembers.Visible = false;
+
+            newProjectMembersListBox.DataSource = myDataSet.Tables["User"];
+            newProjectMembersListBox.DataTextField = "Username";
+            newProjectMembersListBox.DataValueField = "UserID";
+            newProjectMembersListBox.DataBind();
         }
 
         protected void btnUserManagement_Click(object sender, EventArgs e)
@@ -199,7 +205,7 @@ namespace Kanbean_Project
             tableSummary.Visible = true;
             tableEditProfile.Visible = false;
             tableChangePass.Visible = false;
-            GetDB(Session["username"].ToString());
+            GetDB(Request.QueryString["UserID"].ToString());
             FillContent();
         }
 
@@ -214,7 +220,6 @@ namespace Kanbean_Project
 
         private void FillProject(DropDownList _Project,DataTable _projectTable)
         {
-
             //fill projectlist
             _Project.Items.Clear();
             _Project.Items.Add("Choose a project!");
@@ -237,10 +242,10 @@ namespace Kanbean_Project
         {
             //update Default Project
             if (defaultProjectDropDownList.SelectedValue != "0") {
-                Update("[User]", "DefaultProjectID",defaultProjectDropDownList.SelectedValue.ToString(), "[Username]", Session["username"].ToString());
+                Update("[User]", "DefaultProjectID",defaultProjectDropDownList.SelectedValue.ToString(), "[UserID]", Request.QueryString["UserID"].ToString());
             }
             //up date email
-            Update("[User]", "Email", emailTextbox.Text, "[Username]", Session["username"].ToString());
+            Update("[User]", "Email", emailTextbox.Text, "[UserID]", Request.QueryString["UserID"].ToString());
             backSummary();
         }
 
@@ -283,19 +288,45 @@ namespace Kanbean_Project
 
         protected void btnCreateProject_Click(object sender, EventArgs e)
         {
+            GetDB();
             myConnection.Open();
             myUpdateCommand.Connection = myConnection;
             myUpdateCommand.CommandType = CommandType.Text;
-            myAdapter.SelectCommand.CommandText = "SELECT * FROM Projects;";
-            myAdapter.Fill(myDataSet, "Project");
-            DataRow Inrow = myDataSet.Tables["Project"].NewRow();
-            Inrow["ProjectName"] = newProjectNameTextBox.Text;
-            myDataSet.Tables["Project"].Rows.Add(Inrow);
-            OleDbCommandBuilder InSert = new OleDbCommandBuilder(myAdapter);
-            myUpdateCommand = InSert.GetInsertCommand(true);
-            myAdapter.InsertCommand = myUpdateCommand;
-            myAdapter.Update(myDataSet, "Projects");
-            myConnection.Close();
+            bool valid = true;
+            foreach (DataRow r in myDataSet.Tables["Projects"].Rows)
+            {
+                if (r["ProjectName"].ToString() == newProjectNameTextBox.Text) { valid = false; }
+            }
+
+            if (valid && newProjectNameTextBox.Text != "the entered project nam has already exist!")
+            {   //Error with the command
+                myUpdateCommand.CommandText = "INSERT INTO Projects(ProjectName) VALUE ('" + newProjectNameTextBox.Text + "');";
+                myUpdateCommand.ExecuteNonQuery();
+                mySelectCommand.CommandText = "SELECT ProjectID FROM Projects Where ProjectName = '" + newProjectNameTextBox.Text + "');";
+                myReader = mySelectCommand.ExecuteReader();
+                string ProjectID = "";
+                bool notEoF;
+                //read first row from database
+                notEoF = myReader.Read();
+                //read row by row until the last row
+                while (notEoF)
+                {
+                    ProjectID = myReader["ProjectID"].ToString();
+                    //read next row
+                    notEoF = myReader.Read();
+                }
+                foreach (ListItem li in newProjectMembersListBox.Items)
+                {
+                    if (li.Selected)
+                    {
+                        myUpdateCommand.CommandText = "INSERT INTO ProjectsMembers(ProjectID,UserID) VALUE (" + ProjectID + "," + li.Value.ToString() + ");";
+                    }
+                }
+            }
+            else
+            {
+                newProjectNameTextBox.Text = "the entered project nam has already exist!";
+            }
         }
 
         protected void InnerMem(object sender, EventArgs e)
@@ -336,7 +367,15 @@ namespace Kanbean_Project
         }
         protected void btnAddMembers_Click(object sender, EventArgs e)
         {
-
+            foreach (ListItem li in newProjectMembersListBox.Items)
+            {
+                if (li.Selected)
+                {
+                    myUpdateCommand.CommandText = "INSERT INTO ProjectsMembers(ProjectID,UserID) VALUE (" + AddMembersProjectDropDownList.SelectedValue.ToString() + "," + li.Value.ToString() + ");";
+                    myUpdateCommand.ExecuteNonQuery();
+                }
+            }
+            myConnection.Close();
         }
 
         protected void btnRemoveMembers_Click(object sender, EventArgs e)

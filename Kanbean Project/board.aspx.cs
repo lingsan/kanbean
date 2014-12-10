@@ -25,7 +25,7 @@ namespace Kanbean_Project
         OleDbCommand selectSearch = new OleDbCommand();
 
         DataSet myDataSet = new DataSet();
-        
+
         private void getDatabase()
         {
             mySelectCommand.Connection = myConnection;
@@ -33,25 +33,25 @@ namespace Kanbean_Project
             mySelectCommand.CommandText = "SELECT * FROM Swimlanes ORDER BY SwimlaneID";
             myAdapter.Fill(myDataSet, "mySwimlanes");
             mySelectCommand.CommandText = "SELECT Projects.ProjectName, [User].UserID, [User].Username, [User].Level "
-                                        + "FROM ProjectsMembers, Projects, [User] " 
+                                        + "FROM ProjectsMembers, Projects, [User] "
                                         + "WHERE ProjectsMembers.ProjectID = Projects.ProjectID AND ProjectsMembers.UserID = [User].UserID "
-                                        + "AND Projects.ProjectID = " + Session["currentProject"].ToString() 
+                                        + "AND Projects.ProjectID = " + Session["currentProject"].ToString()
                                         + " ORDER BY [User].UserID";
             myAdapter.Fill(myDataSet, "myProjectNembers");
             mySelectCommand.CommandText = "SELECT Backlogs.*, [User].Username, Swimlanes.SwimlaneName, Projects.ProjectName, Status.StatusName "
                                         + "FROM Backlogs, [User], Swimlanes, Projects, Status "
-                                        + "WHERE Backlogs.ProjectID = " + Session["currentProject"].ToString() 
+                                        + "WHERE Backlogs.ProjectID = " + Session["currentProject"].ToString()
                                         + " AND Backlogs.BacklogAssigneeID = [User].UserID AND Backlogs.SwimlaneID = Swimlanes.SwimlaneID "
-                                        + "AND Backlogs.ProjectID = Projects.ProjectID AND Backlogs.BacklogStatusID = Status.StatusID " 
+                                        + "AND Backlogs.ProjectID = Projects.ProjectID AND Backlogs.BacklogStatusID = Status.StatusID "
                                         + "ORDER BY Backlogs.SwimlaneID, Backlogs.BacklogPosition";
             myAdapter.Fill(myDataSet, "myBacklogs");
             mySelectCommand.CommandText = "Select * From Backlogs";
             myAdapter.Fill(myDataSet, "myRawBacklogs");
             mySelectCommand.CommandText = "SELECT Tasks.*, [User].Username, Status.StatusName "
-                                        + "FROM Tasks, [User], Backlogs, Status " 
-                                        + "WHERE Backlogs.ProjectID = " + Session["currentProject"].ToString() 
-                                        + " AND Backlogs.BacklogID = Tasks.BacklogID " 
-                                        + "AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskStatusID = Status.StatusID " 
+                                        + "FROM Tasks, [User], Backlogs, Status "
+                                        + "WHERE Backlogs.ProjectID = " + Session["currentProject"].ToString()
+                                        + " AND Backlogs.BacklogID = Tasks.BacklogID "
+                                        + "AND Tasks.TaskAssigneeID = [User].UserID AND Tasks.TaskStatusID = Status.StatusID "
                                         + "ORDER BY Tasks.TaskID";
             myAdapter.Fill(myDataSet, "myTasks");
             mySelectCommand.CommandText = "Select * From Tasks";
@@ -61,7 +61,7 @@ namespace Kanbean_Project
             mySelectCommand.CommandText = "Select * From Projects";
             myAdapter.Fill(myDataSet, "myProjects");
         }
-        
+
         private void createBacklog(string id, string complexity, string title, string deadline, string color, string colorHeader, string swimlaneID, string assignee)
         {
             if (kanbanboard.FindControl("backlogArea" + id) == null)
@@ -145,7 +145,7 @@ namespace Kanbean_Project
                     btnComplexity.Click += new EventHandler(btnComplexity_Click);
                     backlogFooterUp.Controls.Add(btnComplexity);
                 }
-                
+
                 LinkButton btnAssignee = new LinkButton();
                 btnAssignee.CssClass = "btnAssignee";
                 btnAssignee.ID = "btnBacklogAssignee" + id;
@@ -330,10 +330,10 @@ namespace Kanbean_Project
                     Username = Request.Cookies["UserSettings"]["Name"];
                     linkBtnUsername.Text = Username;
                 }
-                else 
+                else
                     Response.Redirect("login.aspx");
             }
-            else 
+            else
                 Response.Redirect("login.aspx");
 
             //open connection
@@ -672,7 +672,7 @@ namespace Kanbean_Project
                 ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "refreshBoard", "refreshBoard();", true);
                 addandEditBacklogPopup.Hide();
             }
-            
+
         }
 
         protected void btnDelete_Click(object sender, EventArgs e)
@@ -1073,9 +1073,9 @@ namespace Kanbean_Project
                 ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "refreshBoard", "refreshBoard();", true);
                 editDueDatePopup.Hide();
             }
-            
+
         }
-        
+
         protected void btnDueDate_Click(object sender, EventArgs e)
         {
             string id = "";
@@ -1172,7 +1172,7 @@ namespace Kanbean_Project
                                                 + "VALUES (@CommentContent, @CommenterID, @TaskID)";
                     myInsertCommand.Parameters.AddWithValue("@CommentContent", addCommentTextBox.Text);
                     myInsertCommand.Parameters.AddWithValue("@CommenterID", Session["userID"].ToString());
-                    myInsertCommand.Parameters.AddWithValue("@TaskID", addCommentLegend.InnerText.Remove(0, 18)); 
+                    myInsertCommand.Parameters.AddWithValue("@TaskID", addCommentLegend.InnerText.Remove(0, 18));
                     myInsertCommand.ExecuteNonQuery();
                 }
                 myDataSet.Clear();
@@ -1280,7 +1280,7 @@ namespace Kanbean_Project
                 statusID = 2;
             for (int i = 0; i < swimlaneBacklog.Count; i++)
             {
-                
+
                 if (swimlane == "5")
                 {
                     myCommand.CommandText = "UPDATE Backlogs SET BacklogPosition = " + swimlaneBacklogPos[i]
@@ -1302,10 +1302,10 @@ namespace Kanbean_Project
             conn.Close();
         }
 
-        public bool IsNumeric(string input) 
+        public bool IsNumeric(string input)
         {
             int test;
-            return int.TryParse(input, out test); 
+            return int.TryParse(input, out test);
         }
 
         public bool IsDate(string input)
@@ -1314,7 +1314,8 @@ namespace Kanbean_Project
             return DateTime.TryParse(input, out dt);
         }
 
-        protected void EatCookies(object sender, EventArgs e){
+        protected void EatCookies(object sender, EventArgs e)
+        {
             if (Request.Cookies["UserSettings"] != null)
             {
                 Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
@@ -1438,7 +1439,7 @@ namespace Kanbean_Project
         protected void linkBtnUsername_Click(object sender, EventArgs e)
         {
             myConnection.Close();
-            Response.Redirect("Profile.aspx");
+            Response.Redirect("Profile.aspx?userID=" + Session["userID"].ToString());
         }
 
         protected void projectDropDownList_SelectedIndexChanged(object sender, EventArgs e)
