@@ -90,15 +90,12 @@
                 <div id="toolbar">
                     <asp:LinkButton runat="server" id="btnAddBacklog" CssClass="icon" ToolTip="Add new backlog" OnClick="btnAddBacklog_Click"></asp:LinkButton>
                     <asp:LinkButton runat="server" id="btnChart" CssClass="icon" ToolTip="Click to display the chart" OnClick="btnChart_Click"></asp:LinkButton>
-                    <%--<asp:LinkButton runat="server" id="btnSearch" CssClass="icon" ToolTip="Click to get the search field" OnClick="btnSearch_Click"></asp:LinkButton>
-                    <asp:TextBox ID="tbxSearch" runat="server" Visible="False"></asp:TextBox>
-                    <asp:LinkButton runat="server" id="btnFilter" CssClass="icon" ToolTip="Click to select category" Enabled="False" OnClick="btnFilter_Click"></asp:LinkButton>
-                    <asp:DropDownList ID="dropdownFilter" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropdownFilter_SelectedIndexChanged" Visible="False">
-                        <asp:ListItem Selected="True"></asp:ListItem>
+                    <asp:TextBox ID="tbxSearch" runat="server"></asp:TextBox>
+                    <asp:DropDownList ID="dropdownFilter" runat="server">
+                        <asp:ListItem Selected="True">Backlogs</asp:ListItem>
                         <asp:ListItem>Tasks</asp:ListItem>
-                        <asp:ListItem>Users</asp:ListItem>
-                        <asp:ListItem>Comments</asp:ListItem>
-                    </asp:DropDownList>--%>
+                    </asp:DropDownList>
+                    <asp:LinkButton runat="server" id="btnSearch" CssClass="icon" ToolTip="Click to get the search field" OnClick="btnSearch_Click"></asp:LinkButton>
                 </div>
 
                 <div class="clear"></div>
