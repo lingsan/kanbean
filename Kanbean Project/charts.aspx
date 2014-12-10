@@ -55,15 +55,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="6">
-                            Start date: <asp:TextBox ID="startdateTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
-                            <ajaxToolkit:CalendarExtender ID="startdateCalendarExtender" runat="server" TargetControlID="startdateTextBox" Format="MM/dd/yyyy" />
-                            End date: <asp:TextBox ID="enddateTextBox" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
-                            <ajaxToolkit:CalendarExtender ID="enddateCalendarExtender" runat="server" TargetControlID="enddateTextBox" Format="MM/dd/yyyy" />
-                            <asp:Button ID="btnCreateChart" runat="server" Text="Burn-Down and Burn-Up Chart" OnClick="btnCreateChart_Click" />
-                        </td>
-                    </tr>
-                    <tr>
                         <td colspan="2">
                             <asp:Chart ID="TaskAssignedChart" runat="server" >
                                 <Series>
@@ -72,9 +63,6 @@
                                 <ChartAreas>
                                     <asp:ChartArea Name="TaskAssignedChartArea"></asp:ChartArea>
                                 </ChartAreas>
-                                <Legends>
-                                    <asp:Legend Name="TaskAssignedLegend" Docking="Bottom" Alignment="Center"></asp:Legend>
-                                </Legends>
                             </asp:Chart>
                         </td>
                         <td colspan="2">
@@ -85,9 +73,6 @@
                                 <ChartAreas>
                                     <asp:ChartArea Name="TaskDoneChartArea"></asp:ChartArea>
                                 </ChartAreas>
-                                <Legends>
-                                    <asp:Legend Name="TaskDoneLegend" Docking="Bottom" Alignment="Center"></asp:Legend>
-                                </Legends>
                             </asp:Chart>
                         </td>
                         <td colspan="2">
@@ -99,9 +84,6 @@
                                 <ChartAreas>
                                     <asp:ChartArea Name="EstimationPointChartArea"></asp:ChartArea>
                                 </ChartAreas>
-                                <Legends>
-                                    <asp:Legend Name="EstimationPointChartLegend" Docking="Bottom" Alignment="Center"></asp:Legend>
-                                </Legends>
                             </asp:Chart>
                         </td>
                     </tr>
