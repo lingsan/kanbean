@@ -188,6 +188,12 @@ namespace Kanbean_Project
             newProjectMembersListBox.DataTextField = "Username";
             newProjectMembersListBox.DataValueField = "UserID";
             newProjectMembersListBox.DataBind();
+            foreach (ListItem li in newProjectMembersListBox.Items)
+            {
+                if (li.Value.ToString() == "0"| li.Value.ToString() == "1"){
+                    li.Enabled = false;
+                }
+            }
         }
 
         protected void btnUserManagement_Click(object sender, EventArgs e)
@@ -284,6 +290,7 @@ namespace Kanbean_Project
             tableAddMembers.Visible = false;
             tableRemoveMembers.Visible = false;
             GetDB();
+            newProjectNameTextBox.Text = "";
         }
 
         protected void linkbtnAddMembers_Click(object sender, EventArgs e)
@@ -293,6 +300,7 @@ namespace Kanbean_Project
             tableCreateProject.Visible = false;
             tableAddMembers.Visible = true;
             tableRemoveMembers.Visible = false;
+            AddProjectMembersListBox.Items.Clear();
         }
 
         protected void linkbtnRemoveMembers_Click(object sender, EventArgs e)
@@ -302,6 +310,7 @@ namespace Kanbean_Project
             tableCreateProject.Visible = false;
             tableAddMembers.Visible = false;
             tableRemoveMembers.Visible = true;
+            RemoveProjectMembersListBox.Items.Clear();
         }
 
         protected void btnCreateProject_Click(object sender, EventArgs e)
@@ -316,8 +325,8 @@ namespace Kanbean_Project
                 if (r["ProjectName"].ToString() == newProjectNameTextBox.Text) { valid = false; }
             }
 
-            if (valid && newProjectNameTextBox.Text != "the entered project nam has already exist!" && newProjectNameTextBox.Text!="")
-            {   //Error with the command
+            if (valid && newProjectNameTextBox.Text != "the entered project name has already exist!" && newProjectNameTextBox.Text!="")
+            {
                 myInsertCommand.CommandText = "INSERT INTO Projects (ProjectName) "
                                                 + "VALUES (@ProjectName)";
                 myInsertCommand.Parameters.AddWithValue("@ProjectName", newProjectNameTextBox.Text);
@@ -339,14 +348,17 @@ namespace Kanbean_Project
                 {
                     if (li.Selected)
                     {
-                        myUpdateCommand.CommandText = "INSERT INTO ProjectsMembers(ProjectID,UserID) VALUE (" + ProjectID + "," + li.Value.ToString() + ");";
-
+                        myInsertCommand.CommandText = "INSERT INTO ProjectsUsers (UserID, ProjectID) "
+                                                           + "VALUES (@UserID, @ProjectID)";
+                        myInsertCommand.Parameters.AddWithValue("@UserID", li.Value.ToString());
+                        myInsertCommand.Parameters.AddWithValue("@ProjectID", ProjectID);
+                        myInsertCommand.ExecuteNonQuery();
                     }
                 }
             }
             else
             {
-                newProjectNameTextBox.Text = "the entered project nam has already exist!";
+                newProjectNameTextBox.Text = "the entered project name has already exist!";
             }
         }
 
@@ -396,7 +408,7 @@ namespace Kanbean_Project
                 if (li.Selected)
                 {
 
-                    myInsertCommand.CommandText = "INSERT INTO ProjectsUsers (UserID, ProjectID) "
+                    myInsertCommand.CommandText = "INSERT INTO ProjectsMembers (UserID, ProjectID) "
                                                         + "VALUES (@UserID, @ProjectID)";
                     myInsertCommand.Parameters.AddWithValue("@UserID", li.Value.ToString());
                     myInsertCommand.Parameters.AddWithValue("@ProjectID", AddMembersProjectDropDownList.SelectedValue.ToString());
