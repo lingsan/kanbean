@@ -22,7 +22,7 @@
                 <tr>
                     <td class="registerLabel">Password</td>
                     <td>
-                        <asp:CustomValidator ID="passwordCustomValidator" runat="server" ErrorMessage="* Password should have at least 6 characters,<br/>&nbsp;&nbsp;&nbsp;include 1 number and 1 capital letter" ControlToValidate="passwordTextBox" OnServerValidate="passwordCustomValidator_ServerValidate" EnableClientScript="False" CssClass="validatorField" Font-Italic="True"></asp:CustomValidator><br />
+                        <asp:CustomValidator ID="passwordCustomValidator" runat="server" ErrorMessage="* Password should have at least 6 characters,<br/>&nbsp;&nbsp;&nbsp;include 1 number, 1 small letter and 1 capital letter" ControlToValidate="passwordTextBox" OnServerValidate="passwordCustomValidator_ServerValidate" EnableClientScript="False" CssClass="validatorField" Font-Italic="True"></asp:CustomValidator><br />
                         <asp:RequiredFieldValidator ID="passwordRequiredFieldValidator" runat="server" ErrorMessage="* Please enter your password" ControlToValidate="passwordTextBox" EnableClientScript="False" CssClass="validatorField" Font-Italic="True"></asp:RequiredFieldValidator><br />
                         <asp:TextBox ID="passwordTextBox" runat="server" TextMode="Password"></asp:TextBox>
                     </td>

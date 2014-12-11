@@ -85,13 +85,13 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.LinkButton btnProjectManagement;
         
         /// <summary>
-        /// btnUserManagement control.
+        /// btnAccountManagement control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnUserManagement;
+        protected global::System.Web.UI.WebControls.LinkButton btnAccountManagement;
         
         /// <summary>
         /// userProfile control.
@@ -463,13 +463,13 @@ namespace Kanbean_Project {
         protected global::System.Web.UI.WebControls.TextBox newAccountPasswordTextBox;
         
         /// <summary>
-        /// newAccountEmailTextBox2 control.
+        /// newAccountEmailTextBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox newAccountEmailTextBox2;
+        protected global::System.Web.UI.WebControls.TextBox newAccountEmailTextBox;
         
         /// <summary>
         /// newAccountUserLevelDropDownList control.

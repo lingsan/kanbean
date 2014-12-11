@@ -28,7 +28,6 @@ namespace Kanbean_Project
 
         private void getDatabase()
         {
-            mySelectCommand.Connection = myConnection;
             myAdapter.SelectCommand = mySelectCommand;
             mySelectCommand.CommandText = "SELECT * FROM Swimlanes ORDER BY SwimlaneID";
             myAdapter.Fill(myDataSet, "mySwimlanes");
@@ -339,8 +338,12 @@ namespace Kanbean_Project
             //open connection
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
-            //get the Default Project by Username
             mySelectCommand.Connection = myConnection;
+            myUpdateCommand.Connection = myConnection;
+            myInsertCommand.Connection = myConnection;
+            myDeleteCommand.Connection = myConnection;
+
+            //get the Default Project by Username
             mySelectCommand.CommandText = "SELECT * FROM [User] WHERE [Username] = '" + Username + "';";
             myReader = mySelectCommand.ExecuteReader();
             bool notEoF = myReader.Read();
@@ -399,6 +402,10 @@ namespace Kanbean_Project
             {
                 ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "alert", "alert('You aren't member of any project.\r\nPlease contact with admin.');", true);
                 Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
+                myConnection.Close();
+                Session["username"] = null;
+                Session["userID"] = null;
+                Session["currentProject"] = null;
                 Response.Redirect("login.aspx");
             }
 
@@ -668,7 +675,6 @@ namespace Kanbean_Project
 
         protected void btnDeleteBacklogorTask_Click(object sender, EventArgs e)
         {
-            myDeleteCommand.Connection = myConnection;
             if (lblDeleteItem.Text.Substring(0, 4) == "back")
             {
                 string id = lblDeleteItem.Text.Remove(0, 12);
@@ -905,7 +911,6 @@ namespace Kanbean_Project
             }
             else
             {
-                myUpdateCommand.Connection = myConnection;
                 string value = "";
                 if (editComplexityLegend.InnerText.Substring(24, 4) == "Back")
                 {
@@ -956,7 +961,6 @@ namespace Kanbean_Project
 
         protected void updateAssignee_Click(object sender, EventArgs e)
         {
-            myUpdateCommand.Connection = myConnection;
             string value = "";
             if (editAssigneeLegend.InnerText.Substring(22, 4) == "Back")
             {
@@ -1029,7 +1033,6 @@ namespace Kanbean_Project
             }
             else
             {
-                myUpdateCommand.Connection = myConnection;
                 DateTime? value = null;
                 if (editDueDateLegend.InnerText.Substring(22, 4) == "Back")
                 {
@@ -1123,7 +1126,6 @@ namespace Kanbean_Project
         protected void btnDeleteComment_Click(object sender, EventArgs e)
         {
             string id = (sender as LinkButton).CommandArgument;
-            myDeleteCommand.Connection = myConnection;
             if (addCommentLegend.InnerText.Substring(12, 4) == "Back")
                 myDeleteCommand.CommandText = "DELETE FROM BacklogsComments WHERE CommentID = " + id;
             if (addCommentLegend.InnerText.Substring(12, 4) == "Task")
@@ -1138,7 +1140,6 @@ namespace Kanbean_Project
         {
             if (addCommentTextBox.Text != "")
             {
-                myInsertCommand.Connection = myConnection;
                 if (addCommentLegend.InnerText.Substring(12, 4) == "Back")
                 {
                     myInsertCommand.CommandText = "INSERT INTO BacklogsComments (CommentContent, CommenterID, BacklogID) "
@@ -1172,14 +1173,12 @@ namespace Kanbean_Project
         {
             List<string> links = new List<string>();
             selectSearch.Connection = myConnection;
-            if (myConnection.State == ConnectionState.Closed)
-                myConnection.Open();
 
             if (dropdownFilter.SelectedItem.Text == "Tasks")
             {
-                selectSearch.CommandText = "SELECT TaskTitle, TaskStartDate, TaskDueDate, Username "
-                + "FROM Tasks INNER JOIN [User] ON Tasks.TaskAssigneeID = [User].UserID "
-                + "WHERE TaskTitle LIKE '%" + tbxSearch.Text + "%'";
+                selectSearch.CommandText = "SELECT Tasks.TaskTitle, Tasks.TaskStartDate, Tasks.TaskDueDate, [User].Username "
+                + "FROM Tasks, [User] WHERE Tasks.TaskAssigneeID = [User].UserID "
+                + "AND Tasks.TaskTitle LIKE '%" + tbxSearch.Text + "%'";
 
                 myReader = selectSearch.ExecuteReader();
                 bool notEoF;
@@ -1187,22 +1186,26 @@ namespace Kanbean_Project
                 while (notEoF)
                 {
                     links.Add(myReader["TaskTitle"].ToString()
-                    + ". Period: " + myReader["TaskStartDate"] + " - " + myReader["TaskDueDate"]
-                    + ", assignee: " + myReader["Username"]);
+                    + "+" + Convert.ToDateTime(myReader["TaskStartDate"]).ToShortDateString()
+                    + "+" + Convert.ToDateTime(myReader["TaskDueDate"]).ToShortDateString() 
+                    + "+" + myReader["Username"].ToString());
                     notEoF = myReader.Read();
                 }
             }
             else
             {
-                selectSearch.CommandText = @"SELECT BacklogTitle, BacklogStartDate, BacklogDueDate, Username
-                                            FROM Backlogs INNER JOIN [User] ON Backlogs.BacklogAssigneeID=User.UserID
-                                            WHERE BacklogTitle LIKE '%" + tbxSearch.Text + "%' OR BacklogDescription LIKE '%" + tbxSearch.Text + "%'";
+                selectSearch.CommandText = "SELECT Backlogs.BacklogTitle, Backlogs.BacklogStartDate, Backlogs.BacklogDueDate, [User].Username "
+                                        + "FROM Backlogs, [User] WHERE Backlogs.BacklogAssigneeID=[User].UserID "
+                                        + "AND Backlogs.BacklogTitle LIKE '%" + tbxSearch.Text + "%'";
                 myReader = selectSearch.ExecuteReader();
                 bool notEoF;
                 notEoF = myReader.Read();
                 while (notEoF)
                 {
-                    links.Add(myReader["BacklogTitle"].ToString() + ", - " + myReader["Username"].ToString() + ". Period: " + myReader["BacklogStartDate"] + " - " + myReader["BacklogDueDate"]);
+                    links.Add(myReader["BacklogTitle"].ToString() 
+                        + "+" + Convert.ToDateTime(myReader["BacklogStartDate"]).ToShortDateString() 
+                        + "+" + Convert.ToDateTime(myReader["BacklogDueDate"]).ToShortDateString() 
+                        + "+" + myReader["Username"].ToString());
                     notEoF = myReader.Read();
                 }
             }
@@ -1265,6 +1268,9 @@ namespace Kanbean_Project
             {
                 Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
                 myConnection.Close();
+                Session["username"] = null;
+                Session["userID"] = null;
+                Session["currentProject"] = null;
                 Response.Redirect("login.aspx");
             }
         }
@@ -1329,7 +1335,7 @@ namespace Kanbean_Project
         protected void linkBtnUsername_Click(object sender, EventArgs e)
         {
             myConnection.Close();
-            Response.Redirect("Profile.aspx?userID=" + Session["userID"].ToString());
+            Response.Redirect("Profile.aspx");
         }
 
         protected void projectDropDownList_SelectedIndexChanged(object sender, EventArgs e)

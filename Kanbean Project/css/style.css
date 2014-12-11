@@ -23,12 +23,6 @@
     margin:0em 0em 0.6em 0em;
     font-size:2.5em;
 }
-.formTitle-profile {
-    color:whitesmoke;
-    text-align:left;
-    margin:0em 0em 0.6em 0em;
-    font-size:2.5em;
-}
 
 #RegisterPanel {
     width:28em;
@@ -93,11 +87,6 @@
     float:right;
     padding:15px;
     width:12.5em;
-}
-#user-information-profile{
-    float:right;
-    padding:0px;
-    width:25em;
 }
 
 #projectDropDownList {
@@ -300,6 +289,16 @@ td {
     max-width:60%;
 }
 
+.popupmodal fieldset {
+    padding:1em;
+}
+
+.noticeField {
+    color:red;
+    font-size:1em;
+    font-style:italic;
+}
+
 legend {
     font-size:1.6em;
     font-weight:bold;
@@ -349,7 +348,7 @@ legend {
     content:"\f022";
 }
 
-#btnUserManagement:before {
+#btnAccountManagement:before {
     content:"\f0c0";
 }
 
@@ -384,5 +383,12 @@ legend {
 ul {
     margin-top:2em;
     margin-right:3.4em;
+}
+
+#TableSearchResults {
+    border-collapse:collapse;
+    max-width:60%;
+    margin:2em auto;
+    background-color:white;
 }
 

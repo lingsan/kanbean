@@ -12,6 +12,13 @@ namespace Kanbean_Project
 {
     public partial class registration : System.Web.UI.Page
     {
+        protected void Page_Init(object sender, EventArgs e)
+        {
+            //read cookie to check if User Loged on or not
+            if (Request.Cookies["UserSettings"] != null && Request.Cookies["UserSettings"]["Name"] != null)
+                Response.Redirect("board.aspx");
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             Page.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
@@ -40,30 +47,29 @@ namespace Kanbean_Project
 
                 OleDbCommand myCommand = new OleDbCommand();
                 myCommand.Connection = myConnection;
-                myCommand.CommandText = "SELECT * FROM [User] WHERE [Username] = @Username OR [Email] = @Email";
+                myCommand.CommandText = "SELECT COUNT(UserID) FROM [User] WHERE [Username] = @Username OR [Email] = @Email";
                 myCommand.Parameters.AddWithValue("@Username", usernameTextBox.Text);
                 myCommand.Parameters.AddWithValue("@Email", emailTextBox.Text);
-                try
+                if ((int)myCommand.ExecuteScalar() > 0)
                 {
-                    if (myCommand.ExecuteScalar().ToString() != "")
-                    {
-                        resultLabel.Text = "This username or email is used!";
-                        btnOK.Visible = false;
-                        btnCancel.Visible = true;
-                        registerFormPopup.Show();
-                    }
+                    resultLabel.Text = "This username or email is used!";
+                    btnOK.Visible = false;
+                    btnCancel.Visible = true;
+                    registerFormPopup.Show();
                 }
-                catch
+                else
                 {
-                    myCommand.CommandText = "INSERT INTO [User]([Username], [Password], [Email], [Level]) VALUES ( @Username, @Password, @Email, 2)";
-                    myCommand.Parameters.AddWithValue("@Username", usernameTextBox.Text);
-                    myCommand.Parameters.AddWithValue("@Password", passwordTextBox.Text);
-                    myCommand.Parameters.AddWithValue("@Email", emailTextBox.Text);
+                    myCommand.CommandText = "INSERT INTO [User]([Username], [Password], [Email], [Level], DefaultProjectID) "
+                                        + "VALUES ( '" + usernameTextBox.Text + "', '" + passwordTextBox.Text + "', '" + emailTextBox.Text + "', 2, 1)";
+                    //myCommand.CommandText = "INSERT INTO [User]([Username], [Password], [Email], [Level], DefaultProjectID) VALUES ( @Username, @Password, @Email, 2, 1)";
+                    //myCommand.Parameters.AddWithValue("@Username", usernameTextBox.Text);
+                    //myCommand.Parameters.AddWithValue("@Password", passwordTextBox.Text);
+                    //myCommand.Parameters.AddWithValue("@Email", emailTextBox.Text);
                     myCommand.ExecuteNonQuery();
                     myConnection.Close();
                     resultLabel.Text = "Your account is created! Click OK to login.";
                     btnOK.Visible = true;
-                    btnCancel.Visible = false;
+                    btnCancel.Visible = true;
                     registerFormPopup.Show();
                 }
             }

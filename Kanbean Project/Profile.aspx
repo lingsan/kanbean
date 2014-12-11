@@ -26,7 +26,7 @@
                     <asp:LinkButton runat="server" id="btnBacktheBoard" CssClass="icon" ToolTip="Back to the Board" OnClick="btnBacktheBoard_Click"></asp:LinkButton>
                     <asp:LinkButton runat="server" id="btnUserProfile" CssClass="icon" ToolTip="User Profile" OnClick="btnUserProfile_Click"></asp:LinkButton>
                     <asp:LinkButton runat="server" id="btnProjectManagement" CssClass="icon" ToolTip="Project Management" OnClick="btnProjectManagement_Click"></asp:LinkButton>
-                    <asp:LinkButton runat="server" id="btnUserManagement" CssClass="icon" ToolTip="User Management" OnClick="btnUserManagement_Click"></asp:LinkButton>
+                    <asp:LinkButton runat="server" id="btnAccountManagement" CssClass="icon" ToolTip="Account Management" OnClick="btnAccountManagement_Click"></asp:LinkButton>
                 </div>
                 <div id="content">
                     <asp:Table runat="server" ID="userProfile">
@@ -80,7 +80,7 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Default Project: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="defaultProjectDropDownList" CssClass="accounttextbox" runat="server"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell><asp:DropDownList ID="defaultProjectDropDownList" CssClass="accountselectbox" runat="server"></asp:DropDownList></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell ColumnSpan="2">
@@ -94,15 +94,15 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Old password: </asp:TableCell>
-                                        <asp:TableCell><asp:TextBox ID="oldPassTextBox" CssClass="accounttextbox" runat="server"></asp:TextBox></asp:TableCell>
+                                        <asp:TableCell><asp:TextBox ID="oldPassTextBox" CssClass="accounttextbox" runat="server" TextMode="Password"></asp:TextBox></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>New password: </asp:TableCell>
-                                        <asp:TableCell><asp:TextBox ID="newPassTextBox" CssClass="accounttextbox" runat="server"></asp:TextBox></asp:TableCell>
+                                        <asp:TableCell><asp:TextBox ID="newPassTextBox" CssClass="accounttextbox" runat="server" TextMode="Password"></asp:TextBox></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Re-enter new password: </asp:TableCell>
-                                        <asp:TableCell><asp:TextBox ID="reenterNewPassTextBox" CssClass="accounttextbox" runat="server"></asp:TextBox></asp:TableCell>
+                                        <asp:TableCell><asp:TextBox ID="reenterNewPassTextBox" CssClass="accounttextbox" runat="server" TextMode="Password"></asp:TextBox></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell ColumnSpan="2">
@@ -154,7 +154,7 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Project: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="AddMembersProjectDropDownList" CssClass="accountselectbox" runat="server" AutoPostBack ="true" OnSelectedIndexChanged ="OuterMem"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell><asp:DropDownList ID="AddMembersProjectDropDownList" CssClass="accountselectbox" runat="server" AutoPostBack ="true" OnSelectedIndexChanged="AddMembersProjectDropDownList_SelectedIndexChanged"></asp:DropDownList></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Add Member(s): </asp:TableCell>
@@ -172,10 +172,10 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Project: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="RemoveMembersProjectDropDownList" CssClass="accountselectbox" runat="server" AutoPostBack="true" OnSelectedIndexChanged="InnerMem"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell><asp:DropDownList ID="RemoveMembersProjectDropDownList" CssClass="accountselectbox" runat="server" AutoPostBack="true" OnSelectedIndexChanged="RemoveMembersProjectDropDownList_SelectedIndexChanged"></asp:DropDownList></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
-                                        <asp:TableCell>Remmove Member(s): </asp:TableCell>
+                                        <asp:TableCell>Remove Member(s): </asp:TableCell>
                                         <asp:TableCell><asp:ListBox ID="RemoveProjectMembersListBox" CssClass="accountlistbox" runat="server" SelectionMode="Multiple"></asp:ListBox></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
@@ -217,11 +217,16 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Email: </asp:TableCell>
-                                        <asp:TableCell><asp:TextBox ID="newAccountEmailTextBox2" CssClass="accounttextbox" runat="server"></asp:TextBox></asp:TableCell>
+                                        <asp:TableCell><asp:TextBox ID="newAccountEmailTextBox" CssClass="accounttextbox" runat="server"></asp:TextBox></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>User level: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="newAccountUserLevelDropDownList" CssClass="accountselectbox" runat="server"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell>
+                                            <asp:DropDownList ID="newAccountUserLevelDropDownList" CssClass="accountselectbox" runat="server">
+                                                <asp:ListItem Text="admin" Value="1"></asp:ListItem>
+                                                <asp:ListItem Text="user" Value="2" Selected="True"></asp:ListItem>
+                                            </asp:DropDownList>
+                                        </asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Default Project: </asp:TableCell>
@@ -240,7 +245,7 @@
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Select Account: </asp:TableCell>
-                                        <asp:TableCell><asp:DropDownList ID="selectAccountDropDownList" CssClass="accountselectbox" runat="server"></asp:DropDownList></asp:TableCell>
+                                        <asp:TableCell><asp:DropDownList ID="selectAccountDropDownList" CssClass="accountselectbox" runat="server" AutoPostBack="true" OnSelectedIndexChanged="selectAccountDropDownList_SelectedIndexChanged"></asp:DropDownList></asp:TableCell>
                                     </asp:TableRow>
                                     <asp:TableRow>
                                         <asp:TableCell>Password: </asp:TableCell>

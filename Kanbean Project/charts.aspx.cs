@@ -31,6 +31,9 @@ namespace Kanbean_Project
             else
                 Response.Redirect("login.aspx");
 
+            if (Session["currentProject"] == null)
+                Response.Redirect("board.aspx");
+
             myConnection.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|LanbanDatabase.mdb;";
             myConnection.Open();
             myCommand.Connection = myConnection;
@@ -201,20 +204,6 @@ namespace Kanbean_Project
             Response.Redirect("board.aspx");
         }
 
-        private List<DateTime> GetDateRange(DateTime StartingDate, DateTime EndingDate)
-        {
-            if (StartingDate > EndingDate)
-                return null;
-            List<DateTime> rv = new List<DateTime>();
-            DateTime tmpDate = StartingDate;
-            do
-            {
-                rv.Add(tmpDate);
-                tmpDate = tmpDate.AddDays(1);
-            } while (tmpDate <= EndingDate);
-            return rv;
-        }
-
         protected void linkBtnUsername_Click(object sender, EventArgs e)
         {
             myConnection.Close();
@@ -227,6 +216,9 @@ namespace Kanbean_Project
             {
                 Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
                 myConnection.Close();
+                Session["username"] = null;
+                Session["userID"] = null;
+                Session["currentProject"] = null;
                 Response.Redirect("login.aspx");
             }
         }
