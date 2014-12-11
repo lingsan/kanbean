@@ -308,19 +308,21 @@ namespace Kanbean_Project
         {
             GetDB();
             myConnection.Open();
-            myUpdateCommand.Connection = myConnection;
-            myUpdateCommand.CommandType = CommandType.Text;
+            myInsertCommand.Connection = myConnection;
+            myInsertCommand.CommandType = CommandType.Text;
             bool valid = true;
             foreach (DataRow r in myDataSet.Tables["Projects"].Rows)
             {
                 if (r["ProjectName"].ToString() == newProjectNameTextBox.Text) { valid = false; }
             }
 
-            if (valid && newProjectNameTextBox.Text != "the entered project nam has already exist!")
+            if (valid && newProjectNameTextBox.Text != "the entered project nam has already exist!" && newProjectNameTextBox.Text!="")
             {   //Error with the command
-                myUpdateCommand.CommandText = "INSERT INTO Projects(ProjectName) VALUE ('" + newProjectNameTextBox.Text + "');";
-                myUpdateCommand.ExecuteNonQuery();
-                mySelectCommand.CommandText = "SELECT ProjectID FROM Projects Where ProjectName = '" + newProjectNameTextBox.Text + "');";
+                myInsertCommand.CommandText = "INSERT INTO Projects (ProjectName) "
+                                                + "VALUES (@ProjectName)";
+                myInsertCommand.Parameters.AddWithValue("@ProjectName", newProjectNameTextBox.Text);
+                myInsertCommand.ExecuteNonQuery();
+                mySelectCommand.CommandText = "SELECT ProjectID FROM Projects Where ProjectName = '" + newProjectNameTextBox.Text + "';";
                 myReader = mySelectCommand.ExecuteReader();
                 string ProjectID = "";
                 bool notEoF;
@@ -338,6 +340,7 @@ namespace Kanbean_Project
                     if (li.Selected)
                     {
                         myUpdateCommand.CommandText = "INSERT INTO ProjectsMembers(ProjectID,UserID) VALUE (" + ProjectID + "," + li.Value.ToString() + ");";
+
                     }
                 }
             }
@@ -385,20 +388,44 @@ namespace Kanbean_Project
         }
         protected void btnAddMembers_Click(object sender, EventArgs e)
         {
-            foreach (ListItem li in newProjectMembersListBox.Items)
+            myConnection.Open();
+            myInsertCommand.Connection = myConnection;
+            myInsertCommand.CommandType = CommandType.Text;
+            foreach (ListItem li in AddProjectMembersListBox.Items)
             {
                 if (li.Selected)
                 {
-                    myUpdateCommand.CommandText = "INSERT INTO ProjectsMembers(ProjectID,UserID) VALUE (" + AddMembersProjectDropDownList.SelectedValue.ToString() + "," + li.Value.ToString() + ");";
-                    myUpdateCommand.ExecuteNonQuery();
+
+                    myInsertCommand.CommandText = "INSERT INTO ProjectsUsers (UserID, ProjectID) "
+                                                        + "VALUES (@UserID, @ProjectID)";
+                    myInsertCommand.Parameters.AddWithValue("@UserID", li.Value.ToString());
+                    myInsertCommand.Parameters.AddWithValue("@ProjectID", AddMembersProjectDropDownList.SelectedValue.ToString());
+                    myInsertCommand.ExecuteNonQuery();
                 }
             }
             myConnection.Close();
+            OuterMem(new object(), EventArgs.Empty);
+            
         }
 
         protected void btnRemoveMembers_Click(object sender, EventArgs e)
         {
-
+            myConnection.Open();
+            myDeleteCommand.CommandType = CommandType.Text;
+            myDeleteCommand.Connection = myConnection;
+            foreach (ListItem li in RemoveProjectMembersListBox.Items)
+            {
+                if (li.Selected)
+                {
+                    myDeleteCommand.CommandText = "DELETE FROM ProjectsMembers "
+                                                + "WHERE (UserID = @UserID) AND (ProjectID = @ProjectID);";
+                    myDeleteCommand.Parameters.AddWithValue("@UserID", li.Value.ToString());
+                    myDeleteCommand.Parameters.AddWithValue("@ProjectID", RemoveMembersProjectDropDownList.SelectedValue.ToString());
+                    myDeleteCommand.ExecuteNonQuery();
+                }
+            }
+            myConnection.Close();
+            InnerMem(new object(), EventArgs.Empty);
         }
 
         protected void linkbtnCreateAccount_Click(object sender, EventArgs e)
