@@ -140,58 +140,65 @@ namespace Kanbean_Project
             EstimationPointChart.Legends["EstimationPointChartLegend"].Docking = Docking.Bottom;
             EstimationPointChart.Legends["EstimationPointChartLegend"].Alignment = System.Drawing.StringAlignment.Center;
 
-            //burn up and burn down chart
-            myCommand.CommandText = "SELECT MIN(Tasks.TaskStartDate) FROM Tasks, Backlogs " +
-                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
-            DateTime startdate = DateTime.Parse(myCommand.ExecuteScalar().ToString());
-            myCommand.CommandText = "SELECT MAX(Tasks.TaskDueDate) FROM Tasks, Backlogs " +
-                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
-            DateTime enddate = DateTime.Parse(myCommand.ExecuteScalar().ToString());
-            DateTime currentdate = DateTime.Today;
-            if (currentdate > enddate)
-                currentdate = enddate;
-
-            myCommand.CommandText = "SELECT SUM(Tasks.TaskEstimationHour) FROM Tasks, Backlogs " +
-                                    "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString() +
-                                    " AND (Tasks.TaskStatusID = 1 OR Tasks.TaskStatusID = 2 OR Tasks.TaskCompletedDate >= #" + startdate + "#)" +
-                                    " AND Tasks.TaskDueDate <= #" + enddate + "#";
-
-            decimal totalhour = Convert.ToDecimal(myCommand.ExecuteScalar());
-            decimal diffstartend = Convert.ToDecimal(enddate.Subtract(startdate).TotalDays);
-            decimal diffstartcurrent = Convert.ToDecimal(currentdate.Subtract(startdate).TotalDays);
-            decimal gap = totalhour / diffstartend;
-            for (int i = 0; i <= diffstartend; i++)
+            try
             {
-                if (i <= diffstartcurrent)
-                {
-                    decimal spenthour;
-                    myCommand.CommandText = "SELECT SUM(Tasks.TaskEstimationHour) FROM Tasks, Backlogs " +
-                                            "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString() +
-                                            " AND (Tasks.TaskStatusID = 1 OR Tasks.TaskStatusID = 2 OR Tasks.TaskCompletedDate >= #" + startdate + "#)" +
-                                            " AND Tasks.TaskDueDate <=#" + enddate + "# AND Tasks.TaskCompletedDate <=#" + startdate.AddDays((double)i) + "#";
-                    try
-                    {
-                        spenthour = Convert.ToDecimal(myCommand.ExecuteScalar());
-                    }
-                    catch
-                    {
-                        spenthour = 0;
-                    }
-                    BurnDownChart.Series["Burn-Down"].Points.AddXY(startdate.AddDays((double)i).ToString("dd.MM.yyyy"), totalhour - spenthour);
-                    BurnUpChart.Series["Burn-Up"].Points.AddXY(startdate.AddDays((double)i).ToString("dd.MM.yyyy"), spenthour);
-                }
-                BurnDownChart.Series["Optimal"].Points.AddXY(startdate.AddDays((double)i).ToString("dd.MM.yyyy"), totalhour - i * gap);
-                BurnUpChart.Series["Total"].Points.AddXY(startdate.AddDays((double)i).ToString("dd.MM.yyyy"), totalhour);
-            }
-            BurnDownChart.Titles.Add(new Title("Burn-Down Chart", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
-            BurnDownChart.Legends.Add("BurnDownChartLegend");
-            BurnDownChart.Legends["BurnDownChartLegend"].Docking = Docking.Bottom;
-            BurnDownChart.Legends["BurnDownChartLegend"].Alignment = System.Drawing.StringAlignment.Center;
+                //burn up and burn down chart
+                myCommand.CommandText = "SELECT MIN(Tasks.TaskStartDate) FROM Tasks, Backlogs " +
+                                        "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
+                DateTime startdate = DateTime.Parse(myCommand.ExecuteScalar().ToString());
+                myCommand.CommandText = "SELECT MAX(Tasks.TaskDueDate) FROM Tasks, Backlogs " +
+                                        "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString();
+                DateTime enddate = DateTime.Parse(myCommand.ExecuteScalar().ToString());
+                DateTime currentdate = DateTime.Today;
+                if (currentdate > enddate)
+                    currentdate = enddate;
 
-            BurnUpChart.Titles.Add(new Title("Burn-Up Chart", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
-            BurnUpChart.Legends.Add("BurnUpChartLegend");
-            BurnUpChart.Legends["BurnUpChartLegend"].Docking = Docking.Bottom;
-            BurnUpChart.Legends["BurnUpChartLegend"].Alignment = System.Drawing.StringAlignment.Center;
+                myCommand.CommandText = "SELECT SUM(Tasks.TaskEstimationHour) FROM Tasks, Backlogs " +
+                                        "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString() +
+                                        " AND (Tasks.TaskStatusID = 1 OR Tasks.TaskStatusID = 2 OR Tasks.TaskCompletedDate >= #" + startdate + "#)" +
+                                        " AND Tasks.TaskDueDate <= #" + enddate + "#";
+
+                decimal totalhour = Convert.ToDecimal(myCommand.ExecuteScalar());
+                decimal diffstartend = Convert.ToDecimal(enddate.Subtract(startdate).TotalDays);
+                decimal diffstartcurrent = Convert.ToDecimal(currentdate.Subtract(startdate).TotalDays);
+                decimal gap = totalhour / diffstartend;
+                for (int i = 0; i <= diffstartend; i++)
+                {
+                    if (i <= diffstartcurrent)
+                    {
+                        decimal spenthour;
+                        myCommand.CommandText = "SELECT SUM(Tasks.TaskEstimationHour) FROM Tasks, Backlogs " +
+                                                "WHERE Tasks.BacklogID = Backlogs.BacklogID AND Backlogs.ProjectID = " + Session["currentProject"].ToString() +
+                                                " AND (Tasks.TaskStatusID = 1 OR Tasks.TaskStatusID = 2 OR Tasks.TaskCompletedDate >= #" + startdate + "#)" +
+                                                " AND Tasks.TaskDueDate <=#" + enddate + "# AND Tasks.TaskCompletedDate <=#" + startdate.AddDays((double)i) + "#";
+                        try
+                        {
+                            spenthour = Convert.ToDecimal(myCommand.ExecuteScalar());
+                        }
+                        catch
+                        {
+                            spenthour = 0;
+                        }
+                        BurnDownChart.Series["Burn-Down"].Points.AddXY(startdate.AddDays((double)i).ToString("dd.MM.yyyy"), totalhour - spenthour);
+                        BurnUpChart.Series["Burn-Up"].Points.AddXY(startdate.AddDays((double)i).ToString("dd.MM.yyyy"), spenthour);
+                    }
+                    BurnDownChart.Series["Optimal"].Points.AddXY(startdate.AddDays((double)i).ToString("dd.MM.yyyy"), totalhour - i * gap);
+                    BurnUpChart.Series["Total"].Points.AddXY(startdate.AddDays((double)i).ToString("dd.MM.yyyy"), totalhour);
+                }
+                BurnDownChart.Titles.Add(new Title("Burn-Down Chart", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
+                BurnDownChart.Legends.Add("BurnDownChartLegend");
+                BurnDownChart.Legends["BurnDownChartLegend"].Docking = Docking.Bottom;
+                BurnDownChart.Legends["BurnDownChartLegend"].Alignment = System.Drawing.StringAlignment.Center;
+
+                BurnUpChart.Titles.Add(new Title("Burn-Up Chart", Docking.Top, new Font("Calibri", 16f, FontStyle.Bold), Color.Black));
+                BurnUpChart.Legends.Add("BurnUpChartLegend");
+                BurnUpChart.Legends["BurnUpChartLegend"].Docking = Docking.Bottom;
+                BurnUpChart.Legends["BurnUpChartLegend"].Alignment = System.Drawing.StringAlignment.Center;
+            }
+            catch
+            {
+
+            }
         }
         protected void Page_Load(object sender, EventArgs e)
         {

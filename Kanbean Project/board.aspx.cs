@@ -356,7 +356,13 @@ namespace Kanbean_Project
             }
             myReader.Close();
             if (Request["projectID"] != null)
-                Session["currentProject"] = Request["projectID"].ToString();
+            {
+                mySelectCommand.CommandText = "SELECT COUNT(UserID) FROM ProjectsMembers WHERE UserID =" + Session["UserID"].ToString()
+                            + " AND ProjectID = " + Request["projectID"].ToString();
+                if ((int)mySelectCommand.ExecuteScalar() > 0)
+                    Session["currentProject"] = Request["projectID"].ToString();
+            }
+
             if (Session["currentProject"].ToString() != "0")
             {
                 getDatabase();
@@ -400,7 +406,7 @@ namespace Kanbean_Project
             }
             else
             {
-                ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "alert", "alert('You aren't member of any project.\r\nPlease contact with admin.');", true);
+                ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "alert", "alert('You are not member of any project. Please contact with admin.');", true);
                 Response.Cookies["UserSettings"].Expires = DateTime.Now.AddDays(-1);
                 myConnection.Close();
                 Session["username"] = null;
@@ -1340,9 +1346,15 @@ namespace Kanbean_Project
 
         protected void projectDropDownList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            myConnection.Close();
-            Response.Redirect("board.aspx?projectID=" + projectDropDownList.SelectedValue);
+            mySelectCommand.CommandText = "SELECT COUNT(UserID) FROM ProjectsMembers WHERE UserID =" + Session["UserID"].ToString() 
+                                        + " AND ProjectID = " + projectDropDownList.SelectedValue;
+            if ((int)mySelectCommand.ExecuteScalar() > 0)
+            {
+                myConnection.Close();
+                Response.Redirect("board.aspx?projectID=" + projectDropDownList.SelectedValue);
+            }
+            else
+                ScriptManager.RegisterStartupScript(updatePanel, updatePanel.GetType(), "alert", "alert('You are not in this project.');", true);
         }
-
     }
 }
